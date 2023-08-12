@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeng/resources/themes/viva-dark/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+body {
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--surface-0);
+    color: var(--text-color);
+
+}
+#homeLoadingImg{
+
+    text-align: center;
+
+
+}
+.productImgs{
+
+    width: 100%;
+    height: auto;
+
+}
+
+#shoppingLoadingImg{
+    text-align: center;
+
+}
+
+.shoppingPage{
+    margin: auto;
+    width: 50%;
+
+}
+#artLoadingImg{
+    /* position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%); */
+  text-align: center;
+
+}
+.artPage{
+  
+    margin: auto;
+    width: 50%;
+
+}
+/* comment out if not working*/
+.artImgs{
+
+    width: 100%;
+    height: auto;
+}
+
+#homePage{
+}
