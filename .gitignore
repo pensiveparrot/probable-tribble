@@ -1,6 +1,8 @@
 # Compiled class file
 *.class
-
+HAPPYLONELY-BACKEND/.settings/
+HAPPYLONELY-FRONTEND/.settings/
+HAPPYLONELY-FRONTEND/src/main/frontend/.angular/
 # Log file
 *.log
 
