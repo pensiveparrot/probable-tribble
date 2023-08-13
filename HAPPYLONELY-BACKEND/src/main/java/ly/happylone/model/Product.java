@@ -1,4 +1,4 @@
-package app.Product;
+package ly.happylone.model;
 
 import java.math.BigDecimal;
 
@@ -20,6 +20,7 @@ public class Product {
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
+
 	private Long id;
 
 	@Column(name = "productname")

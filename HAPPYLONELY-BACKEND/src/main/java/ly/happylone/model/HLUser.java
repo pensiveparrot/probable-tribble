@@ -1,8 +1,7 @@
-package app.HLUser;
+package ly.happylone.model;
 
 import java.util.Date;
 
-import app.HLRole.HLRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
