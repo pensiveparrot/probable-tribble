@@ -12,15 +12,15 @@
     <ng-template let-product of products pTemplate="item">
         <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
             <div class="mb-3">
-                <img src="{{ product.image }}" [alt]="product.name" class="productImgs" />
+                <img src="{{ product.image }}" [alt]="product.productname" class="productImgs" />
             </div>
             <div>
-                <h4 class="mb-1">{{ product.name }}</h4>
+                <h4 class="mb-1">{{ product.productname }}</h4>
                 <h6 class="mt-0 mb-3">{{ '$' + product.price }}</h6>
-                <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)"></p-tag>
+                <p-tag [value]="product.inventorystatus" [severity]="getSeverity(product.inventorystatus)"></p-tag>
                 
                 <div class="car-buttons mt-5">
-                    <p-button [disabled]="setDisabled(product.inventoryStatus)" type="button" (click)="onClick(product.productLink)" styleClass="p-button p-button-rounded mr-2" icon="pi pi-shopping-bag"></p-button>
+                    <p-button [disabled]="setDisabled(product.inventorystatus)" type="button" (click)="onClick(product.shoplink)" styleClass="p-button p-button-rounded mr-2" icon="pi pi-shopping-bag"></p-button>
                 </div>
             </div>
         </div>

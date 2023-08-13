@@ -13,12 +13,15 @@ import { ShopComponent } from './shop/shop.component';
 import {ButtonModule} from 'primeng/button';
 import {CarouselModule} from 'primeng/carousel';
 import {TagModule} from 'primeng/tag';
+import { ProductService } from './shop/product/product.service';
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
     ArtComponent,
     HomeComponent,
     ShopComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -29,8 +32,8 @@ import {TagModule} from 'primeng/tag';
     DialogModule,
     ButtonModule,
     CarouselModule,
-    TagModule
-
+    TagModule,
+    HttpClientModule
 
   ],
   providers: [],

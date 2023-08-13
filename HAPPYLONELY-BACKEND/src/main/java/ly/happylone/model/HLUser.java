@@ -52,4 +52,8 @@ public class HLUser {
 	@Column(name = "profileimg")
 	private String profileimg;
 
+	@Getter
+	@Column(name = "userloggedin")
+	private boolean userloggedin;
+
 }

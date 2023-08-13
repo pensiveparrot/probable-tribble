@@ -6,7 +6,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>HAPPYLONELY-BACKEND</module>
 		<module>HAPPYLONELY-FRONTEND</module>
+		<module>HAPPYLONELY-BACKEND</module>
+
 	</modules>
 </project>

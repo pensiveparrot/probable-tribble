@@ -1,6 +1,7 @@
 package ly.happylone.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +24,13 @@ public class ProductController {
 	public Product getProductById(@PathVariable Long id) throws SQLException {
 		{
 			return productService.getProductById(id);
+		}
+	}
+
+	@GetMapping(value= "/getAllProducts")
+	public List<Product> getAllProducts() throws SQLException {
+		{
+			return productService.getAllProducts();
 		}
 	}
 

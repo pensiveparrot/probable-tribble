@@ -1,7 +1,9 @@
 export interface Product {
-    name: string;
-    price: number;
-    inventoryStatus: string;
+    id: number;
     image: string;
-    productLink: string;
+    inventorystatus: string;
+    price: number;
+    shoplink: string;
+    productname: string;
+
 }
