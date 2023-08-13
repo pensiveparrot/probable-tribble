@@ -6,7 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "Product")
 public class Product {
 	@Id
 	@GeneratedValue
@@ -29,15 +27,14 @@ public class Product {
 
 	@Column(name = "price")
 	private BigDecimal price;
-	
-	@Column(name="inventorystatus")
+
+	@Column(name = "inventorystatus")
 	private String inventorystatus;
-	
-	@Column(name="image")
+
+	@Column(name = "image")
 	private String image;
 
-	@Column(name="shoplink")
+	@Column(name = "shoplink")
 	private String shoplink;
-
 
 }
