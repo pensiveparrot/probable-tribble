@@ -1,12 +1,11 @@
 <p-messages *ngIf="statusCode > 0  && statusCode !== 200" [(value)]="errorMsg" [enableService]="false" [closable]="false" ></p-messages>
 <form (ngSubmit)="getProductByName()">
     <input [(ngModel)]="product.productname" name="productname" pInputText placeholder="Enter product name" />
-    <button pButton label="Find Product" type="submit"></button>
+    <button pButton label="Find Product" type="submit" ></button>
   </form>
   <br>
-<form *ngIf="product.id && bUpdate" (ngSubmit)="updateProduct()">
- 
-    <div>
+<form *ngIf="product.id && bFindClicked && bCreateClicked===false" (ngSubmit)="updateProduct()">
+     <div>
       <label for="productname">Name:</label>
       <input id="productname" [(ngModel)]="product.productname" name="productname" pInputText />
     </div>
@@ -29,8 +28,8 @@
     <button pButton [label]="buttonLabel" type="submit"></button>
   </form>
   <br>
-  <button *ngIf="bUpdate" pButton label="Create Product" (click)="onCreateButtonPressed()"></button>
-  <form *ngIf="bCreate && bUpdate === false" (ngSubmit)="createProduct()">
+  <button pButton *ngIf="bCreateClicked === false" label="Create Product" (click)="onCreateButtonPressed()"></button>
+  <form *ngIf="bCreateClicked && bFindClicked === false" (ngSubmit)="createProduct()">
     <div>
       <label for="productname">Name:</label>
       <input id="productname" [(ngModel)]="product.productname" name="productname" pInputText />

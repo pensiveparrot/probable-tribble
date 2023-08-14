@@ -9,11 +9,12 @@ import { Message } from 'primeng/api';
 })
 export class AdminComponent {
   errorMsgDetail: string = "";
-  bUpdate: boolean = false;
-  bCreate: boolean = false;
+  bFindClicked: boolean = false;
+  bCreateClicked: boolean = false;
   errorMsg: Message[] = [];
   statusCode: number = 0;
   product:any = {id:0,productname:"",price:0,image:"",inventorystatus:"",shoplink:""};
+ 
   constructor(private productService: ProductService) { }
 
   get buttonLabel(): string {
@@ -21,13 +22,14 @@ export class AdminComponent {
   }
 
   getProductByName(){
+    this.bFindClicked = true;
+    this.bCreateClicked = false;
     return new Promise((resolve,reject) => {
     this.productService.getProductByName(this.product.productname).subscribe({next: (response) => {
       this.statusCode = response.status;
       this.product = response.body;
       console.log("product: " + JSON.stringify(this.product));
       console.log("status code: " + this.statusCode);
-      this.bUpdate = true;
       resolve(this.product);
     },
     error: (error) => {
@@ -42,9 +44,10 @@ export class AdminComponent {
   });
   });
   }
+
 onCreateButtonPressed(){
-  this.bCreate = true;
-  this.bUpdate = false;
+  this.bCreateClicked = true;
+  this.bFindClicked = false;
 }
 createProduct(){
   return new Promise((resolve,reject) => {
@@ -53,7 +56,6 @@ createProduct(){
     this.product = response.body;
     console.log("product: " + JSON.stringify(this.product));
     console.log("status code: " + this.statusCode);
-    this.bCreate = false;
     resolve(this.product);
   },error: (error) => {
     this.statusCode = error.status;
@@ -62,7 +64,6 @@ createProduct(){
     this.errorMsgDetail = "Error adding product with name: "+this.product.productname +".  Response code: " + this.statusCode;
     this.errorMsg.pop();
     this.errorMsg.push({severity:'error', summary:'Error', detail:this.errorMsgDetail});
-    this.bCreate=true;
     reject(error);
   }});}
   );

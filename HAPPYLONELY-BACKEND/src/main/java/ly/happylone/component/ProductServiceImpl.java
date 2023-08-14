@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.http.HttpServletResponse;
 import ly.happylone.model.Product;
 import ly.happylone.service.ProductService;
 
