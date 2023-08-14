@@ -13,14 +13,18 @@ import { ShopComponent } from './shop/shop.component';
 import {ButtonModule} from 'primeng/button';
 import {CarouselModule} from 'primeng/carousel';
 import {TagModule} from 'primeng/tag';
-import { ProductService } from './shop/product/product.service';
+import { InputTextModule } from 'primeng/inputtext';
 import { HttpClientModule } from '@angular/common/http';
+import { AdminComponent } from './admin/admin.component';
+import { FormsModule } from '@angular/forms';
+import { MessagesModule } from 'primeng/messages';
 @NgModule({
   declarations: [
     AppComponent,
     ArtComponent,
     HomeComponent,
-    ShopComponent
+    ShopComponent,
+    AdminComponent
     
   ],
   imports: [
@@ -33,8 +37,10 @@ import { HttpClientModule } from '@angular/common/http';
     ButtonModule,
     CarouselModule,
     TagModule,
+    InputTextModule,
+    MessagesModule,
+    FormsModule,
     HttpClientModule
-
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -16,7 +16,16 @@ export class ProductService {
   getAllProducts(): Observable<Product[]> {
     return this.http.get<Product[]>("http://"+window.location.hostname+":8080/" +"api/products/getAllProducts");
   }
- 
+
+  updateProduct(product:Product): Observable<any> {
+    return this.http.put<Product>("http://"+window.location.hostname+":8080/" +"api/products/updateProduct",product, { observe: 'response' });
+  }
+ getProductByName(productname:string): Observable<any> {
+    return this.http.get<Product>("http://"+window.location.hostname+":8080/" +"api/products/getProductByName/"+productname, { observe: 'response' });
+  }
+  addProduct(product:Product): Observable<any> {
+    return this.http.post<Product>("http://"+window.location.hostname+":8080/" +"api/products/addProduct",product, { observe: 'response' });
+  }
    
 
 }

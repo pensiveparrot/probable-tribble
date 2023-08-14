@@ -14,7 +14,8 @@ export class AppComponent {
    ngOnInit() {
     this.items.push({label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home']});
     this.items.push({label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop']});
-    this.items.push({label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art']});  
+    this.items.push({label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art']}); 
+    this.items.push({label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin']}) 
     this.activeItem = this.items[0];
   }
      
