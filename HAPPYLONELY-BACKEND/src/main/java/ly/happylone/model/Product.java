@@ -23,7 +23,7 @@ public class Product {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "productname")
+	@Column(name = "productname", unique = true)
 	private String productname;
 
 	@Column(name = "price")
