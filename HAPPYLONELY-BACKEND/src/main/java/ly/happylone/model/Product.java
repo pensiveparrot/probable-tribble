@@ -38,4 +38,7 @@ public class Product {
 	@Column(name = "shoplink")
 	private String shoplink;
 
+	@Column(name = "visible")
+	private boolean visible;
+
 }

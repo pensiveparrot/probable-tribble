@@ -1,6 +1,7 @@
 package ly.happylone.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Setter
 @Entity
 public class HLUser {
@@ -20,11 +20,15 @@ public class HLUser {
 	@GeneratedValue
 	@Column(name = "id")
 	private Long id;
+	
+	@Getter
+	@Column(name = "email")
+	private String email;
 
 	@Getter
-	@Column(name = "username")
+	@Column(name = "username", unique = true)
 	private String username;
-
+	@Getter
 	@Column(name = "password")
 	private String password;
 
@@ -55,5 +59,11 @@ public class HLUser {
 	@Getter
 	@Column(name = "userloggedin")
 	private boolean userloggedin;
+
+	private Set<HLRole> HLroles;
+
+	public Set<HLRole> getRoles() {
+        return HLroles;
+    }
 
 }

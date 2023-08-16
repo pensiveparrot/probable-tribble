@@ -20,20 +20,7 @@ export class ShopComponent implements OnInit {
     setTimeout(() => {
       this.showText=true;
     }, 4000);
-  //   this.productService.getProductById(1).subscribe((data) =>{
-  //       if(data && data.id > 0) {
-  //       this.product.id = data.id;
-  //       this.product.productname = data.productname;
-  //       this.product.price = data.price;
-  //       this.product.inventorystatus = data.inventorystatus; 
-  //       this.product.image = data.image;
-  //       this.product.shoplink = data.shoplink;
-  //       }
 
-  //   console.log("product: "+JSON.stringify(this.product));
-  //   this.products.push(this.product);
-   
-  // });
   this.loadAllProducts();
   
 }
@@ -74,28 +61,7 @@ loadProduct(){
   });
   });
 }
-// loadProduct(): Promise<any> {
-//   return new Promise((resolve, reject) => {
-//     this.productService.getProductById(1).subscribe({
-//       next: (data: any) => {
-//         resolve(data);
-//       },
-//       error: (error: any) => {
-//         reject(error);
-//       }
-//     });
-//     }
-//     );
- //products: Product[] = [ { name: 'Shirt', price: 30, inventoryStatus:'In Stock', image: 'assets/products/1.jpg',productLink:'https://buy.stripe.com/test_8wM5mQcoKcxhdHOcMM' }, { name: 'Jeans', price: 50, inventoryStatus:'Out Of Stock', image: '../assets/products/2.jpg',productLink:'' }, { name: 'Sneakers', price: 60, inventoryStatus:'Low Stock', image: '../assets/products/3.jpg',productLink:'' }];
-// }
-// loadProduct(): Promise<any> {
-//   return new Promise((resolve, reject) => {
-//     this.productService.getProductById(1).subscribe(
-//       data => resolve(data),
-//       error => reject(error)
-//     );
-//   });
-// }
+
 responsiveOptions: any[] = [ { breakpoint: '1024px', numVisible: 3, numScroll: 3 }, { breakpoint: '768px', numVisible: 2, numScroll: 2 }, { breakpoint: '560px', numVisible: 1, numScroll: 1 } ];
 getSeverity(status: string) {
   switch (status) {

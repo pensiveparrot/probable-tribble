@@ -24,7 +24,7 @@ import { MessagesModule } from 'primeng/messages';
     ArtComponent,
     HomeComponent,
     ShopComponent,
-    AdminComponent
+    AdminComponent,
     
   ],
   imports: [
