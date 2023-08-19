@@ -23,7 +23,8 @@ public class ProductServiceImpl implements ProductService {
 
 		String sql = "select * from product where id=?";
 		Product product = new Product();
-		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely", System.getenv("PGUSER"), System.getenv("PGPW"))) {
+		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+				System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
 			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setLong(1, id);
@@ -47,11 +48,13 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return product;
 	}
-@Override
+
+	@Override
 	public List<Product> getAllProducts() throws SQLException {
 		String sql = "select * from product order by id";
 		List<Product> products = new ArrayList<Product>();
-		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely", System.getenv("PGUSER"), System.getenv("PGPW"))) {
+		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+				System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
 			PreparedStatement statement = con.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
@@ -72,40 +75,41 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return products;
 	}
+
 	@Override
 	public ResponseEntity<Product> addProduct(Product product) throws SQLException {
-		
+
 		String sql = "insert into product (productname, price, inventorystatus, image, shoplink) values (?, ?, ?, ?, ?)";
-		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely", System.getenv("PGUSER"), System.getenv("PGPW"))) {
-			
-		if(getProductByName(product.getProductname()).getStatusCode() == HttpStatus.NOT_FOUND) {
-		PreparedStatement statement = con.prepareStatement(sql);
-			statement.setString(1, product.getProductname());
-			statement.setBigDecimal(2, product.getPrice());
-			statement.setString(3, product.getInventorystatus());
-			statement.setString(4, product.getImage());
-			statement.setString(5, product.getShoplink());
-			statement.executeUpdate();
-			return ResponseEntity.status(HttpStatus.OK).body(product);			
-		}
-			else {
+		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+				System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+			if (getProductByName(product.getProductname()).getStatusCode() == HttpStatus.NOT_FOUND) {
+				PreparedStatement statement = con.prepareStatement(sql);
+				statement.setString(1, product.getProductname());
+				statement.setBigDecimal(2, product.getPrice());
+				statement.setString(3, product.getInventorystatus());
+				statement.setString(4, product.getImage());
+				statement.setString(5, product.getShoplink());
+				statement.executeUpdate();
+				return ResponseEntity.status(HttpStatus.OK).body(product);
+			} else {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
 
 			}
-	
-			
-		}
-		catch (SQLException ex) {
+
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
 		}
 
 	}
+
 	@Override
 	public ResponseEntity<Product> getProductByName(String productname) throws SQLException {
 		String sql = "select * from product where productname=?";
 		Product product = new Product();
-		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely", System.getenv("PGUSER"), System.getenv("PGPW"))) {
+		try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+				System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
 			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, productname);
@@ -128,47 +132,46 @@ public class ProductServiceImpl implements ProductService {
 		catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
-		
-			
+
 	}
+
 	@Override
 	public ResponseEntity<Product> updateProduct(Product product) throws SQLException {
-		if(product.getId() != null) {
+		if (product.getId() != null) {
 			String sql = "update product set productname=?, price=?, inventorystatus=?, image=?, shoplink=? where id=?";
-			try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely", System.getenv("PGUSER"), System.getenv("PGPW"))) {
+			try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+					System.getenv("PGUSER"), System.getenv("PGPW"))) {
 				Product prod = getProductById(product.getId());
-				if(prod.getId() > 0){
-				PreparedStatement statement = con.prepareStatement(sql);
-				statement.setString(1, product.getProductname());
-				statement.setBigDecimal(2, product.getPrice());
-				statement.setString(3, product.getInventorystatus());
-				statement.setString(4, product.getImage());
-				statement.setString(5, product.getShoplink());
-				statement.setLong(6, product.getId());
-				statement.executeUpdate();
-   				return ResponseEntity.status(HttpStatus.OK).body(product);				
-			}
-				else{
+				if (prod.getId() > 0) {
+					PreparedStatement statement = con.prepareStatement(sql);
+					statement.setString(1, product.getProductname());
+					statement.setBigDecimal(2, product.getPrice());
+					statement.setString(3, product.getInventorystatus());
+					statement.setString(4, product.getImage());
+					statement.setString(5, product.getShoplink());
+					statement.setLong(6, product.getId());
+					statement.executeUpdate();
+					return ResponseEntity.status(HttpStatus.OK).body(product);
+				} else {
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(product);
 				}
 			}
-			
 
 			catch (SQLException ex) {
 				ex.printStackTrace();
-			}	
+			}
 		}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
 
-		
 	}
 
 	public void deleteProduct(Long id) throws SQLException {
-		if(id > 0 && id instanceof Long){
+		if (id > 0 && id instanceof Long) {
 			String sql = "delete from product where id=?";
-			try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely", System.getenv("PGUSER"), System.getenv("PGPW"))) {
+			try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+					System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
 				PreparedStatement statement = con.prepareStatement(sql);
 				statement.setLong(1, id);
@@ -177,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
 
 			catch (SQLException ex) {
 				ex.printStackTrace();
-			}	
+			}
 		}
 	}
 }

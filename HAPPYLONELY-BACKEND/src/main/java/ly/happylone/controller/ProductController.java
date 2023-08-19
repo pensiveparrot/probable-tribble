@@ -32,28 +32,30 @@ public class ProductController {
 		}
 	}
 
-	@GetMapping(value= "/getAllProducts")
+	@GetMapping(value = "/getAllProducts")
 	public List<Product> getAllProducts() throws SQLException {
 		{
 			return productService.getAllProducts();
 		}
 	}
-@PutMapping(value = "/updateProduct")
-@ResponseBody
+
+	@PutMapping(value = "/updateProduct")
+	@ResponseBody
 	public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws SQLException {
 		{
 			return productService.updateProduct(product);
 		}
 	}
+
 	@GetMapping(value = "/getProductByName/{productname}")
-	public ResponseEntity<Product>  getProductByName(@PathVariable String productname) throws SQLException {
+	public ResponseEntity<Product> getProductByName(@PathVariable String productname) throws SQLException {
 		{
 			return productService.getProductByName(productname);
 		}
 	}
 
 	@PostMapping(value = "/addProduct")
-	public ResponseEntity<Product>  addProduct(@RequestBody Product product) throws SQLException {
+	public ResponseEntity<Product> addProduct(@RequestBody Product product) throws SQLException {
 		{
 			return productService.addProduct(product);
 		}

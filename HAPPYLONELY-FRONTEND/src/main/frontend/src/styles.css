@@ -2,6 +2,7 @@
 @import "primeng/resources/themes/viva-dark/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
+
 body {
     padding: 0;
     margin: 0;
@@ -10,49 +11,46 @@ body {
     color: var(--text-color);
 
 }
-#homeLoadingImg{
+
+#homeLoadingImg {
 
     text-align: center;
 
 
 }
-.productImgs{
+
+.productImgs {
 
     width: 100%;
     height: auto;
 
 }
 
-#shoppingLoadingImg{
+#shoppingLoadingImg {
     text-align: center;
 
 }
 
-.shoppingPage{
+.shoppingPage {
     margin: auto;
     width: 50%;
 
 }
-#artLoadingImg{
-    /* position: absolute;
-    top: 80%;
-    left: 50%;
-    transform: translate(-50%, -50%); */
-  text-align: center;
 
+#artLoadingImg {
+    text-align: center;
 }
-.artPage{
-  
+
+.artPage {
+
     margin: auto;
     width: 50%;
 
 }
-/* comment out if not working*/
-.artImgs{
+
+
+.artImgs {
 
     width: 100%;
     height: auto;
-}
-
-#homePage{
 }

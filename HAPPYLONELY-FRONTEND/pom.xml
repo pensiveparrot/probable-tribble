@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <groupId>HAPPYLONELY</groupId>
-    <artifactId>ly</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+        <groupId>HAPPYLONELY</groupId>
+        <artifactId>ly</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
     <artifactId>HAPPYLONELY-FRONTEND</artifactId>
     <packaging>pom</packaging>
     <build>
@@ -24,7 +24,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v18.17.0</nodeVersion>
-                            </configuration>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>npm install</id>
@@ -32,7 +32,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>install --no-package-lock</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -46,7 +46,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <workingDirectory>${project.basedir}/src/main/frontend</workingDirectory>	
+                    <workingDirectory>${project.basedir}/src/main/frontend</workingDirectory>
                 </configuration>
             </plugin>
         </plugins>

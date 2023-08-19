@@ -1,19 +1,19 @@
-<div id="artLoadingImg" >
-    <p-image *ngIf="this.hidden === false"  src="../../assets/5.gif" [preview]="false" alt="Image" width="500px">
-    <ng-template pTemplate="indicator">
-        <i class="pi pi-check"></i>
-    </ng-template>
-</p-image>
+<div id="artLoadingImg">
+    <p-image *ngIf="this.hidden === false" src="../../assets/5.gif" [preview]="false" alt="Image" width="500px">
+        <ng-template pTemplate="indicator">
+            <i class="pi pi-check"></i>
+        </ng-template>
+    </p-image>
 </div>
 <div class="artPage" *ngIf="this.showText === true">
-<p-galleria [value]="images" [containerStyle]="{ 'max-width': '960px' }" [numVisible]="1">
-    <ng-template pTemplate="item" let-item>
-        <img [src]="item.itemImageSrc" class="artImgs" />
-    </ng-template>
-    <ng-template pTemplate="thumbnail" let-item>
-        <div class="grid grid-nogutter justify-content-center">
-            <img [src]="item.thumbnailImageSrc" />
-        </div>
-    </ng-template>
-</p-galleria>
+    <p-galleria [value]="images" [containerStyle]="{ 'max-width': '960px' }" [numVisible]="1">
+        <ng-template pTemplate="item" let-item>
+            <img [src]="item.itemImageSrc" class="artImgs" />
+        </ng-template>
+        <ng-template pTemplate="thumbnail" let-item>
+            <div class="grid grid-nogutter justify-content-center">
+                <img [src]="item.thumbnailImageSrc" />
+            </div>
+        </ng-template>
+    </p-galleria>
 </div>

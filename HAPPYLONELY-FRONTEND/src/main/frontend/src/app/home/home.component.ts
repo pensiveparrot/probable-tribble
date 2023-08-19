@@ -9,9 +9,9 @@ export class HomeComponent implements OnInit {
   hidden: boolean = false;
   showText: boolean = false;
   ngOnInit(): void {
-    setTimeout(() => {this.hidden=true}, 3000);
+    setTimeout(() => { this.hidden = true }, 3000);
     setTimeout(() => {
-      this.showText=true;
+      this.showText = true;
     }, 4000);
   }
 

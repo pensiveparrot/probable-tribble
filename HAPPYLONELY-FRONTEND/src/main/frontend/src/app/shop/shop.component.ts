@@ -9,84 +9,85 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./shop.component.css']
 })
 export class ShopComponent implements OnInit {
-  showText: boolean =false;
+  showText: boolean = false;
   hidden: boolean = false;
-  products: Product[] = [ ];
-  product:any = {id:0,productname:"",price:0,image:"",inventorystatus:"",shoplink:""};
+  products: Product[] = [];
+  product: any = { id: 0, productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
 
-  constructor(private productService:ProductService){}
+  constructor(private productService: ProductService) { }
   ngOnInit(): void {
-    setTimeout(() => {this.hidden=true}, 3000);
+    setTimeout(() => { this.hidden = true }, 3000);
     setTimeout(() => {
-      this.showText=true;
+      this.showText = true;
     }, 4000);
 
-  this.loadAllProducts();
-  
-}
+    this.loadAllProducts();
 
-loadAllProducts(){
-  return new Promise((resolve, reject) => {
-      this.productService.getAllProducts().subscribe((data) =>{
-        if(data && data.length > 0) {
+  }
+
+  loadAllProducts() {
+    return new Promise((resolve, reject) => {
+      this.productService.getAllProducts().subscribe((data) => {
+        if (data && data.length > 0) {
           data.forEach((product: any) => {
-          product.id = product.id;
-          product.productname = product.productname;
-          product.price = product.price;
-          product.inventorystatus = product.inventorystatus;
-          product.image = product.image;
-          product.shoplink = product.shoplink;
-          this.products.push(product);
-          });}
-    console.log("products: "+JSON.stringify(this.products));
-    resolve(data);
-  });
-  });
-}
-loadProduct(){
-  return new Promise((resolve, reject) => {
-      this.productService.getProductById(1).subscribe((data) =>{
-        if(data && data.id > 0) {
-        this.product.id = data.id;
-        this.product.productname = data.productname;
-        this.product.price = data.price;
-        this.product.inventorystatus = data.inventorystatus; 
-        this.product.image = data.image;
-        this.product.shoplink = data.shoplink;
+            product.id = product.id;
+            product.productname = product.productname;
+            product.price = product.price;
+            product.inventorystatus = product.inventorystatus;
+            product.image = product.image;
+            product.shoplink = product.shoplink;
+            this.products.push(product);
+          });
+        }
+        console.log("products: " + JSON.stringify(this.products));
+        resolve(data);
+      });
+    });
+  }
+  loadProduct() {
+    return new Promise((resolve, reject) => {
+      this.productService.getProductById(1).subscribe((data) => {
+        if (data && data.id > 0) {
+          this.product.id = data.id;
+          this.product.productname = data.productname;
+          this.product.price = data.price;
+          this.product.inventorystatus = data.inventorystatus;
+          this.product.image = data.image;
+          this.product.shoplink = data.shoplink;
         }
 
-    console.log("product: "+JSON.stringify(this.product));
-    this.products.push(this.product);
-    resolve(data);
-  });
-  });
-}
+        console.log("product: " + JSON.stringify(this.product));
+        this.products.push(this.product);
+        resolve(data);
+      });
+    });
+  }
 
-responsiveOptions: any[] = [ { breakpoint: '1024px', numVisible: 3, numScroll: 3 }, { breakpoint: '768px', numVisible: 2, numScroll: 2 }, { breakpoint: '560px', numVisible: 1, numScroll: 1 } ];
-getSeverity(status: string) {
-  switch (status) {
-    case 'In Stock':
+  responsiveOptions: any[] = [{ breakpoint: '1024px', numVisible: 3, numScroll: 3 }, { breakpoint: '768px', numVisible: 2, numScroll: 2 }, { breakpoint: '560px', numVisible: 1, numScroll: 1 }];
+  getSeverity(status: string) {
+    switch (status) {
+      case 'In Stock':
         return 'success';
-     
-    case 'Low Stock':
+
+      case 'Low Stock':
         return 'warning';
- 
-    case 'Out Of Stock':
+
+      case 'Out Of Stock':
         return 'danger';
-        
-        
-    default:
+
+
+      default:
         return 'medium';
-   
-}
+
+    }
 
 
-}
-setDisabled(status: string){
- return status === "Out Of Stock";
-}
-onClick(productLink:string){
-  if(productLink!='')
-  window.open(productLink,"_self");
-}
+  }
+  setDisabled(status: string) {
+    return status === "Out Of Stock";
+  }
+  onClick(productLink: string) {
+    if (productLink != '')
+      window.open(productLink, "_self");
+  }
 }
