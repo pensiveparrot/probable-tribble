@@ -14,10 +14,11 @@ import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
 import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AdminComponent } from './admin/admin.component';
 import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
+// import { AuthInterceptor } from './login/auth.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,7 +43,13 @@ import { MessagesModule } from 'primeng/messages';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers:[],
+  // providers: [
+  //   {
+  //     provide: HTTP_INTERCEPTORS,
+  //     useClass: AuthInterceptor,
+  //     multi: true
+  //   },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -15,8 +15,6 @@ import ly.happylone.service.HLUserService;
 @CrossOrigin(origins = "http://localhost:4200")
 public class HLUserController {
 
-    // @Autowired
-    // private DataSource dataSource;
     private final HLUserService hlUserService;
 
     @Autowired
@@ -28,22 +26,5 @@ public class HLUserController {
     public HLUser getUserById(@PathVariable Long id) throws SQLException {
         return hlUserService.getUserById(id);
     }
-
-    // @PostMapping("/register")
-    // public ResponseEntity<?> register(@RequestBody RegistrationForm form) {
-    // // Validate input and save user in DB
-    // try (Connection connection = dataSource.getConnection();
-    // PreparedStatement statement = connection.prepareStatement("INSERT INTO hluser
-    // (email, username, password) VALUES (?, ?, ?)")) {
-    // statement.setString(1, form.getEmail());
-    // statement.setString(2, form.getUsername());
-    // statement.setString(3, passwordEncoder.encode(form.getPassword()));
-    // statement.executeUpdate();
-    // } catch (SQLException e) {
-    // throw new RuntimeException(e);
-    // }
-
-    // return ResponseEntity.ok("User registered successfully!");
-    // }
 
 }

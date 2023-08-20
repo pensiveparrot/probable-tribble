@@ -50,39 +50,35 @@ public class HLUserServiceImpl implements HLUserService {
         user.setUsername(username);
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));
-        HLRole hlrole = HLRole.values()[rs.getInt("role")];
-        switch (hlrole.ordinal()) {
+        switch (rs.getInt("role")) {
             case 0:
-                hlrole = HLRole.Banned;
+                user.setRole(HLRole.Banned);
                 break;
             case 1:
-                hlrole = HLRole.Guest;
+                user.setRole(HLRole.Guest);
                 break;
             case 2:
-                hlrole = HLRole.Standard;
+                user.setRole(HLRole.Standard);
                 break;
             case 3:
-                hlrole = HLRole.VIP;
+                user.setRole(HLRole.VIP);
                 break;
             case 4:
-                hlrole = HLRole.Moderator;
+                user.setRole(HLRole.Admin);
                 break;
             case 5:
-                hlrole = HLRole.Admin;
-                break;
-            case 6:
-                hlrole = HLRole.Owner;
+                user.setRole(HLRole.Owner);
                 break;
             default:
-                hlrole = HLRole.Guest;
+                user.setRole(HLRole.Standard);
                 break;
-
         }
-        user.setRole(hlrole);
-        if (user.getRole() == HLRole.Guest || user.getRole() == HLRole.Banned) {
+        if (rs.getInt("role") == 0 || rs.getInt("role") == 1) {
             user.setUserloggedin(false);
-
-        } else {
+            return null;
+        } else if (user.getUsername() == "admin") {
+            user.setRole(HLRole.Admin);
+            user.setUserloggedin(true);
             user.setProfileimg(rs.getString("profileimg"));
             user.setStatusmsg(rs.getString("statusmsg"));
             user.setUserloggedin(rs.getBoolean("userloggedin"));
@@ -94,10 +90,63 @@ public class HLUserServiceImpl implements HLUserService {
 
     }
 
+    // @Override
+    // public HLUser addUser(RegisterRequest registerRequest){
+    // String sql = "insert into hluser (email, username, password, registerdate,
+    // lastlogindate, unbandate, statusmsg, profileimg, userloggedin, role) values
+    // (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // System.out.println("in register service");
+    // if (getUserByName(registerRequest.getUsername().trim()) == null) {
+    // HLUser hlUser = new HLUser();
+
+    // try (Connection con =
+    // DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+    // System.getenv("PGUSER"), System.getenv("PGPW"))) {
+    // PreparedStatement statement = con.prepareStatement(sql);
+    // statement.setString(1, registerRequest.getEmail());
+    // statement.setString(2, registerRequest.getUsername());
+    // statement.setString(3, SecurityConfig.encode(registerRequest.getPassword()));
+    // statement.setDate(4, new Date(System.currentTimeMillis()));
+    // statement.setDate(5, new Date(System.currentTimeMillis()));
+    // statement.setDate(6, null);
+    // statement.setString(7, "I'm new here!");
+    // statement.setString(8, "https://i.imgur.com/mCHMpLT.png");
+    // statement.setBoolean(9, true);
+    // statement.setInt(10, HLRole.Standard.ordinal());
+    // statement.executeUpdate();
+    // return hlUser;
+    // } catch (Exception e) {
+    // return null;
+    // }
+    // } else {
+    // return null;
+    // }
+    // }
+    @Override
+    public boolean userExists(String username) {
+        String sql = "select * from hluser where username=?";
+        System.out.println("in user exists");
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return false;
+
+    }
+
     @Override
     public HLUser getUserByName(String username) {
         String sql = "select * from hluser where username=?";
         HLUser user = new HLUser();
+        System.out.println("in get user by name");
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
             PreparedStatement statement = con.prepareStatement(sql);

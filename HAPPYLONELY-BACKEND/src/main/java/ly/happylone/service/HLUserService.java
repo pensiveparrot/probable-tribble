@@ -13,6 +13,8 @@ public interface HLUserService {
 
     HLUser getUserByName(String username);
 
+    boolean userExists(String username);
+
     HLUser queryUser(String username, HLUser user, ResultSet rs) throws SQLException;
 
     ResponseEntity<List<HLUser>> getAllUsers() throws SQLException;
