@@ -2,11 +2,15 @@ package ly.happylone.controller;
 
 import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.service.HLUserService;
 
@@ -25,6 +29,18 @@ public class HLUserController {
     @GetMapping("/getUserById/{id}")
     public HLUser getUserById(@PathVariable Long id) throws SQLException {
         return hlUserService.getUserById(id);
-    }
+
+
+
+        }
+
+        @GetMapping("/getUserRole")
+        public int getUserByRole() throws SQLException {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            return hlUserService.getUserRole(username);
+        }
+
+        
 
 }

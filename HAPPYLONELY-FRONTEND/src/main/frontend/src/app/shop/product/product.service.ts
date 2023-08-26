@@ -18,13 +18,13 @@ export class ProductService {
   }
 
   updateProduct(product:Product): Observable<any> {
-    return this.http.put<Product>("http://"+window.location.hostname+":8080/" +"api/products/updateProduct",product, { observe: 'response' });
+    return this.http.put<Product>("http://"+window.location.hostname+":8080/" +"api/products/updateProduct",product, { observe: 'response', withCredentials: true });
   }
  getProductByName(productname:string): Observable<any> {
-    return this.http.get<Product>("http://"+window.location.hostname+":8080/" +"api/products/getProductByName/"+productname, { observe: 'response' });
+    return this.http.get<Product>("http://"+window.location.hostname+":8080/" +"api/products/getProductByName/"+productname, { observe: 'response', withCredentials: true });
   }
   addProduct(product:Product): Observable<any> {
-    return this.http.post<Product>("http://"+window.location.hostname+":8080/" +"api/products/addProduct",product, { observe: 'response' });
+    return this.http.post<Product>("http://"+window.location.hostname+":8080/" +"api/products/addProduct",product, { observe: 'response' , withCredentials: true});
   }
    
 

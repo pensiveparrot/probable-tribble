@@ -1,5 +1,5 @@
 package ly.happylone.model;
 
 public enum HLRole {
-    Banned, Guest, Standard, VIP, Moderator, Admin, Owner;
+    Guest, Banned, Standard, VIP, Moderator, Admin, Owner;
 }

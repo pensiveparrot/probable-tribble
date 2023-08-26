@@ -32,6 +32,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public HLUser findHlUserByUsername(String username) {
+        return hlUserService.getUserByName(username);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         HLUser hlUser = hlUserService.getUserByName(username);
@@ -39,11 +43,12 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        // Convert HLUser to Spring's UserDetails
+        hlUser.setLastlogindate(new Date(System.currentTimeMillis()));
         return User.builder()
                 .username(hlUser.getUsername())
                 .password(hlUser.getPassword())
                 .roles(hlUser.getRole().name())
+                .accountLocked(hlUser.getUnbandate() != null)
                 .build();
     }
 

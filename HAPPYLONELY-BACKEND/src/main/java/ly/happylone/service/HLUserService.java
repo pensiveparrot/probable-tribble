@@ -15,6 +15,8 @@ public interface HLUserService {
 
     boolean userExists(String username);
 
+    int getUserRole(String username);
+
     HLUser queryUser(String username, HLUser user, ResultSet rs) throws SQLException;
 
     ResponseEntity<List<HLUser>> getAllUsers() throws SQLException;

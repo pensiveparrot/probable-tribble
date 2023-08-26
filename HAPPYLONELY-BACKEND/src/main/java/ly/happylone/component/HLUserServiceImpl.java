@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ly.happylone.model.HLRole;
@@ -42,6 +44,27 @@ public class HLUserServiceImpl implements HLUserService {
         return null;
 
     }
+    @Override 
+    public int getUserRole(String username){
+        if(username.length() == 0){
+            return 0;
+        }
+        int role = 0;
+        String sql = "select role from hluser where username = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+         System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+     PreparedStatement statement = con.prepareStatement(sql);
+     statement.setString(1, username);
+     ResultSet rs = statement.executeQuery();
+     if (rs.next()) {
+         role = rs.getInt("role");
+     } 
+    } catch(Exception e) {
+        return 0;
+    }
+    return role;
+    }
 
     // Banned, Guest, Standard, VIP, Admin;
     @Override
@@ -50,12 +73,13 @@ public class HLUserServiceImpl implements HLUserService {
         user.setUsername(username);
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));
+        //  Guest, Banned, Standard, VIP, Moderator, Admin, Owner;
         switch (rs.getInt("role")) {
             case 0:
-                user.setRole(HLRole.Banned);
+                user.setRole(HLRole.Guest);
                 break;
             case 1:
-                user.setRole(HLRole.Guest);
+                user.setRole(HLRole.Banned);
                 break;
             case 2:
                 user.setRole(HLRole.Standard);
@@ -64,11 +88,13 @@ public class HLUserServiceImpl implements HLUserService {
                 user.setRole(HLRole.VIP);
                 break;
             case 4:
-                user.setRole(HLRole.Admin);
+                user.setRole(HLRole.Moderator);
                 break;
             case 5:
-                user.setRole(HLRole.Owner);
+                user.setRole(HLRole.Admin);
                 break;
+            case 6:
+            user.setRole(HLRole.Owner);
             default:
                 user.setRole(HLRole.Standard);
                 break;

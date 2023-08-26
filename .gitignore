@@ -71,6 +71,7 @@ HAPPYLONELY-BACKEND/src/main/resources/application.properties
 HAPPYLONELY-BACKEND/target/
 HAPPYLONELY-FRONTEND/.project
 jspm_packages/
+.vscode/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

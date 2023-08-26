@@ -14,10 +14,11 @@ import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
 import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { AdminComponent } from './admin/admin.component';
 import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
+import { CsrfInterceptor } from './csrf-interceptor.guard';
 // import { AuthInterceptor } from './login/auth.interceptor';
 @NgModule({
   declarations: [
@@ -41,9 +42,13 @@ import { MessagesModule } from 'primeng/messages';
     InputTextModule,
     MessagesModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'XSRF-TOKEN',
+      headerName: 'X-XSRF-TOKEN',
+    }),
   ],
-  providers:[],
+  providers:[    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },],
   // providers: [
   //   {
   //     provide: HTTP_INTERCEPTORS,
