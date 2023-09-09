@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import ly.happylone.model.HLUser;
+import ly.happylone.model.HLUserResponse;
 
 public interface HLUserService {
     HLUser getUserById(Long id) throws SQLException;
@@ -25,6 +26,8 @@ public interface HLUserService {
 
     void deleteUser(Long id) throws SQLException;
 
+    ResponseEntity<HLUserResponse> getUserByUsernameMin(String username);
+
     ResponseEntity<HLUser> banUser(HLUser user) throws SQLException;
 
     ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException;
@@ -40,6 +43,8 @@ public interface HLUserService {
     ResponseEntity<HLUser> changeUsername(HLUser user) throws SQLException;
 
     ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException;
+
+    HLUserResponse queryUserMin(String username, HLUser user, ResultSet rs) throws SQLException;
 
     HLUser getUserByUsername(String username);
 

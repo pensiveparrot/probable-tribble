@@ -7,12 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Component;
 
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
+import ly.happylone.model.HLUserResponse;
 import ly.happylone.service.HLUserService;
 
 @Component
@@ -112,6 +114,18 @@ public class HLUserServiceImpl implements HLUserService {
             user.setLastlogindate(rs.getDate("lastlogindate"));
         }
         return user;
+
+    }
+
+    @Override
+    public HLUserResponse queryUserMin(String username, HLUser user, ResultSet rs) throws SQLException {
+        user.setId(rs.getLong("id"));
+        user.setUsername(rs.getString("username"));
+        user.setProfileimg(rs.getString("profileimg"));
+        user.setStatusmsg(rs.getString("statusmsg"));
+        HLUserResponse userResp = new HLUserResponse(user);
+
+        return userResp;
 
     }
 
@@ -282,4 +296,33 @@ public class HLUserServiceImpl implements HLUserService {
         return getUserByName(username);
 
     }
+
+    @Override
+    public ResponseEntity<HLUserResponse> getUserByUsernameMin(String username) {
+        String sql = "select * from hluser_response where username=?";
+        HLUser user = new HLUser();
+        System.out.println("in get user by usernname min");
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            if (!username.isEmpty()) {
+                username = username.trim();
+                PreparedStatement statement = con.prepareStatement(sql);
+                statement.setString(1, username);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    HLUserResponse userResp = queryUserMin(username, user, rs);
+                    return ResponseEntity.status(HttpStatus.OK).body(userResp);
+                } else {
+                    System.out.println("No user found with username " + username);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+    }
+
 }

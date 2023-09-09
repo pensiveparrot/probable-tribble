@@ -2,6 +2,7 @@ package ly.happylone.controller;
 
 import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
+import ly.happylone.model.HLUserResponse;
 import ly.happylone.service.HLUserService;
 
 @RequestMapping("/api/user")
@@ -27,10 +29,9 @@ public class HLUserController {
     }
 
     @GetMapping("/getUserById/{id}")
-    public HLUser getUserById(@PathVariable Long id) throws SQLException {
+    public HLUserResponse getUserById(@PathVariable Long id) throws SQLException {
         HLUser user = hlUserService.getUserById(id);
-        user.setPassword("");
-        return user;
+        return new HLUserResponse(user);
 
     }
 
@@ -42,13 +43,13 @@ public class HLUserController {
     }
 
     @GetMapping("/getUserByUsername")
-    public HLUser getUserByUsername() throws SQLException {
+    public ResponseEntity<HLUserResponse> getUserByUsername() throws SQLException {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         System.out.println("USERNAME --> " + username);
-        HLUser user = hlUserService.getUserByUsername(username);
-        user.setPassword("");
-        return user;
+        return hlUserService.getUserByUsernameMin(username);
+
     }
 
 }

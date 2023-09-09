@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import ly.happylone.model.HLUser;
+import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
 import ly.happylone.service.MessageService;
 
@@ -37,7 +39,9 @@ public class MessageServiceImpl implements MessageService {
                 message.setId(rs.getLong("id"));
                 message.setContent(rs.getString("content"));
                 message.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
-                message.setSender(new HLUserServiceImpl().getUserById(rs.getLong("sender_id")));
+                HLUser user = new HLUserServiceImpl().getUserById(rs.getLong("sender_id"));
+                HLUserResponse hluser = new HLUserResponse(user);
+                message.setSender(hluser);
                 messages.add(message);
             }
         } catch (SQLException e) {

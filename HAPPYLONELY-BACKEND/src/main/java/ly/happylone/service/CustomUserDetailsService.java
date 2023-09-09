@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
+import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.RegisterRequest;
 
 @Service
@@ -36,6 +38,24 @@ public class CustomUserDetailsService implements UserDetailsService {
         return hlUserService.getUserByName(username);
     }
 
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws
+    // UsernameNotFoundException {
+    // HLUser hlUser = hlUserService.getUserByName(username);
+    // if (hlUser == null) {
+    // throw new UsernameNotFoundException("User not found");
+    // }
+
+    // hlUser.setLastlogindate(new Date(System.currentTimeMillis()));
+    // hlUser.setUserloggedin(true);
+    // return User.builder()
+    // .username(hlUser.getUsername())
+    // .password(hlUser.getPassword())
+    // .roles(hlUser.getRole().name())
+    // .accountLocked(hlUser.getUnbandate() != null)
+    // .build();
+    // }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         HLUser hlUser = hlUserService.getUserByName(username);
@@ -43,8 +63,26 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
+        // Update last login and other fields
         hlUser.setLastlogindate(new Date(System.currentTimeMillis()));
         hlUser.setUserloggedin(true);
+        HLUserResponse hlUserResponse = new HLUserResponse(hlUser);
+        String sql = "insert into hluser_response (username, profileimg, statusmsg) values (?, ?, ?)";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+            if (hlUserService.getUserByUsernameMin(hlUserResponse.getUsername()).getStatusCode() == HttpStatus.NOT_FOUND) {
+                System.out.println("User not found, adding to hluser_response");
+                PreparedStatement statement = con.prepareStatement(sql);
+                statement.setString(1, hlUserResponse.getUsername());
+                statement.setString(2, hlUserResponse.getProfileimg());
+                statement.setString(3, hlUserResponse.getStatusmsg());
+                statement.executeUpdate();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         return User.builder()
                 .username(hlUser.getUsername())
                 .password(hlUser.getPassword())

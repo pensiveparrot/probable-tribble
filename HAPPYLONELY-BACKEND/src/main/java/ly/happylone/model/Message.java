@@ -1,16 +1,7 @@
 package ly.happylone.model;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -20,16 +11,16 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false) // Made content non-nullable assuming every message should have content
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id")
-    private HLUser sender;
+    @ManyToOne(fetch = FetchType.LAZY) // Set FetchType to LAZY to align with the OneToMany FetchType
+    @JoinColumn(name = "sender_id", nullable = false) // Made sender_id non-nullable, assuming every message should have
+                                                      // a sender
+    private HLUserResponse sender;
 
-    @Column(name = "date_sent")
+    @Column(name = "date_sent", nullable = false) // Assuming every message should have a send date
     private LocalDateTime dateSent;
 }

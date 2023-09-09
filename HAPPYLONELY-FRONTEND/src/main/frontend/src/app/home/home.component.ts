@@ -36,14 +36,6 @@ export class HomeComponent implements OnInit {
             message.date_sent = message.date_sent;
             message.content = message.content;
             message.sender = message.sender;
-            message.sender.password = "";
-            message.sender.email = "";
-            message.sender.registerdate = new Date(1970, 0, 1);
-            message.sender.lastlogindate = new Date(1970, 0, 1);
-            message.sender.unbandate = new Date(1970, 0, 1);
-            message.sender.statusmsg = "";
-            message.sender.userloggedin = false
-            message.sender.role = 0;
             this.Messages.push(message);
           });
           console.log("messages: " + JSON.stringify(this.Messages));
@@ -61,23 +53,15 @@ export class HomeComponent implements OnInit {
     {
       id: 0,
       username: "",
-      password: "",
-      email: "",
-      registerdate: new Date(1970, 0, 1),  // Months are 0-indexed, so 0 is January
-      lastlogindate: new Date(1970, 0, 1),
-      unbandate: new Date(1970, 0, 1),
       statusmsg: "",
       profileimg: "",
-      userloggedin: false,
-      role: 0
     }
     ;
   getUsername() {
     return new Promise((resolve, reject) => {
       this.ChatService.getUserDetails().subscribe((data: HLUser) => {
         if (data !== null) {
-          data.password = "";
-          this.hluser = { id: data.id, username: data.username, password: data.password, email: data.email, registerdate: data.registerdate, lastlogindate: data.lastlogindate, unbandate: data.unbandate, statusmsg: data.statusmsg, profileimg: data.profileimg, userloggedin: data.userloggedin, role: data.role };
+          this.hluser = { id: data.id, username: data.username, statusmsg: data.statusmsg, profileimg: data.profileimg };
 
           console.log("data: " + JSON.stringify(data));
 
@@ -102,15 +86,8 @@ export class HomeComponent implements OnInit {
           sender: {
             id: this.hluser.id,
             username: this.hluser.username,
-            password: this.hluser.password,
-            email: this.hluser.email,
-            registerdate: this.hluser.registerdate,
-            lastlogindate: this.hluser.lastlogindate,
-            unbandate: this.hluser.unbandate,
             statusmsg: this.hluser.statusmsg,
             profileimg: this.hluser.profileimg,
-            userloggedin: this.hluser.userloggedin,
-            role: this.hluser.role
           }
         };
         this.ChatService.sendMessage(newMessage).subscribe((data: any) => {
