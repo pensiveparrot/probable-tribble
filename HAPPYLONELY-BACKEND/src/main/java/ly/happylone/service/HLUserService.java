@@ -41,4 +41,6 @@ public interface HLUserService {
 
     ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException;
 
+    HLUser getUserByUsername(String username);
+
 }

@@ -8,8 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Component;
 
 import ly.happylone.model.HLRole;
@@ -44,36 +43,37 @@ public class HLUserServiceImpl implements HLUserService {
         return null;
 
     }
-    @Override 
-    public int getUserRole(String username){
-        if(username.length() == 0){
+
+    @Override
+    public int getUserRole(String username) {
+        if (username.length() == 0) {
             return 0;
         }
         int role = 0;
         String sql = "select role from hluser where username = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
-         System.getenv("PGUSER"), System.getenv("PGPW"))) {
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
-     PreparedStatement statement = con.prepareStatement(sql);
-     statement.setString(1, username);
-     ResultSet rs = statement.executeQuery();
-     if (rs.next()) {
-         role = rs.getInt("role");
-     } 
-    } catch(Exception e) {
-        return 0;
-    }
-    return role;
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                role = rs.getInt("role");
+            }
+        } catch (Exception e) {
+            return 0;
+        }
+        return role;
     }
 
     // Banned, Guest, Standard, VIP, Admin;
     @Override
     public HLUser queryUser(String username, HLUser user, ResultSet rs) throws SQLException {
         user.setId(rs.getLong("id"));
-        user.setUsername(username);
+        user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));
-        //  Guest, Banned, Standard, VIP, Moderator, Admin, Owner;
+        // Guest, Banned, Standard, VIP, Moderator, Admin, Owner;
         switch (rs.getInt("role")) {
             case 0:
                 user.setRole(HLRole.Guest);
@@ -94,7 +94,7 @@ public class HLUserServiceImpl implements HLUserService {
                 user.setRole(HLRole.Admin);
                 break;
             case 6:
-            user.setRole(HLRole.Owner);
+                user.setRole(HLRole.Owner);
             default:
                 user.setRole(HLRole.Standard);
                 break;
@@ -102,8 +102,7 @@ public class HLUserServiceImpl implements HLUserService {
         if (rs.getInt("role") == 0 || rs.getInt("role") == 1) {
             user.setUserloggedin(false);
             return null;
-        } else if (user.getUsername() == "admin") {
-            user.setRole(HLRole.Admin);
+        } else {
             user.setUserloggedin(true);
             user.setProfileimg(rs.getString("profileimg"));
             user.setStatusmsg(rs.getString("statusmsg"));
@@ -168,6 +167,23 @@ public class HLUserServiceImpl implements HLUserService {
 
     }
 
+    /*
+     * export interface HLUser {
+     * id: number; // ID of the user
+     * email: string; // Email of the user
+     * username: string; // Username, which is unique
+     * registerdate: Date; // Registration date of the user
+     * lastlogindate: Date; // Last login date
+     * unbandate: Date; // Date on which the user was unbanned
+     * statusmsg: string; // Status message or bio of the user
+     * profileimg: string; // URL or data link for the profile picture
+     * userloggedin: boolean; // Indicates if the user is currently logged in
+     * role: number; // User's role. It could be an enum or a string depending on
+     * how it's handled in your frontend
+     * }
+     * 
+     * 
+     */
     @Override
     public HLUser getUserByName(String username) {
         String sql = "select * from hluser where username=?";
@@ -175,14 +191,17 @@ public class HLUserServiceImpl implements HLUserService {
         System.out.println("in get user by name");
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, username);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                return queryUser(username, user, rs);
-            } else {
-                System.out.println("No user found with username " + username);
-                return null;
+            if (!username.isEmpty()) {
+                username = username.trim();
+                PreparedStatement statement = con.prepareStatement(sql);
+                statement.setString(1, username);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    return queryUser(username, user, rs);
+                } else {
+                    System.out.println("No user found with username " + username);
+                    return null;
+                }
             }
 
         } catch (SQLException ex) {
@@ -258,4 +277,9 @@ public class HLUserServiceImpl implements HLUserService {
         throw new UnsupportedOperationException("Unimplemented method 'changeEmail'");
     }
 
+    @Override
+    public HLUser getUserByUsername(String username) {
+        return getUserByName(username);
+
+    }
 }

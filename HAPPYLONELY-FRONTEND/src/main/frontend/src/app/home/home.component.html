@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
 <div id="homeLoadingImg">
     <p-image *ngIf="this.hidden === false" id="homeLoadingImg" src="../../assets/5.gif" [preview]="false" alt="Image"
         width="500px">
@@ -6,22 +8,34 @@
         </ng-template>
     </p-image>
 </div>
+
 <div id="homePage" *ngIf="this.showText === true"
     style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; height: auto; padding: 10px;">
 
-    <!-- Textarea with rows set to 1 -->
-    <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="value"
+    <!-- Textarea for user input -->
+    <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="newMessageContent"
         style="flex-grow: 1; margin-right: 10px; height: 30px;"></textarea>
 
-    <!-- Button with file upload icon and height set explicitly -->
+    <!-- Button with file upload icon -->
     <button pButton type="button" class="ui-button-secondary"
         style="margin-right: 10px; height: 30px; display: flex; align-items: center; justify-content: center;">
         <i class="fas fa-upload"></i>
     </button>
 
-    <!-- Send button with height set explicitly -->
-    <button pButton type="button" label="Send" class="ui-button-success"
-        style="height: 30px; display: flex; align-items: center; justify-content: center;">
-    </button>
+    <!-- Send button -->
+    <button pButton type="button" label="Send" class="ui-button-success" (click)="sendMessage()"
+        style="height: 30px; display: flex; align-items: center; justify-content: center;"></button>
 
+</div>
+
+<!-- Messages display -->
+<div id="homePage" *ngFor="let message of Messages" style="padding: 10px;">
+    <p *ngIf="this.showText === true" style="display: flex; align-items: center;">
+        <span style="margin-right: 10px;">{{ message.date_sent | date:'shortTime' }}</span>
+        <img [src]="message.sender.profileimg" alt="{{ message.sender.username }}'s profile image"
+            style="width: 40px; height: 40px; margin-right: 5px;">
+        <span>
+            <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+        </span>
+    </p>
 </div>

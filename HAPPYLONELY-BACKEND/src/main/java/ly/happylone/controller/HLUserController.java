@@ -28,19 +28,27 @@ public class HLUserController {
 
     @GetMapping("/getUserById/{id}")
     public HLUser getUserById(@PathVariable Long id) throws SQLException {
-        return hlUserService.getUserById(id);
+        HLUser user = hlUserService.getUserById(id);
+        user.setPassword("");
+        return user;
 
+    }
 
+    @GetMapping("/getUserRole")
+    public int getUserByRole() throws SQLException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return hlUserService.getUserRole(username);
+    }
 
-        }
-
-        @GetMapping("/getUserRole")
-        public int getUserByRole() throws SQLException {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            return hlUserService.getUserRole(username);
-        }
-
-        
+    @GetMapping("/getUserByUsername")
+    public HLUser getUserByUsername() throws SQLException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        System.out.println("USERNAME --> " + username);
+        HLUser user = hlUserService.getUserByUsername(username);
+        user.setPassword("");
+        return user;
+    }
 
 }

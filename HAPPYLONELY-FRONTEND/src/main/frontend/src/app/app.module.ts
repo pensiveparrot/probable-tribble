@@ -19,6 +19,7 @@ import { AdminComponent } from './admin/admin.component';
 import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
 import { CsrfInterceptor } from './csrf-interceptor.guard';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 // import { AuthInterceptor } from './login/auth.interceptor';
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { CsrfInterceptor } from './csrf-interceptor.guard';
     CarouselModule,
     TagModule,
     InputTextModule,
+    InputTextareaModule,
     MessagesModule,
     FormsModule,
     HttpClientModule,
@@ -48,13 +50,7 @@ import { CsrfInterceptor } from './csrf-interceptor.guard';
       headerName: 'X-XSRF-TOKEN',
     }),
   ],
-  providers:[    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },],
-  // providers: [
-  //   {
-  //     provide: HTTP_INTERCEPTORS,
-  //     useClass: AuthInterceptor,
-  //     multi: true
-  //   },],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

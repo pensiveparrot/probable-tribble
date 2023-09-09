@@ -44,6 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         hlUser.setLastlogindate(new Date(System.currentTimeMillis()));
+        hlUser.setUserloggedin(true);
         return User.builder()
                 .username(hlUser.getUsername())
                 .password(hlUser.getPassword())
