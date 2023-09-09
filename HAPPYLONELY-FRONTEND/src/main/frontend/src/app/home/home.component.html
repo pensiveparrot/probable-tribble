@@ -6,13 +6,22 @@
         </ng-template>
     </p-image>
 </div>
-<div id="homePage" *ngIf="this.showText === true">
+<div id="homePage" *ngIf="this.showText === true"
+    style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; height: auto; padding: 10px;">
 
+    <!-- Textarea with rows set to 1 -->
+    <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="value"
+        style="flex-grow: 1; margin-right: 10px; height: 30px;"></textarea>
 
+    <!-- Button with file upload icon and height set explicitly -->
+    <button pButton type="button" class="ui-button-secondary"
+        style="margin-right: 10px; height: 30px; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-upload"></i>
+    </button>
 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    <!-- Send button with height set explicitly -->
+    <button pButton type="button" label="Send" class="ui-button-success"
+        style="height: 30px; display: flex; align-items: center; justify-content: center;">
+    </button>
 
 </div>
