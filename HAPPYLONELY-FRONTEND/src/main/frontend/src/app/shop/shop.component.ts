@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from './objects/product';
 import { ProductService } from './product/product.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-shop',

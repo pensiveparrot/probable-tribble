@@ -20,7 +20,6 @@ import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
 import { CsrfInterceptor } from './csrf-interceptor.guard';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-// import { AuthInterceptor } from './login/auth.interceptor';
 @NgModule({
   declarations: [
     AppComponent,

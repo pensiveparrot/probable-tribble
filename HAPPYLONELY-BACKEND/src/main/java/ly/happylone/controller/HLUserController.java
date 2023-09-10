@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.service.HLUserService;

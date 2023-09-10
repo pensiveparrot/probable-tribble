@@ -36,6 +36,5 @@ public class HLUserResponse {
         this.username = user.getUsername();
         this.profileimg = user.getProfileimg();
         this.statusmsg = user.getStatusmsg();
-        // We won't directly derive messages here, but you can set them externally
     }
 }

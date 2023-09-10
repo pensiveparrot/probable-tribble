@@ -1,5 +1,4 @@
-
- <p-messages *ngIf="statusCode > 0  && statusCode !== 200" [(value)]="errorMsg" [enableService]="false"
+<p-messages *ngIf="statusCode > 0  && statusCode !== 200" [(value)]="errorMsg" [enableService]="false"
   [closable]="false"></p-messages>
 <form (ngSubmit)="getProductByName()">
   <input [(ngModel)]="product.productname" name="productname" pInputText placeholder="Enter product name" />

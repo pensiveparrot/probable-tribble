@@ -18,15 +18,13 @@ export class AppComponent implements OnInit {
       { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
       { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] }
     ];
-    // this.items.push({ label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] });
-    // this.items.push({ label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] });
-    // this.items.push({ label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] });
+
     try {
       await this.getUserRole();
     } catch (error) {
       console.error('An error occurred:', error);
     }
-  
+
     console.log("Items after getUserRole:", this.items);
     this.activeItem = this.items[0];
   }
@@ -35,18 +33,18 @@ export class AppComponent implements OnInit {
       this.authService.getUserRole().subscribe((data) => {
         if (data == 5) {
           console.log("data: " + JSON.stringify(data));
-         
-          this.items=[{ label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
+
+          this.items = [{ label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
           { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
-          { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] },{ label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin'] }];
+          { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] }, { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin'] }];
           resolve(this.items);
         }
         else {
           reject("error");
         }
       })
-      });
-    }
+    });
+  }
 
 
 }

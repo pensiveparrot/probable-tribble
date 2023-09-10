@@ -10,7 +10,6 @@ import { HLUser } from './hluser';
 })
 export class ChatService {
 
-    // private apiUrl = "http://" + window.location.hostname + ":8080/" + "api/Message/"; // Change this to your own API URL
 
     constructor(private http: HttpClient) { }
 

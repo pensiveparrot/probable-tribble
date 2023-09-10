@@ -3,11 +3,6 @@ package ly.happylone.controller;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,21 +55,5 @@ public class HLAuthController {
 
         return "redirect:/login";
     }
-    // @GetMapping("/currentUser")
-    // public ResponseEntity<HLUser> getCurrentUser() {
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     if (authentication == null || !authentication.isAuthenticated()) {
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // or another appropriate response
-    //     }
 
-    //     Object principal = authentication.getPrincipal();
-    //     if (principal instanceof UserDetails) {
-    //         UserDetails userDetails = (UserDetails) principal;
-    //         String username = userDetails.getUsername();
-    //         HLUser user = customUserDetailsService.findHlUserByUsername(username); // Assuming you have this method
-    //         return ResponseEntity.ok(user);
-    //     }
-
-    //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // or another appropriate response
-    // }
 }

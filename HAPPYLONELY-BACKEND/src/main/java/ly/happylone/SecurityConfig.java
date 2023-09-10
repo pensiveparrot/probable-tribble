@@ -1,12 +1,10 @@
 package ly.happylone;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -80,7 +78,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(tokenRepository)
                         .requireCsrfProtectionMatcher(request -> {
-                            String token = request.getHeader("XSRF-TOKEN");
+                            String token = request.getHeader("XSRF-TOKEN"); // Fetch the token from the request header; IMPORTANT
                             if (token == null) {
                                 return false;
 

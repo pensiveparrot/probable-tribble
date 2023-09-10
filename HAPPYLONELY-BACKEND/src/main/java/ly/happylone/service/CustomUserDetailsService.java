@@ -15,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
@@ -38,24 +36,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return hlUserService.getUserByName(username);
     }
 
-    // @Override
-    // public UserDetails loadUserByUsername(String username) throws
-    // UsernameNotFoundException {
-    // HLUser hlUser = hlUserService.getUserByName(username);
-    // if (hlUser == null) {
-    // throw new UsernameNotFoundException("User not found");
-    // }
-
-    // hlUser.setLastlogindate(new Date(System.currentTimeMillis()));
-    // hlUser.setUserloggedin(true);
-    // return User.builder()
-    // .username(hlUser.getUsername())
-    // .password(hlUser.getPassword())
-    // .roles(hlUser.getRole().name())
-    // .accountLocked(hlUser.getUnbandate() != null)
-    // .build();
-    // }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         HLUser hlUser = hlUserService.getUserByName(username);
@@ -71,7 +51,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
-            if (hlUserService.getUserByUsernameMin(hlUserResponse.getUsername()).getStatusCode() == HttpStatus.NOT_FOUND) {
+            if (hlUserService.getUserByUsernameMin(hlUserResponse.getUsername())
+                    .getStatusCode() == HttpStatus.NOT_FOUND) {
                 System.out.println("User not found, adding to hluser_response");
                 PreparedStatement statement = con.prepareStatement(sql);
                 statement.setString(1, hlUserResponse.getUsername());
