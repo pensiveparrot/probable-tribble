@@ -1,4 +1,4 @@
-package ly.happylone;
+package ly.happylone.config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -78,7 +78,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(tokenRepository)
                         .requireCsrfProtectionMatcher(request -> {
-                            String token = request.getHeader("XSRF-TOKEN"); // Fetch the token from the request header; IMPORTANT
+                            String token = request.getHeader("XSRF-TOKEN"); // Fetch the token from the request header;
+                                                                            // IMPORTANT
                             if (token == null) {
                                 return false;
 
