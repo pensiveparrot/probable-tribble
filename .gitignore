@@ -68,8 +68,7 @@ bower_components
 build/Release
 
 # Dependency directories
-HAPPYLONELY-FRONTEND/node_modules/
-HAPPYLONELY-BACKEND/src/main/resources/application.properties
+HAPPYLONELY-FRONTEND/node_modules/=
 HAPPYLONELY-BACKEND/target/
 HAPPYLONELY-FRONTEND/.project
 jspm_packages/
