@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ChatService } from './chat.service';
 import { Message } from './message';
@@ -9,13 +9,16 @@ import { HLUser } from './hluser';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewChecked {
   Messages: Message[] = [];
   newMessageContent: string = '';
   hidden: boolean = false;
   showText: boolean = false;
-
-  private chatSocket: WebSocketSubject<any> = webSocket('ws://localhost:8080/websocket');
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+  private chatSocket: WebSocketSubject<any> = webSocket('ws://localhost:8443/websocket');
 
   constructor(private ChatService: ChatService) {
     this.chatSocket.subscribe(
@@ -30,7 +33,11 @@ export class HomeComponent implements OnInit {
     setTimeout(() => { this.showText = true }, 4000);
     await this.fetchMessages();
   }
-
+  private scrollToBottom(): void {
+    try {
+      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
   async fetchMessages() {
     return new Promise((resolve, reject) => {
       this.ChatService.getMessages().subscribe((data: Message[]) => {

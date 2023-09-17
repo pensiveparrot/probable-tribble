@@ -9,33 +9,36 @@
     </p-image>
 </div>
 
-<div id="homePage" *ngIf="this.showText === true"
-    style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; height: auto; padding: 10px;">
+<div style="display: flex; flex-direction: column; height: 100%;">
 
-    <!-- Textarea for user input -->
-    <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="newMessageContent"
-        style="flex-grow: 1; margin-right: 10px; height: 30px;"></textarea>
+    <div #messagesContainer style="max-height: 400px; overflow-y: auto; flex-grow: 1;">
+        <!-- Messages display -->
+        <div *ngFor="let message of Messages" style="padding: 10px;">
+            <p *ngIf="this.showText === true" style="display: flex; align-items: center;">
+                <span style="margin-right: 10px;">{{ message.date_sent | date:'shortTime' }}</span>
+                <img [src]="message.sender.profileimg" alt="{{ message.sender.username }}'s profile image"
+                    style="width: 40px; height: 40px; margin-right: 5px;">
+                <span>
+                    <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                </span>
+            </p>
+        </div>
+    </div>
 
-    <!-- Button with file upload icon -->
-    <button pButton type="button" class="ui-button-secondary"
-        style="margin-right: 10px; height: 30px; display: flex; align-items: center; justify-content: center;">
-        <i class="fas fa-upload"></i>
-    </button>
+    <div id="homePage" *ngIf="this.showText === true"
+        style="position: relative; display: flex; align-items: center; height: auto; padding: 10px;">
+        <!-- Textarea for user input -->
+        <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="newMessageContent"
+            style="flex-grow: 1; margin-right: 10px; height: 30px;"></textarea>
 
-    <!-- Send button -->
-    <button pButton type="button" label="Send" class="ui-button-success" (click)="sendMessage()"
-        style="height: 30px; display: flex; align-items: center; justify-content: center;"></button>
+        <!-- Button with file upload icon -->
+        <button pButton type="button" class="ui-button-secondary"
+            style="margin-right: 10px; height: 30px; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-upload"></i>
+        </button>
 
-</div>
-
-<!-- Messages display -->
-<div id="homePage" *ngFor="let message of Messages" style="padding: 10px;">
-    <p *ngIf="this.showText === true" style="display: flex; align-items: center;">
-        <span style="margin-right: 10px;">{{ message.date_sent | date:'shortTime' }}</span>
-        <img [src]="message.sender.profileimg" alt="{{ message.sender.username }}'s profile image"
-            style="width: 40px; height: 40px; margin-right: 5px;">
-        <span>
-            <strong>{{ message.sender.username }}</strong>: {{ message.content }}
-        </span>
-    </p>
+        <!-- Send button -->
+        <button pButton type="button" label="Send" class="ui-button-success" (click)="sendMessage()"
+            style="height: 30px; display: flex; align-items: center; justify-content: center;"></button>
+    </div>
 </div>

@@ -15,16 +15,16 @@ export class ChatService {
 
     // Fetch all Messages
     getMessages(): Observable<Message[]> {
-        return this.http.get<Message[]>("http://" + window.location.hostname + ":8080/" + "api/chat/messages", { withCredentials: true });
+        return this.http.get<Message[]>("https://" + window.location.hostname + ":8443/" + "api/chat/messages", { withCredentials: true });
     }
 
     // Send a new Message
     sendMessage(Message: Message): Observable<Message> {
-        return this.http.post<Message>("http://" + window.location.hostname + ":8080/" + "api/chat/messages", Message, { withCredentials: true });
+        return this.http.post<Message>("https://" + window.location.hostname + ":8443/" + "api/chat/messages", Message, { withCredentials: true });
     }
 
 
     getUserDetails(): Observable<HLUser> {
-        return this.http.get<HLUser>("http://" + window.location.hostname + ":8080/" + "api/user/getUserByUsername", { withCredentials: true });
+        return this.http.get<HLUser>("https://" + window.location.hostname + ":8443/" + "api/user/getUserByUsername", { withCredentials: true });
     }
 }

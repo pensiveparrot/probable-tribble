@@ -10,7 +10,7 @@ export class AuthService {
    options = { headers: this.headers, withCredentials: true };
   constructor(private http:HttpClient) {   }
    getUserRole():Observable<any> {
-          return this.http.get<number>("http://"+window.location.hostname+":8080/" +"api/user/getUserRole",{withCredentials: true});
+          return this.http.get<number>("https://"+window.location.hostname+":8443/" +"api/user/getUserRole",{withCredentials: true});
     }
    }
 
