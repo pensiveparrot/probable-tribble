@@ -1,5 +1,6 @@
 package ly.happylone.component;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,15 +10,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.socket.WebSocketSession;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
@@ -25,9 +22,8 @@ import ly.happylone.service.MessageService;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-
     @Autowired
-    private SimpMessagingTemplate template; // Inject the SimpMessagingTemplate
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public List<Message> fetchAllMessages() {
@@ -54,7 +50,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ResponseEntity<Message> postMessage(Message message) throws SQLException {
+    public void postMessage(Message message) throws SQLException {
         String sql = "INSERT INTO messages (content, sender_id, date_sent) VALUES (?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
@@ -63,14 +59,24 @@ public class MessageServiceImpl implements MessageService {
             statement.setLong(2, message.getSender().getId());
             statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             statement.executeUpdate();
-
+            System.out.println("Message posted postMessage service: " + message);
             // Send the message to the topic after saving it to the database
-            template.convertAndSend("/topic/messages", message);
+            broadcastMessageToClients(message);
 
-            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (SQLException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+
+        }
+    }
+
+    public void broadcastMessageToClients(Message message) {
+        System.out.println("Message posted broadcastMessageToClients method: " + message);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String messageJson = objectMapper.writeValueAsString(message);
+            simpMessagingTemplate.convertAndSend("/topic/messages", messageJson);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

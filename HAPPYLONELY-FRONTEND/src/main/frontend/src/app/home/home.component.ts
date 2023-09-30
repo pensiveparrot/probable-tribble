@@ -1,5 +1,4 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ChatService } from './chat.service';
 import { Message } from './message';
 import { HLUser } from './hluser';
@@ -15,48 +14,6 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   hidden: boolean = false;
   showText: boolean = false;
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-  private chatSocket: WebSocketSubject<any> = webSocket('ws://localhost:8443/websocket');
-
-  constructor(private ChatService: ChatService) {
-    this.chatSocket.subscribe(
-      msg => this.Messages.push(msg),
-      err => console.log(err),
-      () => console.log('complete')
-    );
-  }
-
-  async ngOnInit(): Promise<void> {
-    setTimeout(() => { this.hidden = true }, 3000);
-    setTimeout(() => { this.showText = true }, 4000);
-    await this.fetchMessages();
-  }
-  private scrollToBottom(): void {
-    try {
-      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
-    } catch (err) { }
-  }
-  async fetchMessages() {
-    return new Promise((resolve, reject) => {
-      this.ChatService.getMessages().subscribe((data: Message[]) => {
-        if (data.length > 0) {
-          data.forEach((message: any) => {
-            message.id = message.id;
-            message.date_sent = message.date_sent;
-            message.content = message.content;
-            message.sender = message.sender;
-            this.Messages.push(message);
-          });
-          console.log("messages: " + JSON.stringify(this.Messages));
-          resolve(data);
-        } else {
-          reject("error");
-        }
-      });
-    });
-  }
 
   hluser: HLUser = {
     id: 0,
@@ -65,9 +22,35 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     profileimg: "",
   };
 
-  getUsername() {
+  constructor(private chatService: ChatService) {
+    // Subscribe to the message observable. WebSocket initialization is done in the service's constructor.
+    this.chatService.getNewMessageObservable().subscribe((message: Message) => {
+      // Ensure that you're not adding duplicate messages
+      if (!this.Messages.some(m => m.date_sent === message.date_sent && m.content === message.content)) {
+        this.Messages.push(message);
+      }
+    });
+  }
+
+  async ngOnInit(): Promise<void> {
+    setTimeout(() => { this.hidden = true }, 3000);
+    setTimeout(() => { this.showText = true }, 4000);
+    await this.getUsername();  // Fetch the username once on initialization
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom(): void {
+    try {
+      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
+
+  private getUsername(): Promise<HLUser> {
     return new Promise((resolve, reject) => {
-      this.ChatService.getUserDetails().subscribe((data: HLUser) => {
+      this.chatService.getUserDetails().subscribe((data: HLUser) => {
         if (data !== null) {
           this.hluser = {
             id: data.id,
@@ -86,30 +69,19 @@ export class HomeComponent implements OnInit, AfterViewChecked {
 
   async sendMessage(): Promise<void> {
     if (this.newMessageContent.trim()) {
-      await this.getUsername();
-
-      if (this.hluser !== null) {
+      if (this.hluser && this.hluser.username) {
         const newMessage: Message = {
           content: this.newMessageContent,
-          sender: {
-            id: this.hluser.id,
-            username: this.hluser.username,
-            statusmsg: this.hluser.statusmsg,
-            profileimg: this.hluser.profileimg,
-          }
+          sender: this.hluser,
+          date_sent: new Date()
         };
 
-        this.ChatService.sendMessage(newMessage).subscribe((data: any) => {
-          this.Messages.push(data);
-          this.newMessageContent = '';
-        });
-
-        let userCache = JSON.parse(localStorage.getItem('usernames') || '{}');
-        userCache[this.hluser.id] = this.hluser.username;
-        localStorage.setItem('usernames', JSON.stringify(userCache));
+        // Send the message. The response will be handled by the WebSocket subscription.
+        this.chatService.sendMessage(newMessage);
+        console.log("newMessage: " + JSON.stringify(newMessage));
+        this.newMessageContent = '';  // Reset the newMessageContent
       } else {
-        await this.getUsername();
-        await this.sendMessage();
+        console.error("User details are not available");
       }
     }
   }

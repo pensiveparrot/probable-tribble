@@ -1,17 +1,44 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Message } from './message';
 import { HLUser } from './hluser';
-
-
+import * as SockJS from 'sockjs-client';
+import { Client, Stomp } from '@stomp/stompjs';
 @Injectable({
     providedIn: 'root'
 })
 export class ChatService {
+    private stompClient: Client | undefined;
+    private messageSubject = new Subject<Message>();
 
+    constructor(private http: HttpClient) {
+        this.initializeWebSocketConnection();
+    }
 
-    constructor(private http: HttpClient) { }
+    initializeWebSocketConnection(): void {
+        this.stompClient = new Client({
+            webSocketFactory: () => new SockJS('https://' + window.location.hostname + ':8443/websocket'),
+            reconnectDelay: 5000,
+            onConnect: (receipt) => {
+                console.log('Connected:', receipt);
+                this.stompClient?.subscribe('/topic/messages', (messageOutput: { body: string; }) => {
+                    const message: Message = JSON.parse(messageOutput.body);
+                    if (message) {
+                        this.messageSubject.next(message);
+                    }
+                });
+            },
+            onStompError: (error) => {
+                console.error('STOMP Error:', error);
+            }
+        });
+
+        this.stompClient.activate();
+    }
+    getNewMessageObservable(): Observable<Message> {
+        return this.messageSubject.asObservable();
+    }
 
     // Fetch all Messages
     getMessages(): Observable<Message[]> {
@@ -19,10 +46,14 @@ export class ChatService {
     }
 
     // Send a new Message
-    sendMessage(Message: Message): Observable<Message> {
-        return this.http.post<Message>("https://" + window.location.hostname + ":8443/" + "api/chat/messages", Message, { withCredentials: true });
+    sendMessage(message: Message): void {
+        if (this.stompClient && this.stompClient.connected) {
+            this.stompClient.publish({
+                destination: "/app/chat/send",
+                body: JSON.stringify(message)
+            });
+        }
     }
-
 
     getUserDetails(): Observable<HLUser> {
         return this.http.get<HLUser>("https://" + window.location.hostname + ":8443/" + "api/user/getUserByUsername", { withCredentials: true });
