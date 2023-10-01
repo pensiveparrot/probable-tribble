@@ -48,4 +48,6 @@ public interface HLUserService {
 
     HLUser getUserByUsername(String username);
 
+    ResponseEntity<HLUserResponse> editUser(HLUserResponse user);
+
 }

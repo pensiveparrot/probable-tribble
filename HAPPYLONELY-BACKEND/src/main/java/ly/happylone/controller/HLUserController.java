@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ly.happylone.model.HLUser;
@@ -28,6 +30,7 @@ public class HLUserController {
 
     @GetMapping("/getUserById/{id}")
     public HLUserResponse getUserById(@PathVariable Long id) throws SQLException {
+        System.out.println("USER IN GETUSERBYID CONTROLLER --> " + id);
         HLUser user = hlUserService.getUserById(id);
         return new HLUserResponse(user);
 
@@ -45,9 +48,15 @@ public class HLUserController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        System.out.println("USERNAME --> " + username);
+        System.out.println("USERNAME IN GETUSERBYUSERNAME CONTROLLER --> " + username);
         return hlUserService.getUserByUsernameMin(username);
 
+    }
+
+    @PostMapping("/editUser")
+    public ResponseEntity<HLUserResponse> editUser(@RequestBody HLUserResponse user) throws SQLException {
+        System.out.println("USER IN EDITUSER CONTROLLER --> " + user);
+        return hlUserService.editUser(user);
     }
 
 }

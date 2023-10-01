@@ -66,6 +66,36 @@ public class HLUserServiceImpl implements HLUserService {
     }
 
     @Override
+    public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) {
+        String sql = "update hluser_response set username=?, profileimg=?, statusmsg=? where id=?";
+        HLUserResponse userResp = getUserByUsernameMin(user.getUsername()).getBody();
+        System.out.println("in editUser component, userResp = " + userResp);
+        if (userResp == null) {
+            System.out.println("User does not exist in db, got username = " + user.getUsername());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            if (user.getUsername().length() <= 0) {
+                System.out.println("Username is empty or the existing user does not match the db, got username = "
+                        + user.getUsername());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            System.out.println("in edit user component, user = " + user.getUsername());
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getProfileimg());
+            statement.setString(3, user.getStatusmsg());
+            statement.setLong(4, user.getId());
+            statement.executeUpdate();
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @Override
     public HLUser queryUser(String username, HLUser user, ResultSet rs) throws SQLException {
         user.setId(rs.getLong("id"));
         user.setUsername(rs.getString("username"));

@@ -1,0 +1,25 @@
+<p-card header="Edit User Profile">
+    <!-- Display error messages if any -->
+    <p-messages [(value)]="errorMsg"></p-messages>
+
+    <div class="p-fluid p-formgrid p-grid">
+        <!-- Edit Status Message -->
+        <div class="p-field p-col-12">
+            <label for="statusmsg">Status Message</label>
+            <input id="statusmsg" type="text" [(ngModel)]="updatedUser.statusmsg" pInputText
+                placeholder="Enter your status message">
+        </div>
+
+        <!-- Edit Profile Image URL -->
+        <div class="p-field p-col-12">
+            <label for="profileimg">Profile Image URL</label>
+            <input id="profileimg" type="text" [(ngModel)]="updatedUser.profileimg" pInputText
+                placeholder="Enter URL for your profile image">
+        </div>
+
+        <!-- Update Button -->
+        <div class="p-field p-col-12">
+            <button pButton type="button" label="Update" class="ui-button-success" (click)="updateUser()"></button>
+        </div>
+    </div>
+</p-card>

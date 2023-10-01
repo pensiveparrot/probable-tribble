@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
 import { CsrfInterceptor } from './csrf-interceptor.guard';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { UserComponent } from './user/user.component';
+import { CardModule } from 'primeng/card';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +29,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     HomeComponent,
     ShopComponent,
     AdminComponent,
-
+    UserComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +44,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     InputTextModule,
     InputTextareaModule,
     MessagesModule,
+    CardModule,
     FormsModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { AuthService } from './auth.service';
+import { AuthService } from './common/service/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
     this.items = [
       { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
       { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
-      { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] }
+      { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] },
+      { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['user'] }
     ];
 
     try {
@@ -35,7 +36,8 @@ export class AppComponent implements OnInit {
           console.log("data: " + JSON.stringify(data));
           this.items = [{ label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
           { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
-          { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] }, { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin'] }];
+          { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] }, { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['user'] },
+          { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin'] }];
           resolve(this.items);
         }
         else {
@@ -44,6 +46,7 @@ export class AppComponent implements OnInit {
       })
     });
   }
+
 
 
 }
