@@ -58,6 +58,7 @@ export class HomeComponent implements OnInit, AfterViewChecked {
             statusmsg: data.statusmsg,
             profileimg: data.profileimg
           };
+          console.log("final");
           console.log("data: " + JSON.stringify(data));
           resolve(this.hluser);
         } else {
@@ -66,7 +67,6 @@ export class HomeComponent implements OnInit, AfterViewChecked {
       });
     });
   }
-
   async sendMessage(): Promise<void> {
     if (this.newMessageContent.trim()) {
       if (this.hluser && this.hluser.username) {
