@@ -14,7 +14,17 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   hidden: boolean = false;
   showText: boolean = false;
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+  selectedUser: HLUser | null = null;
+  showUserProfileDialog: boolean = false;
 
+  showUserProfile(user: HLUser): void {
+    this.selectedUser = user;
+    this.showUserProfileDialog = true;
+  }
+  closeUserProfile(): void {
+    this.selectedUser = null;
+    this.showUserProfileDialog = false;
+  }
   hluser: HLUser = {
     id: 0,
     username: "",

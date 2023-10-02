@@ -10,7 +10,6 @@
 </div>
 
 <div style="display: flex; flex-direction: column; height: 100%;">
-
     <div #messagesContainer style="max-height: 400px; overflow-y: auto; flex-grow: 1;">
         <!-- Messages display -->
         <div *ngFor="let message of Messages" style="padding: 10px;">
@@ -19,7 +18,8 @@
                 <img [src]="message.sender.profileimg" alt="{{ message.sender.username }}'s profile image"
                     style="width: 40px; height: 40px; margin-right: 5px;">
                 <span>
-                    <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                    <strong><a (click)="showUserProfile(message.sender)">{{ message.sender.username }}</a></strong>: {{
+                    message.content }}
                 </span>
             </p>
         </div>
@@ -41,4 +41,16 @@
         <button pButton type="button" label="Send" class="ui-button-success" (click)="sendMessage()"
             style="height: 30px; display: flex; align-items: center; justify-content: center;"></button>
     </div>
+
+    <!-- User Profile Dialog -->
+    <p-dialog [(visible)]="showUserProfileDialog" (onHide)="closeUserProfile()">
+        <ng-template pTemplate="header">
+            {{ selectedUser?.username }}
+        </ng-template>
+        <div style="text-align: center;">
+            <img [src]="selectedUser?.profileimg" alt="{{ selectedUser?.username }}'s profile image"
+                style="width: 150px; height: 150px; margin-bottom: 15px;">
+            <p>{{ selectedUser?.statusmsg }}</p>
+        </div>
+    </p-dialog>
 </div>

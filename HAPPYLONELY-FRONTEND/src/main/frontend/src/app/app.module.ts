@@ -22,6 +22,7 @@ import { CsrfInterceptor } from './csrf-interceptor.guard';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { UserComponent } from './user/user.component';
 import { CardModule } from 'primeng/card';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,6 +47,7 @@ import { CardModule } from 'primeng/card';
     MessagesModule,
     CardModule,
     FormsModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({
       cookieName: 'XSRF-TOKEN',
