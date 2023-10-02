@@ -5,6 +5,8 @@ HAPPYLONELY-BACKEND/target/
 HAPPYLONELY-FRONTEND/.settings/
 HAPPYLONELY-FRONTEND/src/main/frontend/.angular/
 HAPPYLONELY-FRONTEND/src/main/frontend/node_modules/
+HAPPYLONELY-FRONTEND/src/main/frontend/node/
+HAPPYLONELY-FRONTEND/src/main/frontend/node/
 
 # Log file
 *.log
