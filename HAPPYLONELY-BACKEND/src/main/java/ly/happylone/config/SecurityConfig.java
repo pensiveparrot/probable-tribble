@@ -87,7 +87,14 @@ public class SecurityConfig {
                         .accessDeniedHandler(customCsrfFailureHandler))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .formLogin(login -> login.loginPage("/login").permitAll())
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .permitAll()
+                        .successHandler((request, response, authentication) -> {
+                            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":"
+                                    + request.getServerPort();
+                            response.sendRedirect(baseUrl + "/#/home");
+                        }))
                 .logout(logout -> logout.permitAll())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/getProductByName/**").access(adminAuthorizationManager())
@@ -101,7 +108,6 @@ public class SecurityConfig {
                         .requestMatchers("/login/**", "/register/**").permitAll()
                         .requestMatchers("/websocket/**").authenticated()
                         .anyRequest().authenticated());
-
         return http.build();
     }
 

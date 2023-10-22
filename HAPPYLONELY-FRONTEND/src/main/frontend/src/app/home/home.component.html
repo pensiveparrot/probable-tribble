@@ -9,37 +9,77 @@
     </p-image>
 </div>
 
-<div style="display: flex; flex-direction: column; height: 100%;">
-    <div #messagesContainer style="max-height: 400px; overflow-y: auto; flex-grow: 1;">
-        <!-- Messages display -->
-        <div *ngFor="let message of Messages" style="padding: 10px;">
-            <p *ngIf="this.showText === true" style="display: flex; align-items: center;">
-                <span style="margin-right: 10px;">{{ message.date_sent | date:'shortTime' }}</span>
-                <img [src]="message.sender.profileimg" alt="{{ message.sender.username }}'s profile image"
-                    style="width: 40px; height: 40px; margin-right: 5px;">
-                <span>
-                    <strong><a (click)="showUserProfile(message.sender)">{{ message.sender.username }}</a></strong>: {{
-                    message.content }}
+<div *ngIf="this.hidden === true"
+    style="display: flex; flex-direction: column; height: 100%; font-family: Arial, sans-serif;">
+
+    <div #messagesContainer class="messages-container">
+        <ng-container *ngIf="showText">
+            <div *ngFor="let message of Messages" class="message-item">
+                <span class="message-timestamp">{{ message.date_sent | date:'MMM d, y, h:mm a' }}</span>
+                <img [src]="message.sender.profileimg" (click)="showUserProfile(message.sender)" class="message-image"
+                    alt="{{ message.sender.username }}'s profile image">
+                <span class="message-content" *ngIf="!isValidImageURL(message.content)">
+                    <strong>{{ message.sender.username }}</strong>: {{ message.content }}
                 </span>
-            </p>
-        </div>
+                <div class="message-content" *ngIf="isValidImageURL(message.content)">
+                    <strong>{{ message.sender.username }}</strong>:
+                    <img [src]="(message?.content)" alt="Image content" />
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div *ngIf="isDialogMinimized" (click)="openDialog()" class="minimized-dialog">
+        <i class="fas fa-window-minimize"></i>
     </div>
 
-    <div id="homePage" *ngIf="this.showText === true"
-        style="position: relative; display: flex; align-items: center; height: auto; padding: 10px;">
-        <!-- Textarea for user input -->
-        <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="newMessageContent"
-            style="flex-grow: 1; margin-right: 10px; height: 30px;"></textarea>
+    <!-- Input Section -->
+    <div class="input-section" *ngIf="showText">
+        <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="newMessageContent" class="input-textarea"
+            (keydown.enter)="sendMessage()"></textarea>
+        <p-fileUpload #fileInput name="file" url="https://localhost:8443/api/art/uploadArt" accept="image/*"
+            [style.display]="'none'"></p-fileUpload>
 
-        <!-- Button with file upload icon -->
-        <button pButton type="button" class="ui-button-secondary"
-            style="margin-right: 10px; height: 30px; display: flex; align-items: center; justify-content: center;">
+        <!-- Upload Button -->
+        <button pButton type="button" class="ui-button-secondary btn-upload" (click)="openDialog()">
             <i class="fas fa-upload"></i>
         </button>
 
-        <!-- Send button -->
-        <button pButton type="button" label="Send" class="ui-button-success" (click)="sendMessage()"
-            style="height: 30px; display: flex; align-items: center; justify-content: center;"></button>
+        <!-- Art Upload Dialog -->
+        <div *ngIf="isDialogOpen" @fadeInOut>
+            <p-dialog [(visible)]="isDialogOpen" [modal]="true" [closable]="false" header="Upload Art">
+                <ng-template pTemplate="header">
+                    <div class="modal-header">
+                        <span class="modal-title">Upload Art</span>
+                        <button (click)="minimizeModal()" class="modal-control" pRipple><i
+                                class="fas fa-minus"></i></button>
+                        <button (click)="closeModal()" class="modal-control" pRipple><i
+                                class="fas fa-times"></i></button>
+                    </div>
+                </ng-template>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <label for="artName">Art Name:</label>
+                        <input type="text" pInputText [(ngModel)]="artName">
+                    </div>
+                    <div class="ui-g-12">
+                        <label for="artAuthor">Art Author:</label>
+                        <input type="text" pInputText [(ngModel)]="artAuthor">
+                    </div>
+                    <div class="ui-g-12">
+                        <label for="fileInput">Select File:</label>
+                        <input #fileInput type="file" (change)="onFileSelected($event)">
+                    </div>
+                    <div class="ui-g-12">
+                        <button pButton type="button" label="Upload" (click)="onUploadClicked()"></button>
+                    </div>
+                </div>
+            </p-dialog>
+        </div>
+
+        <!-- Send Button -->
+        <button pButton type="button" class="ui-button-success btn-send" (click)="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
 
     <!-- User Profile Dialog -->
@@ -47,10 +87,11 @@
         <ng-template pTemplate="header">
             {{ selectedUser?.username }}
         </ng-template>
-        <div style="text-align: center;">
+        <div class="dialog-content">
             <img [src]="selectedUser?.profileimg" alt="{{ selectedUser?.username }}'s profile image"
-                style="width: 150px; height: 150px; margin-bottom: 15px;">
+                class="profile-dialog-image">
             <p>{{ selectedUser?.statusmsg }}</p>
         </div>
     </p-dialog>
+
 </div>

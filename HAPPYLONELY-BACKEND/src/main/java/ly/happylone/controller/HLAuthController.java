@@ -48,11 +48,11 @@ public class HLAuthController {
         HLUser user = customUserDetailsService.register(regReq);
 
         if (user == null) {
-
             return "register";
         }
 
-        return "redirect:/login";
+        // Redirecting to an external URL after successful registration
+        return "redirect:localhost:8443/login";
     }
 
 }
