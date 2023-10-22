@@ -9,16 +9,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import org.springframework.web.multipart.MultipartFile;
-
 import ly.happylone.model.Art;
 import ly.happylone.service.ArtService;
 import org.springframework.beans.factory.annotation.Value;

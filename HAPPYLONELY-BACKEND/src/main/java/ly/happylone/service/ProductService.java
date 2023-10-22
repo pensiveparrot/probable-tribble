@@ -1,11 +1,8 @@
 package ly.happylone.service;
 
 import java.sql.SQLException;
-
 import ly.happylone.model.Product;
-
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {

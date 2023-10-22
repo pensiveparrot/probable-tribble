@@ -1,12 +1,10 @@
 package ly.happylone.controller;
 
 import java.sql.SQLException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-
 import ly.happylone.model.Message;
 import ly.happylone.service.MessageService;
 

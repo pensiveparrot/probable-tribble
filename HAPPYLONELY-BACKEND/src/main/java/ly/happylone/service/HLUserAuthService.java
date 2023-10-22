@@ -1,9 +1,7 @@
 package ly.happylone.service;
 
 import java.sql.SQLException;
-
 import org.springframework.http.ResponseEntity;
-
 import ly.happylone.model.HLUser;
 
 public interface HLUserAuthService {

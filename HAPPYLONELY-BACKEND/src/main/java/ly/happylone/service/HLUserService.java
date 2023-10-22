@@ -3,9 +3,7 @@ package ly.happylone.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
-
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 

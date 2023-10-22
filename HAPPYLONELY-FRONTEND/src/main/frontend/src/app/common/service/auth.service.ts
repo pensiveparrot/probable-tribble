@@ -6,11 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-   headers = new HttpHeaders({ /* other headers if needed */ });
-   options = { headers: this.headers, withCredentials: true };
-  constructor(private http:HttpClient) {   }
-   getUserRole():Observable<any> {
-          return this.http.get<number>("https://"+window.location.hostname+":8443/" +"api/user/getUserRole",{withCredentials: true});
-    }
-   }
+  headers = new HttpHeaders({ /* other headers if needed */ });
+  options = { headers: this.headers, withCredentials: true };
+  constructor(private http: HttpClient) { }
+  getUserRole(): Observable<any> {
+    return this.http.get<number>("https://" + window.location.hostname + ":8443/" + "api/user/getUserRole", { withCredentials: true });
+  }
+}
 

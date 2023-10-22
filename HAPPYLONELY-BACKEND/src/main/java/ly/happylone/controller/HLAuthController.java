@@ -1,7 +1,6 @@
 package ly.happylone.controller;
 
 import java.sql.SQLException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,7 +51,7 @@ public class HLAuthController {
         }
 
         // Redirecting to an external URL after successful registration
-        return "redirect:localhost:8443/login";
+        return "redirect:login";
     }
 
 }
