@@ -14,17 +14,13 @@ import ly.happylone.model.HLUser;
 import ly.happylone.model.RegisterRequest;
 import ly.happylone.service.CustomUserDetailsService;
 
+//use RestController for angular
 @Controller
 @RequestMapping("/")
 @CrossOrigin(origins = "http://localhost:4200")
 public class HLAuthController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
-    @GetMapping("/index")
-    public String home() {
-        return "index";
-    }
 
     @GetMapping("/login")
     public String login() {

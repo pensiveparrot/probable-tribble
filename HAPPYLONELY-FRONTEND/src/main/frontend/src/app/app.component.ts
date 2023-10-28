@@ -17,7 +17,8 @@ export class AppComponent implements OnInit {
       { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
       { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
       { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] },
-      { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['user'] }
+      { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['user'] },
+      { label: 'YoutubeDL', icon: 'pi pi-fw pi-music', routerLink: ['youtube-dl'] },
     ];
 
     try {
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
           this.items = [{ label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
           { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
           { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] }, { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['user'] },
+          { label: 'YoutubeDL', icon: 'pi pi-fw pi-music', routerLink: ['youtube-dl'] },
           { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin'] }];
           resolve(this.items);
         }

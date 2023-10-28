@@ -5,9 +5,28 @@ import { HomeComponent } from './home/home.component';
 import { ShopComponent } from './shop/shop.component';
 import { AdminComponent } from './admin/admin.component';
 import { UserComponent } from './user/user.component';
+import { YoutubeDLComponent } from './youtube-dl/youtube-dl.component';
 
 
 const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'art', component: ArtComponent },
+  { path: 'shop', component: YoutubeDLComponent },
+  { path: 'shop', component: ShopComponent },
+  { path: 'user', component: UserComponent },
+  { path: 'admin', component: AdminComponent },
+  { path: 'youtube-dl', component: YoutubeDLComponent },
+  { path: "**", redirectTo: "/home" }
+];
+
+/*
+
+const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'register', component: RegistrationComponent },
+  { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'art', component: ArtComponent },
@@ -16,7 +35,7 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent },
   { path: "**", redirectTo: "/home" }
 ];
-
+*/
 @NgModule({
   imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]

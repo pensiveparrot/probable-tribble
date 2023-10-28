@@ -1,0 +1,14 @@
+<div class="p-fluid">
+    <div class="p-field">
+        <label for="url">URL</label>
+        <input id="url" [(ngModel)]="url" class="p-inputtext p-component" type="text" pInputText />
+    </div>
+
+    <div class="p-field">
+        <label for="type">Type</label>
+        <p-dropdown [options]="types" [(ngModel)]="selectedType" optionLabel="name" optionValue="value"
+            placeholder="Select a Type"></p-dropdown>
+    </div>
+
+    <button pButton type="button" label="Download" (click)="download()"></button>
+</div>

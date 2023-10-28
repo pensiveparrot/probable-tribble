@@ -1,0 +1,15 @@
+{
+    "name": "download-script",
+    "version": "1.0.0",
+    "description": "A script to download videos and audio",
+    "main": "download.js",
+    "scripts": {
+        "start": "node download.js"
+    },
+    "dependencies": {
+        "ytdl-core": "^4.10.0",
+        "fs": "0.0.1-security",
+        "path": "^0.12.7",
+        "process": "^0.11.10"
+    }
+}

@@ -23,6 +23,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { UserComponent } from './user/user.component';
 import { CardModule } from 'primeng/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { YoutubeDLComponent } from './youtube-dl/youtube-dl.component';
+import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     ShopComponent,
     AdminComponent,
     UserComponent,
+    YoutubeDLComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,13 +51,15 @@ import { FileUploadModule } from 'primeng/fileupload';
     MessagesModule,
     CardModule,
     FormsModule,
+    DropdownModule,
     BrowserAnimationsModule,
+    FileUploadModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({
       cookieName: 'XSRF-TOKEN',
       headerName: 'X-XSRF-TOKEN',
     }),
-    FileUploadModule,
+
   ],
 
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },],

@@ -88,12 +88,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(login -> login
-                        .loginPage("/login")
+                        .loginPage("/login") // Update the login URL
                         .permitAll()
                         .successHandler((request, response, authentication) -> {
                             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":"
                                     + request.getServerPort();
-                            response.sendRedirect(baseUrl + "/#/home");
+                            response.sendRedirect(baseUrl + "/#/home"); // Use hash-based routing
                         }))
                 .logout(logout -> logout.permitAll())
                 .authorizeHttpRequests(authorize -> authorize
@@ -107,6 +107,7 @@ public class SecurityConfig {
                         .requestMatchers("/#/admin/**").access(adminAuthorizationManager())
                         .requestMatchers("/login/**", "/register/**").permitAll()
                         .requestMatchers("/websocket/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/download/**").authenticated()
                         .anyRequest().authenticated());
         return http.build();
     }
