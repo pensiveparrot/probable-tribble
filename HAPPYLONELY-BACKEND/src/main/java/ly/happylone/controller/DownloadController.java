@@ -2,13 +2,13 @@ package ly.happylone.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,46 +27,31 @@ public class DownloadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadController.class);
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @Value("${script.location:/home/happylonely/script}")
     private String scriptLocation;
 
     private final Set<String> executedCommands = new HashSet<>();
 
+    @Async
     @PostMapping
-    public ResponseEntity<Resource> download(@RequestBody Map<String, String> payload) {
+    public CompletableFuture<ResponseEntity<Resource>> download(@RequestBody Map<String, String> payload) {
         String url = payload.get("url");
         String type = payload.get("type");
 
-        if (url == null || type == null) {
-            LOGGER.error("Missing required parameters. URL: {}, Type: {}", url, type);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (!isValidYouTubeUrl(url) || (!"music".equals(type) && !"video".equals(type))) {
+            LOGGER.error("Invalid parameters. URL: {}, Type: {}", url, type);
+            return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
         }
 
         try {
-            String output = type.equals("music") ? "output.mp3" : "output.mp4";
+            String output = sanitizeFileName(type.equals("music") ? "output.mp3" : "output.mp4");
             String downloadScriptPath = Paths.get(scriptLocation, "download.js").toString();
 
             // Ensure the script directory exists
             File scriptDirectory = new File(scriptLocation);
             if (!scriptDirectory.exists() && !scriptDirectory.mkdirs()) {
                 LOGGER.error("Failed to create script directory at: {}", scriptLocation);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            // Load the download.js script from the classpath
-            Resource downloadScriptResource = resourceLoader.getResource("classpath:download.js");
-            if (!downloadScriptResource.exists()) {
-                LOGGER.error("The download.js script was not found in the classpath");
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            // Copy the download.js script to the scriptLocation
-            try (InputStream is = downloadScriptResource.getInputStream();
-                    OutputStream os = new FileOutputStream(downloadScriptPath)) {
-                FileCopyUtils.copy(is, os);
+                return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
             // Ensure Node.js and npm are installed
@@ -78,7 +64,7 @@ public class DownloadController {
                 executedCommands.add("npm --version");
             }
 
-            // Step 1: Initialize a Node.js project and install required modules
+            // Initialize a Node.js project and install required modules
             if (!executedCommands.contains("npm init -y")) {
                 executeCommand(scriptLocation, "npm", "init", "-y");
                 executedCommands.add("npm init -y");
@@ -88,24 +74,33 @@ public class DownloadController {
                 executedCommands.add("npm install ytdl-core");
             }
 
-            // Step 2: Execute the download script
+            // Execute the download script
             executeCommand(scriptLocation, "node", downloadScriptPath, url, type, output);
 
-            // Load the file as a resource from the script location
+            // Load the file as a resource
             File outputFile = new File(scriptLocation, output);
             Resource resource = new FileSystemResource(outputFile);
 
             if (!resource.exists()) {
                 LOGGER.error("Downloaded file not found at path: {}", outputFile.getAbsolutePath());
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.NOT_FOUND));
             }
 
             LOGGER.info("File successfully downloaded and found at path: {}", outputFile.getAbsolutePath());
-            return new ResponseEntity<>(resource, HttpStatus.OK);
+            return CompletableFuture.completedFuture(new ResponseEntity<>(resource, HttpStatus.OK));
         } catch (IOException | InterruptedException e) {
             LOGGER.error("An error occurred during file download or command execution", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
+    }
+
+    private String sanitizeFileName(String input) {
+        return input.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+    }
+
+    private boolean isValidYouTubeUrl(String url) {
+        String youtubeRegex = "(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(.com)?\\/.*";
+        return url != null && url.matches(youtubeRegex);
     }
 
     private void executeCommand(String workingDirectory, String... command) throws IOException, InterruptedException {

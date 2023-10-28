@@ -13,6 +13,10 @@ async function download() {
             throw new Error('Missing required arguments. Usage: node script.js <url> <type> <output>');
         }
 
+        if (!ytdl.validateURL(url)) {
+            throw new Error('Invalid YouTube URL');
+        }
+
         if (type !== 'music' && type !== 'video') {
             throw new Error('Invalid type. Expected "music" or "video".');
         }
