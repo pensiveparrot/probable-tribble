@@ -34,23 +34,45 @@ public class HLUserServiceImpl implements HLUserService {
 
     @Override
     public int getUserRole(String username) {
-        return databaseService.getUserRole(username);
+        try {
+            return databaseService.getUserRole(username);
+        } catch (Exception e) {
+            logger.error("Error getting user role", e);
+            return -1;
+        }
     }
 
     @Override
     public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) {
-        return databaseService.editUser(user);
+        try {
+            return databaseService.editUser(user);
+        } catch (Exception e) {
+            logger.error("Error editing user", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+
     }
 
     @Override
     public boolean userExists(String username) {
-        return databaseService.userExists(username);
+        try {
+            return databaseService.userExists(username);
+        } catch (Exception e) {
+            logger.error("Error checking if user exists", e);
+            return false;
+        }
 
     }
 
     @Override
     public HLUser getUserByName(String username) {
-        return databaseService.getUserByName(username);
+        try {
+            return databaseService.getUserByName(username);
+        } catch (Exception e) {
+            logger.error("Error getting user by name", e);
+            return null;
+        }
+
     }
 
     @Override

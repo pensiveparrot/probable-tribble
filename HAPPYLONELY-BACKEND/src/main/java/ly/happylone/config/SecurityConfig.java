@@ -13,8 +13,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import ly.happylone.service.CustomUserDetailsService;
+
 import ly.happylone.service.DatabaseService;
+import ly.happylone.service.CustomUserDetailsService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -23,7 +25,6 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-
 import java.util.Arrays;
 
 @Configuration
