@@ -16,8 +16,6 @@ public interface HLUserService {
 
     int getUserRole(String username);
 
-    HLUser queryUser(String username, HLUser user, ResultSet rs) throws SQLException;
-
     ResponseEntity<List<HLUser>> getAllUsers() throws SQLException;
 
     ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException;
@@ -41,8 +39,6 @@ public interface HLUserService {
     ResponseEntity<HLUser> changeUsername(HLUser user) throws SQLException;
 
     ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException;
-
-    HLUserResponse queryUserMin(String username, HLUser user, ResultSet rs) throws SQLException;
 
     HLUser getUserByUsername(String username);
 
