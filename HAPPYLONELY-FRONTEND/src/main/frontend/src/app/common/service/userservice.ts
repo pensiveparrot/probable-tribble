@@ -10,6 +10,10 @@ export class UserService {
     headers = new HttpHeaders({ /* other headers if needed */ });
     options = { headers: this.headers, withCredentials: true };
     constructor(private http: HttpClient) { }
+
+    changeEmail(hlUser: HLUser): Observable<any> {
+        return this.http.put(`https://${window.location.hostname}:8443/api/user/changeEmail`, hlUser, this.options);
+    }
     getUser(): Observable<any> {
         return this.http.get<HLUser>("https://" + window.location.hostname + ":8443/" + "api/user/getUserByUsername", { observe: 'response', withCredentials: true }
         );
@@ -36,6 +40,24 @@ export class UserService {
             withCredentials: true,
         });
     }
+    deleteUser(userId: number): Observable<any> {
+        return this.http.delete(`https://${window.location.hostname}:8443/api/user/deleteUser/${userId}`, this.options);
+    }
 
+    updateUser(user: HLUser): Observable<any> {
+        return this.http.put(`https://${window.location.hostname}:8443/api/user/updateUser`, user, this.options);
+    }
+
+    banUser(userId: number): Observable<any> {
+        return this.http.put(`https://${window.location.hostname}:8443/api/user/banUser/${userId}`, null, this.options);
+    }
+
+    unbanUser(userId: number): Observable<any> {
+        return this.http.put(`https://${window.location.hostname}:8443/api/user/unbanUser/${userId}`, null, this.options);
+    }
+
+    changeUserRole(userId: number, newRole: string): Observable<any> {
+        return this.http.put(`https://${window.location.hostname}:8443/api/user/changeUserRole/${userId}`, { role: newRole }, this.options);
+    }
 
 }

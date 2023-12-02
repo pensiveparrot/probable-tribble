@@ -7,12 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
 import ly.happylone.model.Art;
+import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
+import ly.happylone.model.MessageContext;
 import ly.happylone.model.Product;
 
 import javax.sql.DataSource;
@@ -251,6 +254,300 @@ public class DatabaseServiceImpl implements DatabaseService {
             logger.error("Error fetching user role for username: {}", username, e);
         }
         return 0; // Default role or throw an exception based on your application's needs
+    }
+
+    @Override
+    public ResponseEntity<HLUser> changeStatus(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET statusmsg = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, user.getStatusmsg());
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing status", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> changeProfileImg(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET profileimg = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, user.getProfileimg());
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing profile image", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> changeRole(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET role = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, StringUtils.toString(user.getRole()));
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing role", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> changeUsername(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET username = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, user.getUsername());
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing username", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> awardBadge(HLUser user, HLBadge badge) throws SQLException {
+        String sql = "UPDATE hluser SET badges = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, StringUtils.toString(user.getBadges()));
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error awarding badge", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET email = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, user.getEmail());
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing email", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public void deleteUser(Long id) throws SQLException {
+        String sql = "DELETE FROM hluser WHERE id = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Delete user failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            logger.error("Error deleting user", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public List<ResponseEntity<HLUser>> getAllUsers() throws SQLException {
+        String sql = "select * from hluser";
+        List<ResponseEntity<HLUser>> users = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                HLUser user = new HLUser();
+                user.setId(rs.getLong("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                switch (rs.getInt("role")) {
+                    case 0:
+                        user.setRole(HLRole.Guest);
+                        break;
+                    case 1:
+                        user.setRole(HLRole.Banned);
+                        break;
+                    case 2:
+                        user.setRole(HLRole.Standard);
+                        break;
+                    case 3:
+                        user.setRole(HLRole.VIP);
+                        break;
+                    case 4:
+                        user.setRole(HLRole.Moderator);
+                        break;
+                    case 5:
+                        user.setRole(HLRole.Admin);
+                        break;
+                    case 6:
+                        user.setRole(HLRole.Owner);
+                    default:
+                        user.setRole(HLRole.Standard);
+                        break;
+                }
+                if (rs.getInt("role") == 0 || rs.getInt("role") == 1) {
+                    user.setUserloggedin(false);
+                } else {
+                    user.setUserloggedin(true);
+                    user.setProfileimg(rs.getString("profileimg"));
+                    user.setStatusmsg(rs.getString("statusmsg"));
+                    user.setUserloggedin(rs.getBoolean("userloggedin"));
+                    user.setRegisterdate(rs.getDate("registerdate"));
+                    user.setUnbandate(rs.getDate("unbandate"));
+                    user.setLastlogindate(rs.getDate("lastlogindate"));
+                }
+                users.add(ResponseEntity.ok(user));
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting all users", e);
+            throw e;
+        }
+        return users;
+    }
+
+    @Override
+    public ResponseEntity<HLUser> banUser(Long id) throws SQLException {
+        String sql = "UPDATE hluser SET role = ?, unbandate = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, StringUtils.toString(HLRole.Banned));
+            statement.setDate(2, new java.sql.Date(new Date().getTime()));
+            statement.setLong(3, id);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error banning user", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    // standard user permitted to change role can potentially be automated by way of
+    // forum contribution or bought or gifted by one who pays for them
+    @Override
+    public ResponseEntity<HLUser> changeUserRole(Long id, HLRole role) throws SQLException {
+        String sql = "UPDATE hluser SET role = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, StringUtils.toString(role));
+            statement.setLong(2, id);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing user role", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET username = ?, email = ?, role = ?, statusmsg = ?, profileimg = ?, unbandate = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, StringUtils.toString(user.getRole()));
+            statement.setString(4, user.getStatusmsg());
+            statement.setString(5, user.getProfileimg());
+            statement.setDate(6, user.getUnbandate());
+            statement.setLong(7, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error updating user", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException {
+        String sql = "UPDATE hluser SET unbandate = ? WHERE id = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setDate(1, null);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error unbanning user", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HLUser> changePassword(HLUser user) {
+        String sql = "UPDATE hluser SET password = ? WHERE id = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, user.getPassword());
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error changing password", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // end of user code
@@ -506,4 +803,170 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
     }
     // end of product code
+
+    // start of forum code
+
+    @Override
+    public ResponseEntity<?> addPost(Message message) throws SQLException {
+        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context) VALUES (?, ?, ?, ?)";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            if (message.getContent() == null || message.getContent().isEmpty()
+                    || message.getContent().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
+            } else if (message.getSender() == null || message.getSender().getId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
+            } else if (message.getMessageContext() == null
+                    || StringUtils.isEmpty(StringUtils.toString(message.getMessageContext()))
+                    || StringUtils.toString(message.getMessageContext()).isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message context is null");
+            } else {
+                statement.setString(1, message.getContent());
+                statement.setLong(2, message.getSender().getId());
+                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+                statement.setString(4, StringUtils.toString(MessageContext.Post));
+
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted > 0) {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.TEXT_PLAIN);
+                    String path = message.getContent();
+                    System.out.println("Message path: " + path);
+                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> addThread(Message message) throws SQLException {
+        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context) VALUES (?, ?, ?, ?)";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            if (message.getContent() == null || message.getContent().isEmpty()
+                    || message.getContent().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
+            } else if (message.getSender() == null || message.getSender().getId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
+            } else if (message.getMessageContext() == null
+                    || StringUtils.isEmpty(StringUtils.toString(message.getMessageContext()))
+                    || StringUtils.toString(message.getMessageContext()).isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message context is null");
+            } else {
+                statement.setString(1, message.getContent());
+                statement.setLong(2, message.getSender().getId());
+                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+                statement.setString(4, StringUtils.toString(MessageContext.Thread));
+
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted > 0) {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.TEXT_PLAIN);
+                    String path = message.getContent();
+                    System.out.println("Message path: " + path);
+                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getThreadById(Long id) throws SQLException {
+        String sql = "SELECT * FROM messages WHERE id = ? AND message_context="
+                + StringUtils.toString(MessageContext.Thread);
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Message message = new Message();
+                    message.setId(rs.getLong("id"));
+                    message.setContent(rs.getString("content"));
+                    message.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
+                    HLUser user = new HLUserServiceImpl().getUserById(rs.getLong("sender_id"));
+                    HLUserResponse hluser = new HLUserResponse(user);
+                    message.setSender(hluser);
+                    return ResponseEntity.ok(message);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Thread not found");
+    }
+
+    @Override
+    public ResponseEntity<?> addProfileComment(Message message) throws SQLException {
+        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context) VALUES (?, ?, ?,"
+                + StringUtils.toString(MessageContext.Comment) + ")";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            if (message.getContent() == null || message.getContent().isEmpty()
+                    || message.getContent().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
+            } else if (message.getSender() == null || message.getSender().getId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
+            } else if (message.getMessageContext() == null
+                    || StringUtils.isEmpty(StringUtils.toString(message.getMessageContext()))
+                    || StringUtils.toString(message.getMessageContext()).isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message context is null");
+            } else {
+                statement.setString(1, message.getContent());
+                statement.setLong(2, message.getSender().getId());
+                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted > 0) {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.TEXT_PLAIN);
+                    String path = message.getContent();
+                    System.out.println("Message path: " + path);
+                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> addCredits(HLUser user, int credits) throws SQLException {
+        String sql = "UPDATE hluser SET credits = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setInt(1, user.getCredits() + credits);
+            statement.setLong(2, user.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (SQLException e) {
+            logger.error("Error adding credits", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

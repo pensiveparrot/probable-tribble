@@ -2,6 +2,7 @@ package ly.happylone.controller;
 
 import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,7 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.service.HLUserService;
@@ -43,6 +47,12 @@ public class HLUserController {
         return hlUserService.getUserRole(username);
     }
 
+    @PostMapping("/changeEmail")
+    public ResponseEntity<HLUser> changeEmail(@RequestBody HLUser user) throws SQLException {
+        System.out.println("USER IN CHANGEEMAIL CONTROLLER --> " + user);
+        return hlUserService.changeEmail(user);
+    }
+
     @GetMapping("/getUserByUsername")
     public ResponseEntity<HLUserResponse> getUserByUsername() throws SQLException {
 
@@ -59,4 +69,34 @@ public class HLUserController {
         return hlUserService.editUser(user);
     }
 
+    @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) throws SQLException {
+        hlUserService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/updateUser", method = RequestMethod.PUT)
+    public ResponseEntity<HLUser> updateUser(@RequestBody HLUser user) throws SQLException {
+
+        return hlUserService.updateUser(user);
+    }
+
+    @RequestMapping(value = "/banUser/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> banUser(@PathVariable("id") Long id) throws SQLException {
+        hlUserService.banUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/unbanUser/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> unbanUser(@PathVariable("hluser") HLUser user) throws SQLException {
+        hlUserService.unbanUser(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/changeUserRole/{id}/{role}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> changeUserRole(@PathVariable("id") Long id, @PathVariable("role") HLRole role)
+            throws SQLException {
+        hlUserService.changeUserRole(id, role);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

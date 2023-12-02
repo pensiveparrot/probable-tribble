@@ -23,4 +23,8 @@ public class Message {
 
     @Column(name = "date_sent", nullable = false) // Assuming every message should have a send date
     private LocalDateTime dateSent;
+
+    @Column(name = "message_context")
+    private MessageContext messageContext;
+
 }

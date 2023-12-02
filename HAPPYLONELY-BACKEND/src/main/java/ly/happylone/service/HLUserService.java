@@ -1,9 +1,11 @@
 package ly.happylone.service;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+
+import ly.happylone.model.HLBadge;
+import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 
@@ -16,7 +18,7 @@ public interface HLUserService {
 
     int getUserRole(String username);
 
-    ResponseEntity<List<HLUser>> getAllUsers() throws SQLException;
+    List<ResponseEntity<HLUser>> getAllUsers() throws SQLException;
 
     ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException;
 
@@ -24,7 +26,7 @@ public interface HLUserService {
 
     ResponseEntity<HLUserResponse> getUserByUsernameMin(String username);
 
-    ResponseEntity<HLUser> banUser(HLUser user) throws SQLException;
+    ResponseEntity<HLUser> banUser(Long id) throws SQLException;
 
     ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException;
 
@@ -40,8 +42,12 @@ public interface HLUserService {
 
     ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException;
 
+    public ResponseEntity<HLUser> awardBadge(HLUser user, HLBadge badge) throws SQLException;
+
     HLUser getUserByUsername(String username);
 
     ResponseEntity<HLUserResponse> editUser(HLUserResponse user);
+
+    public ResponseEntity<HLUser> changeUserRole(Long id, HLRole role) throws SQLException;
 
 }

@@ -9,6 +9,9 @@ import { Observable } from 'rxjs';
 export class ProductService {
 
   constructor(private http: HttpClient) { }
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete("https://" + window.location.hostname + ":8443/" + "api/products/deleteProduct/" + id, { observe: 'response', withCredentials: true });
+  }
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>("https://" + window.location.hostname + ":8443/" + "api/products/getProductById/" + id);
   }

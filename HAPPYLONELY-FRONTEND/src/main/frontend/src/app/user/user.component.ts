@@ -66,4 +66,21 @@ export class UserComponent implements OnInit {
       });
     });
   }
+  async changeEmail() {
+    this.userService.changeEmail(this.updatedUser).subscribe({
+      next: (response: { status: number; body: HLUser; }) => {
+        this.statusCode = response.status;
+        this.updatedUser = response.body;
+        console.log("user: " + JSON.stringify(this.updatedUser));
+        console.log("status code: " + this.statusCode);
+      }, error: (error: { status: number; }) => {
+        this.statusCode = error.status;
+        console.error("An error occurred:", error);
+        console.log("status code: " + this.statusCode);
+        this.errorMsgDetail = "Error updating user with id: " + this.updatedUser.id + ".  Response code: " + this.statusCode;
+        this.errorMsg.pop();
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+    });
+  }
 }
