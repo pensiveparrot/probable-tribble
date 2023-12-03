@@ -78,6 +78,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "updateProduct/**")
                         .access(adminAuthorizationManager())
+                        .requestMatchers(HttpMethod.PUT, "/banUser/**").access(adminAuthorizationManager())
+                        .requestMatchers(HttpMethod.PUT, "/unbanUser/**").access(adminAuthorizationManager())
+                        .requestMatchers(HttpMethod.POST, "/changeRole/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/changeUsername/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/changeEmail/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/changePassword/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/editUser/**").access(adminAuthorizationManager())
+                        .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").access(adminAuthorizationManager())
                         .requestMatchers("/#/admin/**").access(adminAuthorizationManager())
                         .requestMatchers("/login/**", "/register/**").permitAll()
                         .requestMatchers("/websocket/**").authenticated()
@@ -117,7 +125,7 @@ public class SecurityConfig {
             try {
                 Authentication authentication = authenticationSupplier.get();
                 String username = authentication.getName();
-                int role = databaseService.fetchUserRole(username);
+                int role = databaseService.getUserRole(username);
                 boolean isAdmin = role == 5;
                 logger.info("Username: {}, Role: {}, Is Admin: {}", username, role, isAdmin);
                 return new AuthorizationDecision(isAdmin);

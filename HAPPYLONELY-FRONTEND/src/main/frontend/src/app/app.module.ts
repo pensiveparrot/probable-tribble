@@ -26,6 +26,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YoutubeDLComponent } from './youtube-dl/youtube-dl.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
+import { ThreadListComponent } from './thread-list/thread-list.component';
+import { ThreadDetailComponent } from './thread-detail/thread-detail.component';
+import { ThreadCreateComponent } from './thread-create/thread-create.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,6 +38,9 @@ import { FileUploadModule } from 'primeng/fileupload';
     AdminComponent,
     UserComponent,
     YoutubeDLComponent,
+    ThreadListComponent,
+    ThreadDetailComponent,
+    ThreadCreateComponent,
   ],
   imports: [
     BrowserModule,

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import ly.happylone.model.HLBadge;
-import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 
@@ -19,8 +18,6 @@ public interface HLUserService {
     int getUserRole(String username);
 
     List<ResponseEntity<HLUser>> getAllUsers() throws SQLException;
-
-    ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException;
 
     void deleteUser(Long id) throws SQLException;
 
@@ -48,6 +45,6 @@ public interface HLUserService {
 
     ResponseEntity<HLUserResponse> editUser(HLUserResponse user);
 
-    public ResponseEntity<HLUser> changeUserRole(Long id, HLRole role) throws SQLException;
+    public Boolean isProfaneUsername(String username);
 
 }

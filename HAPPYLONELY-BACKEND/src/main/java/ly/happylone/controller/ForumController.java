@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +44,8 @@ public class ForumController {
         }
     }
 
-    @GetMapping("/getThreadById")
-    public ResponseEntity<?> getThreadById(Long id) {
+    @GetMapping("/getThreadById/{id}")
+    public ResponseEntity<?> getThreadById(@PathVariable Long id) {
         try {
             return databaseService.getThreadById(id);
         } catch (Exception e) {
@@ -63,8 +64,12 @@ public class ForumController {
         }
     }
 
-    public ResponseEntity<?> addCredits(HLUser user, int credits) {
+    @PostMapping("/addCredits/{credits}")
+    public ResponseEntity<?> addCredits(HLUser user, @PathVariable int credits) {
         try {
+            if (credits < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot add negative credits");
+            }
             return databaseService.addCredits(user, credits);
         } catch (Exception e) {
             e.printStackTrace();

@@ -103,10 +103,10 @@ public class DatabaseServiceImpl implements DatabaseService {
         user.setEmail(rs.getString("email"));
         switch (rs.getInt("role")) {
             case 0:
-                user.setRole(HLRole.Guest);
+                user.setRole(HLRole.Banned);
                 break;
             case 1:
-                user.setRole(HLRole.Banned);
+                user.setRole(HLRole.Guest);
                 break;
             case 2:
                 user.setRole(HLRole.Standard);
@@ -239,24 +239,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public int fetchUserRole(String username) {
-        String sql = "SELECT role FROM hluser WHERE username = ?";
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement statement = con.prepareStatement(sql)) {
-            statement.setString(1, username);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("role");
-                }
-            }
-        } catch (Exception e) {
-            // Log the exception and handle it appropriately
-            logger.error("Error fetching user role for username: {}", username, e);
-        }
-        return 0; // Default role or throw an exception based on your application's needs
-    }
-
-    @Override
     public ResponseEntity<HLUser> changeStatus(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET statusmsg = ? WHERE id = ?";
         try (Connection con = dataSource.getConnection();
@@ -316,6 +298,16 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> changeUsername(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET username = ? WHERE id = ?";
+        try {
+            HLUser user2 = new HLUser();
+            user2 = getUserByName(user.getUsername());
+            if (user2 != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (Exception e) {
+            logger.error("Error changing username", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
@@ -403,10 +395,10 @@ public class DatabaseServiceImpl implements DatabaseService {
                 user.setEmail(rs.getString("email"));
                 switch (rs.getInt("role")) {
                     case 0:
-                        user.setRole(HLRole.Guest);
+                        user.setRole(HLRole.Banned);
                         break;
                     case 1:
-                        user.setRole(HLRole.Banned);
+                        user.setRole(HLRole.Guest);
                         break;
                     case 2:
                         user.setRole(HLRole.Standard);
@@ -462,27 +454,6 @@ public class DatabaseServiceImpl implements DatabaseService {
             }
         } catch (SQLException e) {
             logger.error("Error banning user", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    // standard user permitted to change role can potentially be automated by way of
-    // forum contribution or bought or gifted by one who pays for them
-    @Override
-    public ResponseEntity<HLUser> changeUserRole(Long id, HLRole role) throws SQLException {
-        String sql = "UPDATE hluser SET role = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement statement = con.prepareStatement(sql)) {
-            statement.setString(1, StringUtils.toString(role));
-            statement.setLong(2, id);
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected > 0) {
-                return ResponseEntity.ok(null);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-            }
-        } catch (SQLException e) {
-            logger.error("Error changing user role", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -848,7 +819,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<?> addThread(Message message) throws SQLException {
-        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context,title, category) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
@@ -866,7 +837,8 @@ public class DatabaseServiceImpl implements DatabaseService {
                 statement.setLong(2, message.getSender().getId());
                 statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
                 statement.setString(4, StringUtils.toString(MessageContext.Thread));
-
+                statement.setString(5, message.getTitle());
+                statement.setString(6, message.getCategory());
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
@@ -969,4 +941,6 @@ public class DatabaseServiceImpl implements DatabaseService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    // end of forum code
 }

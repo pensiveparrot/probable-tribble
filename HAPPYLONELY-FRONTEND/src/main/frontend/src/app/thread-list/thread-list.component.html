@@ -1,0 +1,23 @@
+<div>
+    <h2>Forum Threads</h2>
+    <p-table [value]="threads">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Actions</th>
+                <th>Add Thread</th>
+            </tr>
+        </ng-template>
+        <button (click)="addThread()">Add Thread</button>
+        <ng-template pTemplate="body" let-thread>
+            <tr>
+                <td>{{ thread.title }}</td>
+                <td>{{ thread.category }}</td>
+                <td>
+                    <button (click)="viewThread(thread.id)">View</button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

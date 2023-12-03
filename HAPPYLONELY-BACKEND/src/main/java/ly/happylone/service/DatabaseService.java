@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 import ly.happylone.model.Art;
 import ly.happylone.model.HLBadge;
-import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
@@ -26,8 +25,6 @@ public interface DatabaseService {
     public int getUserRole(String username);
 
     public ResponseEntity<HLUserResponse> editUser(HLUserResponse user);
-
-    public int fetchUserRole(String username);
 
     List<ResponseEntity<HLUser>> getAllUsers() throws SQLException;
 
@@ -52,8 +49,6 @@ public interface DatabaseService {
     public ResponseEntity<HLUser> changeUsername(HLUser user) throws SQLException;
 
     public ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException;
-
-    public ResponseEntity<HLUser> changeUserRole(Long id, HLRole role) throws SQLException;
 
     // art code
     public ResponseEntity<?> addArt(Art art);

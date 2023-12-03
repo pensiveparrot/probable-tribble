@@ -56,8 +56,8 @@ export class UserService {
         return this.http.put(`https://${window.location.hostname}:8443/api/user/unbanUser/${userId}`, null, this.options);
     }
 
-    changeUserRole(userId: number, newRole: string): Observable<any> {
-        return this.http.put(`https://${window.location.hostname}:8443/api/user/changeUserRole/${userId}`, { role: newRole }, this.options);
+    changeRole(userId: number, newRole: number): Observable<any> {
+        return this.http.put(`https://${window.location.hostname}:8443/api/user/changeRole/${userId}/${newRole}`, null, this.options);
     }
 
 }

@@ -75,12 +75,6 @@ public class HLUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/updateUser", method = RequestMethod.PUT)
-    public ResponseEntity<HLUser> updateUser(@RequestBody HLUser user) throws SQLException {
-
-        return hlUserService.updateUser(user);
-    }
-
     @RequestMapping(value = "/banUser/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> banUser(@PathVariable("id") Long id) throws SQLException {
         hlUserService.banUser(id);
@@ -93,10 +87,48 @@ public class HLUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/changeUserRole/{id}/{role}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeUserRole(@PathVariable("id") Long id, @PathVariable("role") HLRole role)
-            throws SQLException {
-        hlUserService.changeUserRole(id, role);
-        return new ResponseEntity<>(HttpStatus.OK);
+    // Guest, Banned, Standard, VIP, Moderator, Admin, Owner;
+    @RequestMapping(value = "/changeRole/{id}/{role}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> changeRole(@PathVariable("id") Long id, @PathVariable("role") int role,
+            @PathVariable String event) throws SQLException {
+        HLUser user = hlUserService.getUserById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        HLUser currentUser = hlUserService.getUserByUsername(username);
+        boolean isPromoteOrDemote = event.equals("promote") || event.equals("demote");
+
+        boolean moderatorUser = currentUser.getRole().ordinal() > HLRole.VIP.ordinal();
+        boolean isRoleChangeADemotion = role < user.getRole().ordinal();
+        boolean isRoleChangeAPromotion = role > user.getRole().ordinal();
+        // ensures that the role the user is changing to is permissible for the current
+        // user to execute. For example, disallow Moderator from promoting a user to
+        // Admin.
+        boolean canChangeRole = role < currentUser.getRole().ordinal();
+
+        if (moderatorUser && isPromoteOrDemote) {
+            if (isRoleChangeAPromotion && canChangeRole) {
+                user.setRole(HLRole.values()[role]);
+                hlUserService.changeRole(user);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            if (isRoleChangeADemotion && canChangeRole) {
+                user.setRole(HLRole.values()[role]);
+                hlUserService.changeRole(user);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
     }
+
+    @PostMapping("/changeUsername")
+    public ResponseEntity<HLUser> changeUsername(@RequestBody HLUser user) throws SQLException {
+        System.out.println("USER IN CHANGEUSERNAME CONTROLLER --> " + user);
+        if (hlUserService.isProfaneUsername(user.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return hlUserService.changeUsername(user);
+    }
+
 }

@@ -6,6 +6,9 @@ import { ShopComponent } from './shop/shop.component';
 import { AdminComponent } from './admin/admin.component';
 import { UserComponent } from './user/user.component';
 import { YoutubeDLComponent } from './youtube-dl/youtube-dl.component';
+import { ThreadListComponent } from './thread-list/thread-list.component';
+import { ThreadCreateComponent } from './thread-create/thread-create.component';
+import { ThreadDetailComponent } from './thread-detail/thread-detail.component';
 
 
 const routes: Routes = [
@@ -18,6 +21,9 @@ const routes: Routes = [
   { path: 'user', component: UserComponent },
   { path: 'admin', component: AdminComponent },
   { path: 'youtube-dl', component: YoutubeDLComponent },
+  { path: 'threads', component: ThreadListComponent },
+  { path: 'create-thread', component: ThreadCreateComponent },
+  { path: 'thread/:id', component: ThreadDetailComponent },
   { path: "**", redirectTo: "/home" }
 ];
 

@@ -1,0 +1,14 @@
+<div *ngIf="thread">
+    <h3>{{ thread.title }}</h3>
+    <p>{{ thread.content }}</p>
+
+    <h4>Posts</h4>
+    <div *ngFor="let post of thread.posts">
+        <p>{{ post.content }}</p>
+    </div>
+
+    <form (ngSubmit)="addPost()">
+        <textarea pInputTextarea [(ngModel)]="newPost.content" name="postContent"></textarea>
+        <button type="submit" pButton label="Add Post"></button>
+    </form>
+</div>
