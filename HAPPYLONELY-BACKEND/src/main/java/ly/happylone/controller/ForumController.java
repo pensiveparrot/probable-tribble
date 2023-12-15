@@ -19,7 +19,7 @@ import ly.happylone.service.DatabaseService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/forum")
+@RequestMapping("/api/forum")
 public class ForumController {
     @Autowired
     private DatabaseService databaseService;

@@ -859,12 +859,13 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<?> getThreadById(Long id) throws SQLException {
-        String sql = "SELECT * FROM messages WHERE id = ? AND message_context="
+        String sql = "SELECT * FROM messages WHERE id = ? AND message_context = ?"
                 + StringUtils.toString(MessageContext.Thread);
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setLong(1, id);
+            statement.setString(2, StringUtils.toString(MessageContext.Thread));
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     Message message = new Message();

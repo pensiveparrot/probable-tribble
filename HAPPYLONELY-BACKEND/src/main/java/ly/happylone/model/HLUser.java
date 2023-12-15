@@ -1,13 +1,13 @@
 package ly.happylone.model;
 
 import java.sql.Date;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -52,8 +52,7 @@ public class HLUser {
 	private HLRole role;
 
 	@Column(name = "badges")
-	@OneToMany(mappedBy = "user")
-	private HLBadge badges;
+	private List<HLBadge> badges;
 
 	@Column(name = "credits")
 	private int credits;

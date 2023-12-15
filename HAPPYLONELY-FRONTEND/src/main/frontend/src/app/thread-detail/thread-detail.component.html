@@ -1,6 +1,8 @@
 <div *ngIf="thread">
     <h3>{{ thread.title }}</h3>
-    <p>{{ thread.content }}</p>
+    <p>{{ thread.category }}</p>
+    <p>{{thread.id}}</p>
+
 
     <h4>Posts</h4>
     <div *ngFor="let post of thread.posts">
