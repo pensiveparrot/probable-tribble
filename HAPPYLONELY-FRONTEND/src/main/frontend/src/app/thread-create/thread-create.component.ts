@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 export class ThreadCreateComponent implements OnInit {
   message: Message = { content: '', sender: { id: 0, username: '', statusmsg: '', profileimg: '' }, date_sent: new Date() };
   newThread: Thread = {
+    content: '',
     title: '',
     category: '',
     posts: [this.message],

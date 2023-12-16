@@ -3,6 +3,7 @@ package ly.happylone.model;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.List;
 
 @Data
 @Entity
@@ -30,7 +31,10 @@ public class Message {
     @Column(name = "category", nullable = true)
     private String category;
 
-    @Column(name = "message_context")
+    @Column(name = "message_context", nullable = false)
     private MessageContext messageContext;
+
+    @Column(name = "posts", nullable = true)
+    private List<Post> posts;
 
 }

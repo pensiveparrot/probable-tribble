@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ThreadDetailComponent implements OnInit {
   newPost: Message = { content: '', sender: { id: 0, username: '', statusmsg: '', profileimg: '' }, date_sent: new Date() };
   thread: Thread = {
+    content: '',
     title: '',
     category: '',
     posts: [this.newPost],
@@ -31,6 +32,7 @@ export class ThreadDetailComponent implements OnInit {
       (response) => {
         console.log(response);
         this.thread = {
+          content: response.body.content,
           title: response.body.title,
           category: response.body.category,
           posts: response.body.posts,
