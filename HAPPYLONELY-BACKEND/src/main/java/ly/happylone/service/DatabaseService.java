@@ -10,7 +10,9 @@ import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
+import ly.happylone.model.Post;
 import ly.happylone.model.Product;
+import ly.happylone.model.Thread;
 
 public interface DatabaseService {
     // user code
@@ -73,9 +75,11 @@ public interface DatabaseService {
 
     // forum code
 
-    public ResponseEntity<?> addPost(Message message) throws SQLException;
+    public ResponseEntity<?> addPost(Post post) throws SQLException;
 
-    public ResponseEntity<?> addThread(Message message) throws SQLException;
+    public ResponseEntity<?> getPostsByThreadId(Long id) throws SQLException;
+
+    public ResponseEntity<?> addThread(Thread thread) throws SQLException;
 
     public ResponseEntity<?> getThreadById(Long id) throws SQLException;
 

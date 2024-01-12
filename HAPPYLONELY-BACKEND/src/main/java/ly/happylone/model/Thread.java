@@ -8,15 +8,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import java.sql.Date;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "posts")
-public class Post {
-
+@Table(name = "threads")
+public class Thread {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,12 +27,18 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    private HLUserResponse sender;
+    private HLUser sender;
 
     @Column(name = "date_sent", nullable = false) // Assuming every message should have a send date
     private Date dateSent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "thread_id")
-    private Thread thread;
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "posts")
+    @OneToMany(mappedBy = "thread")
+    private List<Post> posts;
 }

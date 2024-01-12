@@ -5,11 +5,11 @@
 
 
     <h4>Posts</h4>
-    <div *ngFor="let post of thread.posts">
-        <p>{{ post.content }}</p>
+    <div *ngFor="let post of thread.posts | keyvalue">
+        <p>{{ getPostContent(post.value) }}</p>
     </div>
 
-    <form (ngSubmit)="addPost()">
+    <form (ngSubmit)="addPost($event)">
         <textarea pInputTextarea [(ngModel)]="newPost.content" name="postContent"></textarea>
         <button type="submit" pButton label="Add Post"></button>
     </form>

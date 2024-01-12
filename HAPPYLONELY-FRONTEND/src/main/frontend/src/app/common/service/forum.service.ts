@@ -29,4 +29,8 @@ export class ForumService {
     return this.http.post<any>("https://" + window.location.hostname + ":8443/" + "api/forum/addCredits", credits, { observe: 'response', withCredentials: true }
     );
   }
+  getPostsByThreadId(id: number): Observable<any> {
+    return this.http.get<any>("https://" + window.location.hostname + ":8443/" + "api/forum/getPostsByThreadId/" + id, { observe: 'response', withCredentials: true }
+    );
+  }
 }

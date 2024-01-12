@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.Message;
 import ly.happylone.service.DatabaseService;
+import ly.happylone.model.Post;
+import ly.happylone.model.Thread;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -25,9 +27,9 @@ public class ForumController {
     private DatabaseService databaseService;
 
     @PostMapping("/addPost")
-    public ResponseEntity<?> addPost(@RequestBody Message message) throws SQLException {
+    public ResponseEntity<?> addPost(@RequestBody Post post) throws SQLException {
         try {
-            return databaseService.addPost(message);
+            return databaseService.addPost(post);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add post");
@@ -35,9 +37,9 @@ public class ForumController {
     }
 
     @PostMapping("/addThread")
-    public ResponseEntity<?> addThread(@RequestBody Message message) {
+    public ResponseEntity<?> addThread(@RequestBody Thread thread) {
         try {
-            return databaseService.addThread(message);
+            return databaseService.addThread(thread);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add thread");
@@ -74,6 +76,16 @@ public class ForumController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add credits");
+        }
+    }
+
+    @GetMapping("/getPostsByThreadId/{id}")
+    public ResponseEntity<?> getPostsByThreadId(@PathVariable Long id) {
+        try {
+            return databaseService.getPostsByThreadId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get posts");
         }
     }
 

@@ -1,5 +1,7 @@
 package ly.happylone.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,28 +12,29 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-import java.sql.Date;
 
 @Data
 @Entity
-@Table(name = "posts")
-public class Post {
-
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", nullable = false) // Made content non-nullable assuming every message should have content
+    @Column(name = "content", nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "sender_id", nullable = false)
     private HLUserResponse sender;
 
-    @Column(name = "date_sent", nullable = false) // Assuming every message should have a send date
-    private Date dateSent;
+    @Column(name = "date_sent", nullable = false)
+    private LocalDateTime dateSent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "thread_id")
-    private Thread thread;
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "category")
+    private String category;
+
 }

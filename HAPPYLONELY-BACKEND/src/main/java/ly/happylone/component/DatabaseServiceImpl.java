@@ -15,7 +15,8 @@ import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
-import ly.happylone.model.MessageContext;
+import ly.happylone.model.Thread;
+import ly.happylone.model.Post;
 import ly.happylone.model.Product;
 
 import javax.sql.DataSource;
@@ -776,35 +777,28 @@ public class DatabaseServiceImpl implements DatabaseService {
     // end of product code
 
     // start of forum code
-
     @Override
-    public ResponseEntity<?> addPost(Message message) throws SQLException {
-        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context) VALUES (?, ?, ?, ?)";
+    public ResponseEntity<?> addPost(Post post) throws SQLException {
+        String sql = "INSERT INTO posts (content, sender_id, date_sent, thread_id) VALUES (?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
-            if (message.getContent() == null || message.getContent().isEmpty()
-                    || message.getContent().isBlank()) {
+            if (post.getContent() == null || post.getContent().isEmpty()
+                    || post.getContent().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
-            } else if (message.getSender() == null || message.getSender().getId() == null) {
+            } else if (post.getSender() == null || post.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
-            } else if (message.getMessageContext() == null
-                    || StringUtils.isEmpty(StringUtils.toString(message.getMessageContext()))
-                    || StringUtils.toString(message.getMessageContext()).isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message context is null");
             } else {
-                statement.setString(1, message.getContent());
-                statement.setLong(2, message.getSender().getId());
+                statement.setString(1, post.getContent());
+                statement.setLong(2, post.getSender().getId());
                 statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-                statement.setString(4, StringUtils.toString(MessageContext.Post));
-
+                statement.setLong(4, post.getThread().getId());
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.TEXT_PLAIN);
-                    String path = message.getContent();
-                    System.out.println("Message path: " + path);
-                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+
+                    return new ResponseEntity<>(post, headers, HttpStatus.CREATED);
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
                 }
@@ -818,32 +812,57 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public ResponseEntity<?> addThread(Message message) throws SQLException {
-        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context,title, category) VALUES (?, ?, ?, ?, ?, ?)";
+    public ResponseEntity<?> getPostsByThreadId(Long id) throws SQLException {
+        String sql = "SELECT * FROM posts WHERE thread_id = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
-            if (message.getContent() == null || message.getContent().isEmpty()
-                    || message.getContent().isBlank()) {
+            statement.setLong(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Post> posts = new ArrayList<>();
+                while (rs.next()) {
+                    Post post = new Post();
+                    post.setId(rs.getLong("id"));
+                    post.setContent(rs.getString("content"));
+                    post.setDateSent(rs.getDate("date_sent"));
+                    HLUser user = new HLUserServiceImpl().getUserById(rs.getLong("sender_id"));
+                    HLUserResponse hluser = new HLUserResponse(user);
+                    post.setSender(hluser);
+                    posts.add(post);
+                }
+                return ResponseEntity.ok(posts);
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Posts not found");
+    }
+
+    @Override
+    public ResponseEntity<?> addThread(Thread thread) throws SQLException {
+        String sql = "INSERT INTO threads (content, sender_id, date_sent, title, category) VALUES (?, ?, ?, ?, ?)";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            if (thread.getContent() == null || thread.getContent().isEmpty()
+                    || thread.getContent().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
-            } else if (message.getSender() == null || message.getSender().getId() == null) {
+            } else if (thread.getSender() == null || thread.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
-            } else if (message.getMessageContext() == null
-                    || StringUtils.isEmpty(StringUtils.toString(message.getMessageContext()))
-                    || StringUtils.toString(message.getMessageContext()).isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message context is null");
             } else {
-                statement.setString(1, message.getContent());
-                statement.setLong(2, message.getSender().getId());
+                System.out.println("content: " + thread.getContent() + " sender id: " + thread.getSender().getId()
+                        + " message title: " + thread.getTitle() + "message category: "
+                        + thread.getCategory());
+                statement.setString(1, thread.getContent());
+                statement.setLong(2, thread.getSender().getId());
                 statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-                statement.setString(4, StringUtils.toString(MessageContext.Thread));
-                statement.setString(5, message.getTitle());
-                statement.setString(6, message.getCategory());
+                statement.setString(4, thread.getTitle());
+                statement.setString(5, thread.getCategory());
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.TEXT_PLAIN);
-                    String path = message.getContent();
+                    String path = thread.getContent();
                     System.out.println("Message path: " + path);
                     return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
                 } else {
@@ -859,13 +878,12 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<?> getThreadById(Long id) throws SQLException {
-        String sql = "SELECT * FROM messages WHERE id = ? AND message_context = ?"
-                + StringUtils.toString(MessageContext.Thread);
+        String sql = "SELECT * FROM threads WHERE id = ? AND category = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setLong(1, id);
-            statement.setString(2, StringUtils.toString(MessageContext.Thread));
+            statement.setString(2, "Thread");
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     Message message = new Message();
@@ -886,8 +904,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<?> addProfileComment(Message message) throws SQLException {
-        String sql = "INSERT INTO messages (content, sender_id, date_sent, message_context) VALUES (?, ?, ?,"
-                + StringUtils.toString(MessageContext.Comment) + ")";
+        String sql = "INSERT INTO comments (content, sender_id, date_sent) VALUES (?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
@@ -896,10 +913,6 @@ public class DatabaseServiceImpl implements DatabaseService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
             } else if (message.getSender() == null || message.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
-            } else if (message.getMessageContext() == null
-                    || StringUtils.isEmpty(StringUtils.toString(message.getMessageContext()))
-                    || StringUtils.toString(message.getMessageContext()).isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message context is null");
             } else {
                 statement.setString(1, message.getContent());
                 statement.setLong(2, message.getSender().getId());
