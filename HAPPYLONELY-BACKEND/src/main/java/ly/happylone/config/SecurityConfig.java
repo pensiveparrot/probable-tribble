@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,7 +16,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import ly.happylone.service.DatabaseService;
-import ly.happylone.service.CustomUserDetailsService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +25,7 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+
 import java.util.Arrays;
 
 @Configuration
@@ -32,9 +33,8 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private DatabaseService databaseService;
@@ -42,7 +42,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(encoder());
         return provider;
     }
@@ -57,20 +57,21 @@ public class SecurityConfig {
         http
                 .csrf(this::configureCsrf)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                         .accessDeniedHandler((request, response, accessDeniedException) -> response.getWriter()
                                 .write("Custom CSRF check failed")))
                 .cors(cors -> cors.configurationSource(configureCors()))
+                .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .formLogin(login -> login
-                        .loginPage("/login") // Update the login URL
-                        .permitAll()
-                        .successHandler((request, response, authentication) -> {
-                            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":"
-                                    + request.getServerPort();
-                            response.sendRedirect(baseUrl + "/#/home"); // Use hash-based routing
-                        }))
-                .logout(logout -> logout.permitAll())
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/index.html", "/").permitAll() // Allow unauthenticated access to the Angular
+                        .requestMatchers("/login", "/register").permitAll() // application.
+                        .requestMatchers("/styles.css", "/polyfills.js", "polyfills.js.map",
+                                "/runtime.js", "/vendor.js", "vendor.js.map",
+                                "/main.js", "favicon.ico",
+                                "/poppins-v15-latin-ext_latin-regular.woff2",
+                                "/poppins-v15-latin-ext_latin-600.woff2", "main.js.map", "styles.css.map", "/assets/**")
+                        .permitAll()
                         .requestMatchers("/getProductByName/**").access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.POST, "/addProduct/**")
                         .access(adminAuthorizationManager())
@@ -86,11 +87,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/changePassword/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/editUser/**").access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").access(adminAuthorizationManager())
-                        .requestMatchers("/#/admin/**").access(adminAuthorizationManager())
-                        .requestMatchers("/login/**", "/register/**").permitAll()
                         .requestMatchers("/websocket/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/download/**").authenticated()
                         .anyRequest().authenticated());
+
         return http.build();
     }
 

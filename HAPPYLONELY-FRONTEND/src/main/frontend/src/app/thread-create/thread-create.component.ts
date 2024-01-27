@@ -23,7 +23,9 @@ export class ThreadCreateComponent {
       // Set the sender of the new thread
       console.log("Submitting new thread:", JSON.stringify(this.newThread)); // Extra logging
       const response = await firstValueFrom(this.forumService.addThread(this.newThread));
-      this.router.navigate(['/thread', response.body.id]);
+      console.log(response);
+      this.forumService.currentThreadId = response.body.id;
+      this.router.navigate(['/thread', this.forumService.currentThreadId]);
     } catch (error) {
       console.error(error);
     }

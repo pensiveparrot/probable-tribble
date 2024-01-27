@@ -30,7 +30,8 @@ export class ThreadListComponent implements OnInit {
     this.router.navigate(['/thread-create']);
   }
 
-  viewThread(id: number): void {
-    this.router.navigate(['/thread', id]);
+  viewThread(id: string): void {
+    this.forumService.currentThreadId = id;
+    this.router.navigate(['/thread', this.forumService.currentThreadId]);
   }
 }

@@ -1,0 +1,14 @@
+.thread-form {
+    max-width: 600px;
+    margin: auto;
+}
+
+.form-control {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.submit-button {
+    display: block;
+    margin: auto;
+}

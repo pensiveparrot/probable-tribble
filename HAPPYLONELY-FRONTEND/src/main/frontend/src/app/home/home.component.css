@@ -1,98 +1,111 @@
+body {
+    background-color: #181818;
+    /* softer black background */
+    color: #ffffff;
+    /* white text */
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    /* increased font size */
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    /* increased padding */
+    background-color: #181818;
+    /* softer black background */
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 .message-item {
     display: flex;
     align-items: center;
-    margin: 10px 0;
+    padding: 15px;
+    /* increased padding */
+    border-radius: 5px;
+    background-color: #282828;
+    /* slightly lighter black for contrast */
+    margin-bottom: 15px;
+    /* increased margin */
+    color: #ffffff;
+    /* white text */
 }
 
 .message-image {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    /* increased size */
+    height: 50px;
+    /* increased size */
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 25px;
+    /* increased margin */
     cursor: pointer;
 }
 
 .message-timestamp {
-    font-size: 10px;
-    margin-right: 10px;
+    font-size: 14px;
+    /* increased font size */
+    margin-right: 25px;
+    /* increased margin */
+    color: #888;
 }
-
-.message-content img {
-    max-width: 100%;
-    height: auto;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-}
-
-.messages-container {
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-
-div[ngIf="this.hidden === true"] {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    /* Take up the full height of the viewport */
-}
-
-/* This positions the minimized dialog above the input section */
-.minimized-dialog {
-    position: absolute;
-    bottom: 50px;
-    /* Adjust this value based on the height of your input section */
-    right: 10px;
-}
-
-.modal-control {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: color 0.3s;
-}
-
-.modal-control:hover {
-    color: red;
-}
-
 
 .input-section {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
-    background-color: #f5f5f5;
+    padding: 25px;
+    /* increased padding */
+    background-color: #282828;
+    /* slightly lighter black for contrast */
     border-top: 1px solid #ccc;
-    width: 100%;
-    /* This makes sure the input section is full width */
+    color: #ffffff;
+    /* white text */
 }
 
 .input-textarea {
     flex: 1;
     resize: none;
-    padding: 10px;
-    margin-right: 10px;
+    padding: 15px;
+    /* increased padding */
+    margin-right: 15px;
+    /* increased margin */
     border-radius: 5px;
     border: 1px solid #ccc;
+    color: #ffffff;
+    /* white text */
+    background-color: #282828;
+    /* slightly lighter black for contrast */
 }
-
 
 .btn-upload,
 .btn-send {
-    margin-left: 5px;
+    margin-left: 15px;
+    /* increased margin */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 15px 25px;
+    /* increased padding */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-upload:hover,
+.btn-send:hover {
+    background-color: #0056b3;
 }
 
 .profile-dialog-image {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    /* increased size */
+    height: 120px;
+    /* increased size */
     border-radius: 50%;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
+    /* increased margin */
     object-fit: cover;
 }

@@ -9,6 +9,7 @@ import { Post, Thread } from 'src/app/home/message';
 export class ForumService {
 
   constructor(private http: HttpClient) { }
+  currentThreadId: string = "";
   addPost(post: Post): Observable<any> {
     return this.http.post<Post>("https://" + window.location.hostname + ":8443/" + "api/forum/addPost", post, { observe: 'response', withCredentials: true }
     );

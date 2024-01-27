@@ -1,0 +1,31 @@
+<p-toolbar>
+    <div class="p-toolbar-group-right">
+        <a pButton routerLink="/register" label="Register"></a>
+    </div>
+</p-toolbar>
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-12 p-md-6 p-lg-4">
+        <p-messages [(value)]="msgs"></p-messages>
+        <p-card header="Login">
+            <form (ngSubmit)="login()">
+                <div class="p-field">
+                    <label for="username">Username</label>
+                    <input id="username" [(ngModel)]="username" name="username" pInputText
+                        placeholder="Enter username" />
+                </div>
+
+                <div class="p-field">
+                    <label for="password">Password</label>
+                    <input id="password" [(ngModel)]="password" name="password" pPassword
+                        placeholder="Enter password" />
+                </div>
+
+                <p-button type="submit" label="Login"></p-button>
+                <span> Not registered ?
+                    <a routerLink="/register">Register here</a>
+                </span>
+            </form>
+        </p-card>
+    </div>
+</div>

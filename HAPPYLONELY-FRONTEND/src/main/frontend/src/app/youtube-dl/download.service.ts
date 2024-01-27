@@ -9,7 +9,7 @@ import { Post, Thread } from 'src/app/home/message';
 export class DownloadService {
     constructor(private http: HttpClient) { }
 
-    download(url, type) {
+    download(url: any, type: any) {
         return this.http.post("https://" + window.location.hostname + ":8443/" + "api/youtube-dl/download", { url, type }, { observe: 'response', responseType: 'blob' });
     }
 }

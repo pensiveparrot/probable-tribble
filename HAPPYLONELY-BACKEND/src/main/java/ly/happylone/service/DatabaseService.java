@@ -9,12 +9,21 @@ import ly.happylone.model.Art;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
+import ly.happylone.model.LoginRequest;
 import ly.happylone.model.Message;
 import ly.happylone.model.Post;
 import ly.happylone.model.Product;
+import ly.happylone.model.RegisterRequest;
 import ly.happylone.model.Thread;
 
 public interface DatabaseService {
+    // hlauth code
+    public ResponseEntity<?> login(LoginRequest loginRequest) throws SQLException;
+
+    public ResponseEntity<?> register(RegisterRequest registerRequest) throws SQLException;
+
+    public Boolean isProfaneUsername(String username);
+
     // user code
     public HLUser getUserById(String id) throws SQLException;
 

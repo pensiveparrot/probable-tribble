@@ -14,6 +14,9 @@ export class UserService {
     changeEmail(hlUser: HLUser): Observable<any> {
         return this.http.put(`https://${window.location.hostname}:8443/api/user/changeEmail`, hlUser, this.options);
     }
+    getUserById(userId: string): Observable<any> {
+        return this.http.get<HLUser>(`https://${window.location.hostname}:8443/api/user/getUserById/${userId}`, this.options);
+    }
     getUser(): Observable<any> {
         return this.http.get<HLUser>("https://" + window.location.hostname + ":8443/" + "api/user/getUserByUsername", { observe: 'response', withCredentials: true }
         );

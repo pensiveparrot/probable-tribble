@@ -30,6 +30,10 @@ import { TableModule } from 'primeng/table';
 import { ThreadListComponent } from './thread-list/thread-list.component';
 import { ThreadDetailComponent } from './thread-detail/thread-detail.component';
 import { ThreadCreateComponent } from './thread-create/thread-create.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { ToolbarModule } from 'primeng/toolbar';
+import { HeaderComponent } from './header/header.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +46,9 @@ import { ThreadCreateComponent } from './thread-create/thread-create.component';
     ThreadListComponent,
     ThreadDetailComponent,
     ThreadCreateComponent,
+    LoginComponent,
+    RegisterComponent,
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +69,7 @@ import { ThreadCreateComponent } from './thread-create/thread-create.component';
     BrowserAnimationsModule,
     FileUploadModule,
     TableModule,
+    ToolbarModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({
       cookieName: 'XSRF-TOKEN',
@@ -70,7 +78,11 @@ import { ThreadCreateComponent } from './thread-create/thread-create.component';
 
   ],
 
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: CsrfInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

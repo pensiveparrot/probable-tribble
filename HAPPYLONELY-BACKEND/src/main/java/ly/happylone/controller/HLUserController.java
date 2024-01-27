@@ -18,24 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
-import ly.happylone.service.HLUserService;
+import ly.happylone.service.DatabaseService;
 
 @RequestMapping("/api/user")
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class HLUserController {
 
-    private final HLUserService hlUserService;
+    private final DatabaseService databaseService;
 
     @Autowired
-    public HLUserController(HLUserService hlUserService) {
-        this.hlUserService = hlUserService;
+    public HLUserController(DatabaseService databaseService) {
+        this.databaseService = databaseService;
     }
 
     @GetMapping("/getUserById/{id}")
     public HLUserResponse getUserById(@PathVariable String id) throws SQLException {
         System.out.println("USER IN GETUSERBYID CONTROLLER --> " + id);
-        HLUser user = hlUserService.getUserById(id);
+        HLUser user = databaseService.getUserById(id);
         return new HLUserResponse(user);
 
     }
@@ -44,13 +44,13 @@ public class HLUserController {
     public int getUserByRole() throws SQLException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return hlUserService.getUserRole(username);
+        return databaseService.getUserRole(username);
     }
 
     @PostMapping("/changeEmail")
     public ResponseEntity<HLUser> changeEmail(@RequestBody HLUser user) throws SQLException {
         System.out.println("USER IN CHANGEEMAIL CONTROLLER --> " + user);
-        return hlUserService.changeEmail(user);
+        return databaseService.changeEmail(user);
     }
 
     @GetMapping("/getUserByUsername")
@@ -59,31 +59,31 @@ public class HLUserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         System.out.println("USERNAME IN GETUSERBYUSERNAME CONTROLLER --> " + username);
-        return hlUserService.getUserByUsernameMin(username);
+        return databaseService.getUserByUsernameMin(username);
 
     }
 
     @PostMapping("/editUser")
     public ResponseEntity<HLUserResponse> editUser(@RequestBody HLUserResponse user) throws SQLException {
         System.out.println("USER IN EDITUSER CONTROLLER --> " + user);
-        return hlUserService.editUser(user);
+        return databaseService.editUser(user);
     }
 
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) throws SQLException {
-        hlUserService.deleteUser(id);
+        databaseService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/banUser/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> banUser(@PathVariable("id") String id) throws SQLException {
-        hlUserService.banUser(id);
+        databaseService.banUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unbanUser/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> unbanUser(@PathVariable("hluser") HLUser user) throws SQLException {
-        hlUserService.unbanUser(user);
+        databaseService.unbanUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -91,10 +91,10 @@ public class HLUserController {
     @RequestMapping(value = "/changeRole/{id}/{role}", method = RequestMethod.PUT)
     public ResponseEntity<Void> changeRole(@PathVariable("id") String id, @PathVariable("role") int role,
             @PathVariable String event) throws SQLException {
-        HLUser user = hlUserService.getUserById(id);
+        HLUser user = databaseService.getUserById(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        HLUser currentUser = hlUserService.getUserByUsername(username);
+        HLUser currentUser = databaseService.getUserByName(username);
         boolean isPromoteOrDemote = event.equals("promote") || event.equals("demote");
 
         boolean moderatorUser = currentUser.getRole().ordinal() > HLRole.VIP.ordinal();
@@ -108,12 +108,12 @@ public class HLUserController {
         if (moderatorUser && isPromoteOrDemote) {
             if (isRoleChangeAPromotion && canChangeRole) {
                 user.setRole(HLRole.values()[role]);
-                hlUserService.changeRole(user);
+                databaseService.changeRole(user);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
             if (isRoleChangeADemotion && canChangeRole) {
                 user.setRole(HLRole.values()[role]);
-                hlUserService.changeRole(user);
+                databaseService.changeRole(user);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }
@@ -125,10 +125,10 @@ public class HLUserController {
     @PostMapping("/changeUsername")
     public ResponseEntity<HLUser> changeUsername(@RequestBody HLUser user) throws SQLException {
         System.out.println("USER IN CHANGEUSERNAME CONTROLLER --> " + user);
-        if (hlUserService.isProfaneUsername(user.getUsername())) {
+        if (databaseService.isProfaneUsername(user.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        return hlUserService.changeUsername(user);
+        return databaseService.changeUsername(user);
     }
 
 }

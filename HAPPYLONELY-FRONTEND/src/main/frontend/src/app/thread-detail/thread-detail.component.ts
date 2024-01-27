@@ -16,7 +16,8 @@ export class ThreadDetailComponent implements OnInit {
   user: HLUser = {} as HLUser;
   thread: Thread = {} as Thread;
   newPost: Post = {} as Post;
-  id: number = 0;
+  id: string = this.forumService.currentThreadId;
+
 
   ngOnInit(): void {
     this.id = this.aRoute.snapshot.params['id'];
@@ -35,8 +36,8 @@ export class ThreadDetailComponent implements OnInit {
     }
   }
   getThread() {
-    const id = this.aRoute.snapshot.paramMap.get('id')!;
-    this.forumService.getThreadById(id).subscribe(
+
+    this.forumService.getThreadById(this.id).subscribe(
       {
         next: (response) => {
           console.log(response);
@@ -84,14 +85,24 @@ export class ThreadDetailComponent implements OnInit {
   getPosts() {
     const id = this.aRoute.snapshot.paramMap.get('id')!;
     this.forumService.getPostsByThreadId(id).subscribe({
-      next: (response) => {
+      next: async (response) => {
         console.log(response);
         this.thread.posts = response.body;
+
+        // Update the profileimg of the sender in each post
+        for (let post of this.thread.posts!) {
+          if (post.sender.id === this.user.id) {
+            post.sender.profileimg = this.user.profileimg;
+          } else {
+            // If the sender is not the current user, fetch their details
+            const userResponse = await firstValueFrom(this.userService.getUserById(post.sender.id));
+            post.sender.profileimg = userResponse.body.profileimg;
+          }
+        }
       },
       error: (error) => {
         console.error("An error occurred:", error);
       }
     });
-
   }
 }

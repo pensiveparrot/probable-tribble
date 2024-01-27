@@ -1,13 +1,15 @@
 <div *ngIf="thread">
     <h3>{{ thread.title }}</h3>
     <p>{{ thread.category }}</p>
-    <p>{{thread.id}}</p>
+    <p>{{thread.content}}</p>
 
     <h4>Posts</h4>
-    <div *ngFor="let post of thread.posts">
+    <div *ngFor="let post of thread.posts" class="post">
         <img [src]="post.sender.profileimg" alt="User Image" width="50" height="50">
-        <p>{{ post.sender.username }}</p>
-        <p>{{ post.content }}</p>
+        <div>
+            <p>{{ post.sender.username }}</p>
+            <p>{{ post.content }}</p>
+        </div>
     </div>
 
     <form (ngSubmit)="addPost()" class="input-area">

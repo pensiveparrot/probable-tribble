@@ -9,24 +9,29 @@ import { YoutubeDLComponent } from './youtube-dl/youtube-dl.component';
 import { ThreadListComponent } from './thread-list/thread-list.component';
 import { ThreadCreateComponent } from './thread-create/thread-create.component';
 import { ThreadDetailComponent } from './thread-detail/thread-detail.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { AuthGuard } from './auth.guard';
+import { HeaderComponent } from './header/header.component';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'art', component: ArtComponent },
-  { path: 'shop', component: YoutubeDLComponent },
-  { path: 'shop', component: ShopComponent },
-  { path: 'user', component: UserComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'youtube-dl', component: YoutubeDLComponent },
-  { path: 'threads', component: ThreadListComponent },
-  { path: 'create-thread', component: ThreadCreateComponent },
-  { path: 'thread/:id', component: ThreadDetailComponent },
-  { path: "**", redirectTo: "/home" }
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'art', component: ArtComponent, canActivate: [AuthGuard] },
+  { path: 'shop', component: YoutubeDLComponent, canActivate: [AuthGuard] },
+  { path: 'shop', component: ShopComponent, canActivate: [AuthGuard] },
+  { path: 'user', component: UserComponent, canActivate: [AuthGuard] },
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+  { path: 'youtube-dl', component: YoutubeDLComponent, canActivate: [AuthGuard] },
+  { path: 'threads', component: ThreadListComponent, canActivate: [AuthGuard] },
+  { path: 'create-thread', component: ThreadCreateComponent, canActivate: [AuthGuard] },
+  { path: 'thread/:id', component: ThreadDetailComponent, canActivate: [AuthGuard] },
+  { path: 'header', component: HeaderComponent, canActivate: [AuthGuard] },
+  { path: "**", redirectTo: "login" },
 ];
-
 /*
 
 const routes: Routes = [

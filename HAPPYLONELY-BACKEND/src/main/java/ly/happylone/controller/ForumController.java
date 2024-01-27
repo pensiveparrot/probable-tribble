@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import ly.happylone.model.HLUser;
@@ -27,6 +28,7 @@ public class ForumController {
     private DatabaseService databaseService;
 
     @PostMapping("/addPost")
+    @ResponseBody
     public ResponseEntity<?> addPost(@RequestBody Post post) throws SQLException {
         try {
             return databaseService.addPost(post);
@@ -37,9 +39,9 @@ public class ForumController {
     }
 
     @PostMapping("/addThread")
+    @ResponseBody
     public ResponseEntity<?> addThread(@RequestBody Thread thread) throws SQLException {
         try {
-
             return databaseService.addThread(thread);
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,6 +70,7 @@ public class ForumController {
     }
 
     @PostMapping("/addProfileComment")
+    @ResponseBody
     public ResponseEntity<?> addProfileComment(@RequestBody Message message) {
         try {
             return databaseService.addProfileComment(message);

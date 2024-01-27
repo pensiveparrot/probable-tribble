@@ -2,10 +2,17 @@ package ly.happylone.component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
@@ -14,10 +21,12 @@ import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
+import ly.happylone.model.LoginRequest;
 import ly.happylone.model.Message;
 import ly.happylone.model.Thread;
 import ly.happylone.model.Post;
 import ly.happylone.model.Product;
+import ly.happylone.model.RegisterRequest;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,20 +37,187 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import ly.happylone.service.DatabaseService;
 
 @Component
-public class DatabaseServiceImpl implements DatabaseService {
+public class DatabaseServiceImpl implements UserDetailsService, DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
 
     private final DataSource dataSource;
 
-    public DatabaseServiceImpl(DataSource dataSource) {
+    private PasswordEncoder passwordEncoder;
+
+    public DatabaseServiceImpl(DataSource dataSource, @Lazy PasswordEncoder passwordEncoder) {
         this.dataSource = dataSource;
+        this.passwordEncoder = passwordEncoder;
+
+    }
+
+    // start of hlauth code DatabaseServiceImpl
+
+    @Override
+    public ResponseEntity<?> login(LoginRequest loginRequest) throws SQLException {
+        String sql = "select * from hluser where username=?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, loginRequest.getUsername());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                String hashedPassword = rs.getString("password");
+                if (BCrypt.checkpw(loginRequest.getPassword(), hashedPassword)) {
+                    return ResponseEntity.ok("Login successful");
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }
+
+    @Override
+    public Boolean isProfaneUsername(String username) {
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+
+        List<String> a = Arrays.asList("^[a@][s\\$][s\\$]$", "[a@][s\\$][s\\$]h[o0][l1][e3][s\\$]?",
+                "b[a@][s\\$][t\\+][a@]rd ", "b[e3][a@][s\\$][t\\+][i1][a@]?[l1]([i1][t\\+]y)?",
+                "b[e3][a@][s\\$][t\\+][i1][l1][i1][t\\+]y", "b[e3][s\\$][t\\+][i1][a@][l1]([i1][t\\+]y)?",
+                "b[i1][t\\+]ch[s\\$]?", "b[i1][t\\+]ch[e3]r[s\\$]?", "b[i1][t\\+]ch[e3][s\\$]", "b[i1][t\\+]ch[i1]ng?",
+                "b[l1][o0]wj[o0]b[s\\$]?", "c[l1][i1][t\\+]", "^(c|k|ck|q)[o0](c|k|ck|q)[s\\$]?$",
+                "(c|k|ck|q)[o0](c|k|ck|q)[s\\$]u", "(c|k|ck|q)[o0](c|k|ck|q)[s\\$]u(c|k|ck|q)[e3]d ",
+                "(c|k|ck|q)[o0](c|k|ck|q)[s\\$]u(c|k|ck|q)[e3]r", "(c|k|ck|q)[o0](c|k|ck|q)[s\\$]u(c|k|ck|q)[i1]ng",
+                "(c|k|ck|q)[o0](c|k|ck|q)[s\\$]u(c|k|ck|q)[s\\$]", "^cum[s\\$]?$", "cumm??[e3]r", "cumm?[i1]ngcock",
+                "(c|k|ck|q)um[s\\$]h[o0][t\\+]", "(c|k|ck|q)un[i1][l1][i1]ngu[s\\$]",
+                "(c|k|ck|q)un[i1][l1][l1][i1]ngu[s\\$]", "(c|k|ck|q)unn[i1][l1][i1]ngu[s\\$]",
+                "(c|k|ck|q)un[t\\+][s\\$]?", "(c|k|ck|q)un[t\\+][l1][i1](c|k|ck|q)",
+                "(c|k|ck|q)un[t\\+][l1][i1](c|k|ck|q)[e3]r", "(c|k|ck|q)un[t\\+][l1][i1](c|k|ck|q)[i1]ng",
+                "cyb[e3]r(ph|f)u(c|k|ck|q)", "d[a@]mn", "d[i1]ck", "d[i1][l1]d[o0]", "d[i1][l1]d[o0][s\\$]",
+                "d[i1]n(c|k|ck|q)", "d[i1]n(c|k|ck|q)[s\\$]", "[e3]j[a@]cu[l1]", "(ph|f)[a@]g[s\\$]?",
+                "(ph|f)[a@]gg[i1]ng", "(ph|f)[a@]gg?[o0][t\\+][s\\$]?", "(ph|f)[a@]gg[s\\$]",
+                "(ph|f)[e3][l1][l1]?[a@][t\\+][i1][o0]", "(ph|f)u(c|k|ck|q)", "(ph|f)u(c|k|ck|q)[s\\$]?",
+                "g[a@]ngb[a@]ng[s\\$]?", "g[a@]ngb[a@]ng[e3]d", "g[a@]y", "h[o0]m?m[o0]", "h[o0]rny",
+                "j[a@](c|k|ck|q)\\-?[o0](ph|f)(ph|f)?", "j[e3]rk\\-?[o0](ph|f)(ph|f)?", "j[i1][s\\$z][s\\$z]?m?",
+                "[ck][o0]ndum[s\\$]?", "mast(e|ur)b(8|ait|ate)", "n+[i1]+[gq]+[e3]*r+[s\\$]*",
+                "[o0]rg[a@][s\\$][i1]m[s\\$]?", "[o0]rg[a@][s\\$]m[s\\$]?", "p[e3]nn?[i1][s\\$]", "p[i1][s\\$][s\\$]",
+                "p[i1][s\\$][s\\$][o0](ph|f)(ph|f) ", "p[o0]rn", "p[o0]rn[o0][s\\$]?", "p[o0]rn[o0]gr[a@]phy",
+                "pr[i1]ck[s\\$]?", "pu[s\\$][s\\$][i1][e3][s\\$]", "pu[s\\$][s\\$]y[s\\$]?", "[s\\$][e3]x",
+                "[s\\$]h[i1][t\\+][s\\$]?", "[s\\$][l1]u[t\\+][s\\$]?", "[s\\$]mu[t\\+][s\\$]?", "[s\\$]punk[s\\$]?",
+                "[t\\+]w[a@][t\\+][s\\$]?");
+        if (p.matcher(username).find()
+                || a.stream().anyMatch(username::matches)) {
+            return true;
+        }
+        return false;
+
+    }
+
+    public HLUser findHlUserByUsername(String username) {
+        return getUserByName(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (username == null || username.isEmpty() || username.isBlank()) {
+            throw new UsernameNotFoundException("Username cannot be null");
+        }
+        if (isProfaneUsername(username)) {
+            throw new UsernameNotFoundException("Username cannot contain profanity");
+        }
+        HLUser hlUser = getUserByName(username);
+        if (hlUser == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        // Update last login and other fields
+        hlUser.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
+        hlUser.setUserloggedin(true);
+        HLUserResponse hlUserResponse = new HLUserResponse(hlUser);
+        String sql = "insert into hluser_response (id, username, profileimg, statusmsg) values (?, ?, ?, ?)";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+            if (getUserByUsernameMin(hlUserResponse.getUsername())
+                    .getStatusCode() == HttpStatus.NOT_FOUND) {
+                System.out.println("User not found, adding to hluser_response");
+                PreparedStatement statement = con.prepareStatement(sql);
+                statement.setString(1, hlUser.getId()); // Use hluser id for hluser_response id
+                statement.setString(2, hlUserResponse.getUsername());
+                statement.setString(3, hlUserResponse.getProfileimg());
+                statement.setString(4, hlUserResponse.getStatusmsg());
+                statement.executeUpdate();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return User.builder()
+                .username(hlUser.getUsername())
+                .password(hlUser.getPassword())
+                .roles(hlUser.getRole().name())
+                .accountLocked(hlUser.getUnbandate() != null)
+                .build();
+    }
+
+    public ResponseEntity<?> register(RegisterRequest registerRequest) throws SQLException {
+        String sql = "insert into hluser (id, email, username, password, registerdate, lastlogindate, unbandate, statusmsg, profileimg, userloggedin, role) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        System.out.println("in register service");
+        if (registerRequest.getUsername() == null || registerRequest.getUsername().isEmpty()
+                || registerRequest.getUsername().isBlank()) {
+            throw new UsernameNotFoundException("Username cannot be null");
+        }
+        if (isProfaneUsername(registerRequest.getUsername())) {
+            throw new UsernameNotFoundException("Username cannot contain profanity");
+        }
+        boolean userExists = userExists(registerRequest.getUsername().trim());
+        System.out.println("Does user exist? " + userExists);
+        if (!userExists) {
+            HLUser hlUser = new HLUser();
+
+            try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                    System.getenv("PGUSER"), System.getenv("PGPW"))) {
+                PreparedStatement statement = con.prepareStatement(sql);
+                String id = UUID.randomUUID().toString();
+                statement.setString(1, id); // Generate UUID for id
+                statement.setString(2, registerRequest.getEmail());
+                statement.setString(3, registerRequest.getUsername());
+                statement.setString(4, passwordEncoder.encode(registerRequest.getPassword()));
+                hlUser.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
+                hlUser.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
+                statement.setDate(7, null);
+                statement.setString(8, "I'm new here!");
+                statement.setString(9, "https://i.imgur.com/mCHMpLT.png");
+                statement.setBoolean(10, true);
+                statement.setInt(11, HLRole.Standard.ordinal());
+
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated > 0) {
+                    System.out.println("User added successfully");
+                    hlUser.setId(id);
+                    return ResponseEntity.ok(hlUser);
+                } else {
+                    System.out.println("User not added");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add user");
+                }
+            } catch (Exception e) {
+                System.out.println("Exception while adding user: " + e.getMessage());
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+            }
+        } else {
+            System.out.println("User already exists");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
+        }
     }
 
     // start of user code DatabaseServiceImpl
@@ -541,7 +717,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             } else if (art.getArtAuthor() == null || art.getArtAuthor().isEmpty() || art.getArtAuthor().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Art author is null");
             } else {
-                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                String id = UUID.randomUUID().toString();
+                statement.setString(1, id); // Generate UUID for id
                 statement.setString(2, art.getArtName());
                 statement.setString(3, art.getArtAuthor());
                 statement.setDate(4, new java.sql.Date(new Date().getTime()));
@@ -550,10 +727,9 @@ public class DatabaseServiceImpl implements DatabaseService {
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.TEXT_PLAIN);
-                    String path = art.getArtImageFilePath();
-                    System.out.println("Art path: " + path);
-                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    art.setId(id); // Set the generated id to the art object
+                    return new ResponseEntity<>(art, headers, HttpStatus.CREATED);
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add art");
                 }
@@ -580,7 +756,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                 message.setId(rs.getString("id"));
                 message.setContent(rs.getString("content"));
                 message.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
-                HLUser user = new HLUserServiceImpl().getUserById(rs.getString("sender_id"));
+                HLUser user = getUserById(rs.getString("sender_id"));
                 HLUserResponse hluser = new HLUserResponse(user);
                 message.setSender(hluser);
                 messages.add(message);
@@ -678,13 +854,15 @@ public class DatabaseServiceImpl implements DatabaseService {
 
             if (getProductByName(product.getProductname()).getStatusCode() == HttpStatus.NOT_FOUND) {
                 PreparedStatement statement = con.prepareStatement(sql);
-                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                String id = UUID.randomUUID().toString();
+                statement.setString(1, id); // Generate UUID for id
                 statement.setString(2, product.getProductname());
                 statement.setBigDecimal(3, product.getPrice());
                 statement.setString(4, product.getInventorystatus());
                 statement.setString(5, product.getImage());
                 statement.setString(6, product.getShoplink());
                 statement.executeUpdate();
+                product.setId(id);
                 return ResponseEntity.status(HttpStatus.OK).body(product);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
@@ -781,6 +959,22 @@ public class DatabaseServiceImpl implements DatabaseService {
     // start of forum code
     @Override
     public ResponseEntity<?> addPost(Post post) throws SQLException {
+        // Check if the thread exists
+        String checkThreadSql = "SELECT COUNT(*) FROM threads WHERE id = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement checkThreadStatement = con.prepareStatement(checkThreadSql)) {
+            checkThreadStatement.setString(1, post.getThread().getId());
+            ResultSet rs = checkThreadStatement.executeQuery();
+            if (rs.next() && rs.getInt(1) == 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thread does not exist");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
+        }
+
+        // If the thread exists, insert the post
         String sql = "INSERT INTO posts (id, content, sender_id, date_sent, thread_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
@@ -791,7 +985,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             } else if (post.getSender() == null || post.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
             } else {
-                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                String id = UUID.randomUUID().toString();
+                statement.setString(1, id); // Generate UUID for id
                 statement.setString(2, post.getContent());
                 statement.setString(3, post.getSender().getId());
                 statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
@@ -800,13 +995,12 @@ public class DatabaseServiceImpl implements DatabaseService {
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.TEXT_PLAIN);
-
+                    post.setId(id);
                     return new ResponseEntity<>(post, headers, HttpStatus.CREATED);
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
                 }
             }
-
         } catch (SQLException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
@@ -871,7 +1065,8 @@ public class DatabaseServiceImpl implements DatabaseService {
                 System.out.println("content: " + thread.getContent() + " sender id: " + thread.getSender().getId()
                         + " message title: " + thread.getTitle() + "message category: "
                         + thread.getCategory());
-                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                String id = UUID.randomUUID().toString();
+                statement.setString(1, id); // Generate UUID for id
                 statement.setString(2, thread.getContent());
                 statement.setString(3, thread.getSender().getId());
                 statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
@@ -880,10 +1075,9 @@ public class DatabaseServiceImpl implements DatabaseService {
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.TEXT_PLAIN);
-                    String path = thread.getContent();
-                    System.out.println("Message path: " + path);
-                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    thread.setId(id);
+                    return new ResponseEntity<>(thread, headers, HttpStatus.CREATED);
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
                 }
@@ -965,7 +1159,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             } else if (message.getSender() == null || message.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
             } else {
-                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                String id = UUID.randomUUID().toString(); // Generate UUID for id
+                statement.setString(1, id);
                 statement.setString(2, message.getContent());
                 statement.setString(3, message.getSender().getId());
                 statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
@@ -973,10 +1168,9 @@ public class DatabaseServiceImpl implements DatabaseService {
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.TEXT_PLAIN);
-                    String path = message.getContent();
-                    System.out.println("Message path: " + path);
-                    return new ResponseEntity<>(path, headers, HttpStatus.CREATED);
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    message.setId(id); // Set the generated id to the message object
+                    return new ResponseEntity<>(message, headers, HttpStatus.CREATED);
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
                 }

@@ -1,10 +1,12 @@
-<div>
+<div class="thread-form">
     <h3>Create New Thread</h3>
     <form (ngSubmit)="onSubmit()">
-        <input type="text" pInputText placeholder="Title" [(ngModel)]="newThread.title" name="title" />
-        <input type="text" pInputText placeholder="Content" [(ngModel)]="newThread.content" name="content" />
+        <input type="text" pInputText placeholder="Title" [(ngModel)]="newThread.title" name="title"
+            class="form-control" />
+        <textarea pInputTextarea placeholder="Content" [(ngModel)]="newThread.content" name="content"
+            class="form-control"></textarea>
         <p-dropdown [options]="categories" [(ngModel)]="newThread.category" placeholder="Select a Category"
-            name="category"></p-dropdown>
-        <button type="submit" pButton label="Create Thread"></button>
+            name="category" class="form-control"></p-dropdown>
+        <button type="submit" pButton label="Create Thread" class="submit-button"></button>
     </form>
 </div>
