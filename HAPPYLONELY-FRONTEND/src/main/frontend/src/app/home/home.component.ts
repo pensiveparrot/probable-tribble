@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     this.showUserProfileDialog = false;
   }
   hluser: HLUser = {
-    id: 0,
+    id: "",
     username: "",
     statusmsg: "",
     profileimg: "",

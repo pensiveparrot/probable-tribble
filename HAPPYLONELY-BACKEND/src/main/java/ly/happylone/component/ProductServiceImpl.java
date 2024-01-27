@@ -18,7 +18,7 @@ public class ProductServiceImpl implements ProductService {
 	private DatabaseService databaseService;
 
 	@Override
-	public Product getProductById(Long id) throws SQLException {
+	public Product getProductById(String id) throws SQLException {
 		try {
 			return databaseService.getProductById(id);
 		} catch (SQLException e) {
@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void deleteProduct(Long id) throws SQLException {
+	public void deleteProduct(String id) throws SQLException {
 		try {
 			databaseService.deleteProduct(id);
 		} catch (SQLException e) {

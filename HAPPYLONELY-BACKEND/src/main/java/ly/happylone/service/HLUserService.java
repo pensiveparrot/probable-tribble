@@ -9,7 +9,7 @@ import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 
 public interface HLUserService {
-    HLUser getUserById(Long id) throws SQLException;
+    HLUser getUserById(String id) throws SQLException;
 
     HLUser getUserByName(String username);
 
@@ -19,11 +19,11 @@ public interface HLUserService {
 
     List<ResponseEntity<HLUser>> getAllUsers() throws SQLException;
 
-    void deleteUser(Long id) throws SQLException;
+    void deleteUser(String id) throws SQLException;
 
     ResponseEntity<HLUserResponse> getUserByUsernameMin(String username);
 
-    ResponseEntity<HLUser> banUser(Long id) throws SQLException;
+    ResponseEntity<HLUser> banUser(String id) throws SQLException;
 
     ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException;
 

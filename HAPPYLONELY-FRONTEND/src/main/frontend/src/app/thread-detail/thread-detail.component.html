@@ -3,13 +3,14 @@
     <p>{{ thread.category }}</p>
     <p>{{thread.id}}</p>
 
-
     <h4>Posts</h4>
-    <div *ngFor="let post of thread.posts | keyvalue">
-        <p>{{ getPostContent(post.value) }}</p>
+    <div *ngFor="let post of thread.posts">
+        <img [src]="post.sender.profileimg" alt="User Image" width="50" height="50">
+        <p>{{ post.sender.username }}</p>
+        <p>{{ post.content }}</p>
     </div>
 
-    <form (ngSubmit)="addPost($event)">
+    <form (ngSubmit)="addPost()" class="input-area">
         <textarea pInputTextarea [(ngModel)]="newPost.content" name="postContent"></textarea>
         <button type="submit" pButton label="Add Post"></button>
     </form>

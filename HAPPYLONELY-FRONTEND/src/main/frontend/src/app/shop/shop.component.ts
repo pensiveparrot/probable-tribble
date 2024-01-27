@@ -11,7 +11,7 @@ export class ShopComponent implements OnInit {
   showText: boolean = false;
   hidden: boolean = false;
   products: Product[] = [];
-  product: any = { id: 0, productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
+  product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
 
   constructor(private productService: ProductService) { }
   ngOnInit(): void {

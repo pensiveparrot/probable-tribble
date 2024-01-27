@@ -3,6 +3,9 @@ package ly.happylone.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
@@ -10,8 +13,10 @@ import java.util.List;
 public class HLUserResponse {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "id", columnDefinition = "VARCHAR(36)")
+    private String id;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -35,5 +40,12 @@ public class HLUserResponse {
         this.username = user.getUsername();
         this.profileimg = user.getProfileimg();
         this.statusmsg = user.getStatusmsg();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
     }
 }

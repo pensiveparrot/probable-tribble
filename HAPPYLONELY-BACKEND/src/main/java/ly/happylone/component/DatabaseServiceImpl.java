@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import ly.happylone.service.DatabaseService;
 
@@ -45,14 +46,15 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     // start of user code DatabaseServiceImpl
     @Override
-    public HLUser getUserById(Long id) throws SQLException {
+    public HLUser getUserById(String id) throws SQLException {
         String sql = "select * from hluser where id=?";
         HLUser user = new HLUser();
+        user.setId(id);
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setLong(1, user.getId());
+            statement.setString(1, user.getId());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 return queryUser(user.getUsername(), user, rs);
@@ -98,7 +100,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     private HLUser queryUser(String username, HLUser user, ResultSet rs) throws SQLException {
-        user.setId(rs.getLong("id"));
+        user.setId(rs.getString("id"));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));
@@ -191,7 +193,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     private HLUserResponse queryUserMin(String username, HLUser user, ResultSet rs) throws SQLException {
-        user.setId(rs.getLong("id"));
+        user.setId(rs.getString("id"));
         user.setUsername(rs.getString("username"));
         user.setProfileimg(rs.getString("profileimg"));
         user.setStatusmsg(rs.getString("statusmsg"));
@@ -226,7 +228,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getProfileimg());
             statement.setString(3, user.getStatusmsg());
-            statement.setLong(4, user.getId());
+            statement.setString(4, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -245,7 +247,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getStatusmsg());
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -264,7 +266,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getProfileimg());
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -283,7 +285,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, StringUtils.toString(user.getRole()));
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -312,7 +314,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -331,7 +333,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, StringUtils.toString(user.getBadges()));
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -350,7 +352,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getEmail());
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -364,12 +366,12 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public void deleteUser(Long id) throws SQLException {
+    public void deleteUser(String id) throws SQLException {
         String sql = "DELETE FROM hluser WHERE id = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setString(1, id);
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected == 0) {
                 throw new SQLException("Delete user failed, no rows affected.");
@@ -390,7 +392,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 HLUser user = new HLUser();
-                user.setId(rs.getLong("id"));
+                user.setId(rs.getString("id"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
@@ -440,13 +442,13 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public ResponseEntity<HLUser> banUser(Long id) throws SQLException {
+    public ResponseEntity<HLUser> banUser(String id) throws SQLException {
         String sql = "UPDATE hluser SET role = ?, unbandate = ? WHERE id = ?";
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, StringUtils.toString(HLRole.Banned));
             statement.setDate(2, new java.sql.Date(new Date().getTime()));
-            statement.setLong(3, id);
+            statement.setString(3, id);
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(null);
@@ -470,7 +472,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             statement.setString(4, user.getStatusmsg());
             statement.setString(5, user.getProfileimg());
             statement.setDate(6, user.getUnbandate());
-            statement.setLong(7, user.getId());
+            statement.setString(7, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -509,7 +511,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getPassword());
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);
@@ -526,7 +528,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     // start of art code
     @Override
     public ResponseEntity<?> addArt(Art art) {
-        String sql = "INSERT INTO art (artname, artauthor, dateuploaded, artimagefilepath) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO art (id, artname, artauthor, dateuploaded, artimagefilepath) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
@@ -539,10 +541,11 @@ public class DatabaseServiceImpl implements DatabaseService {
             } else if (art.getArtAuthor() == null || art.getArtAuthor().isEmpty() || art.getArtAuthor().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Art author is null");
             } else {
-                statement.setString(1, art.getArtName());
-                statement.setString(2, art.getArtAuthor());
-                statement.setDate(3, new java.sql.Date(new Date().getTime()));
-                statement.setString(4, art.getArtImageFilePath());
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, art.getArtName());
+                statement.setString(3, art.getArtAuthor());
+                statement.setDate(4, new java.sql.Date(new Date().getTime()));
+                statement.setString(5, art.getArtImageFilePath());
 
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
@@ -574,10 +577,10 @@ public class DatabaseServiceImpl implements DatabaseService {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Message message = new Message();
-                message.setId(rs.getLong("id"));
+                message.setId(rs.getString("id"));
                 message.setContent(rs.getString("content"));
                 message.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
-                HLUser user = new HLUserServiceImpl().getUserById(rs.getLong("sender_id"));
+                HLUser user = new HLUserServiceImpl().getUserById(rs.getString("sender_id"));
                 HLUserResponse hluser = new HLUserResponse(user);
                 message.setSender(hluser);
                 messages.add(message);
@@ -590,13 +593,14 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public void postMessage(Message message) throws SQLException {
-        String sql = "INSERT INTO messages (content, sender_id, date_sent) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO messages (id, content, sender_id, date_sent) VALUES (?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, message.getContent());
-            statement.setLong(2, message.getSender().getId());
-            statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+            statement.setString(2, message.getContent());
+            statement.setString(3, message.getSender().getId());
+            statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
             statement.executeUpdate();
             System.out.println("Message posted postMessage service: " + message);
 
@@ -609,7 +613,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     // start of product code
     @Override
-    public Product getProductById(Long id) throws SQLException {
+    public Product getProductById(String id) throws SQLException {
 
         String sql = "select * from product where id=?";
         Product product = new Product();
@@ -617,11 +621,11 @@ public class DatabaseServiceImpl implements DatabaseService {
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setLong(1, id);
+            statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
 
-                product.setId(rs.getLong("id"));
+                product.setId(rs.getString("id"));
                 product.setProductname(rs.getString("productname"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setInventorystatus(rs.getString("inventorystatus"));
@@ -650,7 +654,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Product product = new Product();
-                product.setId(rs.getLong("id"));
+                product.setId(rs.getString("id"));
                 product.setProductname(rs.getString("productname"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setInventorystatus(rs.getString("inventorystatus"));
@@ -668,30 +672,28 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<Product> addProduct(Product product) throws SQLException {
-
-        String sql = "insert into product (productname, price, inventorystatus, image, shoplink) values (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO product (id, productname, price, inventorystatus, image, shoplink) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
             if (getProductByName(product.getProductname()).getStatusCode() == HttpStatus.NOT_FOUND) {
                 PreparedStatement statement = con.prepareStatement(sql);
-                statement.setString(1, product.getProductname());
-                statement.setBigDecimal(2, product.getPrice());
-                statement.setString(3, product.getInventorystatus());
-                statement.setString(4, product.getImage());
-                statement.setString(5, product.getShoplink());
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, product.getProductname());
+                statement.setBigDecimal(3, product.getPrice());
+                statement.setString(4, product.getInventorystatus());
+                statement.setString(5, product.getImage());
+                statement.setString(6, product.getShoplink());
                 statement.executeUpdate();
                 return ResponseEntity.status(HttpStatus.OK).body(product);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
-
             }
 
         } catch (SQLException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
         }
-
     }
 
     @Override
@@ -706,7 +708,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
 
-                product.setId(rs.getLong("id"));
+                product.setId(rs.getString("id"));
                 product.setProductname(rs.getString("productname"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setInventorystatus(rs.getString("inventorystatus"));
@@ -734,14 +736,14 @@ public class DatabaseServiceImpl implements DatabaseService {
             try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                     System.getenv("PGUSER"), System.getenv("PGPW"))) {
                 Product prod = getProductById(product.getId());
-                if (prod.getId() > 0) {
+                if (prod.getId() != null && prod.getId().isBlank() == false) {
                     PreparedStatement statement = con.prepareStatement(sql);
                     statement.setString(1, product.getProductname());
                     statement.setBigDecimal(2, product.getPrice());
                     statement.setString(3, product.getInventorystatus());
                     statement.setString(4, product.getImage());
                     statement.setString(5, product.getShoplink());
-                    statement.setLong(6, product.getId());
+                    statement.setString(6, product.getId());
                     statement.executeUpdate();
                     return ResponseEntity.status(HttpStatus.OK).body(product);
                 } else {
@@ -758,14 +760,14 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public void deleteProduct(Long id) throws SQLException {
-        if (id > 0 && id instanceof Long) {
+    public void deleteProduct(String id) throws SQLException {
+        if (!id.isBlank() && id instanceof String) {
             String sql = "delete from product where id=?";
             try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                     System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
                 PreparedStatement statement = con.prepareStatement(sql);
-                statement.setLong(1, id);
+                statement.setString(1, id);
                 statement.executeUpdate();
             }
 
@@ -779,7 +781,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     // start of forum code
     @Override
     public ResponseEntity<?> addPost(Post post) throws SQLException {
-        String sql = "INSERT INTO posts (content, sender_id, date_sent, thread_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO posts (id, content, sender_id, date_sent, thread_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
@@ -789,10 +791,11 @@ public class DatabaseServiceImpl implements DatabaseService {
             } else if (post.getSender() == null || post.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
             } else {
-                statement.setString(1, post.getContent());
-                statement.setLong(2, post.getSender().getId());
-                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-                statement.setLong(4, post.getThread().getId());
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, post.getContent());
+                statement.setString(3, post.getSender().getId());
+                statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                statement.setString(5, post.getThread().getId());
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
@@ -808,24 +811,24 @@ public class DatabaseServiceImpl implements DatabaseService {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
         }
-
     }
 
     @Override
-    public ResponseEntity<?> getPostsByThreadId(Long id) throws SQLException {
+    public ResponseEntity<?> getPostsByThreadId(String id) throws SQLException {
         String sql = "SELECT * FROM posts WHERE thread_id = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setString(1, id);
             try (ResultSet rs = statement.executeQuery()) {
                 List<Post> posts = new ArrayList<>();
                 while (rs.next()) {
                     Post post = new Post();
-                    post.setId(rs.getLong("id"));
+                    post.setId(rs.getString("id"));
                     post.setContent(rs.getString("content"));
                     post.setDateSent(rs.getDate("date_sent"));
-                    HLUser user = new HLUserServiceImpl().getUserById(rs.getLong("sender_id"));
+                    HLUser user = new HLUser();
+                    user = getUserById(rs.getString("sender_id"));
                     HLUserResponse hluser = new HLUserResponse(user);
                     post.setSender(hluser);
                     posts.add(post);
@@ -840,24 +843,40 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<?> addThread(Thread thread) throws SQLException {
-        String sql = "INSERT INTO threads (content, sender_id, date_sent, title, category) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO threads (id, content, sender_id, date_sent, title, category) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
-            if (thread.getContent() == null || thread.getContent().isEmpty()
+            System.out.println(
+                    "[addThread]::Thread Sender ID: " + thread.getSender().getId()
+                            + " "
+                            + thread.getSender().getUsername());
+            HLUser user = new HLUser();
+            user = getUserById(thread.getSender().getId());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is null");
+            } else if (thread.getContent() == null || thread.getContent().isEmpty()
                     || thread.getContent().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message content is null");
             } else if (thread.getSender() == null || thread.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
+            } else if (user.getRole() == HLRole.Banned || user.getRole() == HLRole.Guest) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not allowed to post");
+            } else if (thread.getTitle() == null || thread.getTitle().isEmpty() || thread.getTitle().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thread title is null");
+            } else if (thread.getCategory() == null || thread.getCategory().isEmpty()
+                    || thread.getCategory().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thread category is null");
             } else {
                 System.out.println("content: " + thread.getContent() + " sender id: " + thread.getSender().getId()
                         + " message title: " + thread.getTitle() + "message category: "
                         + thread.getCategory());
-                statement.setString(1, thread.getContent());
-                statement.setLong(2, thread.getSender().getId());
-                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-                statement.setString(4, thread.getTitle());
-                statement.setString(5, thread.getCategory());
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, thread.getContent());
+                statement.setString(3, thread.getSender().getId());
+                statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                statement.setString(5, thread.getTitle());
+                statement.setString(6, thread.getCategory());
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
                     HttpHeaders headers = new HttpHeaders();
@@ -877,23 +896,55 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public ResponseEntity<?> getThreadById(Long id) throws SQLException {
-        String sql = "SELECT * FROM threads WHERE id = ? AND category = ?";
+    public ResponseEntity<?> getThreads() throws SQLException {
+        String sql = "SELECT * FROM threads ORDER BY date_sent DESC";
+
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
-            statement.setLong(1, id);
-            statement.setString(2, "Thread");
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Thread> threads = new ArrayList<>();
+                while (rs.next()) {
+                    Thread thread = new Thread();
+                    thread.setId(rs.getString("id"));
+                    thread.setContent(rs.getString("content"));
+                    thread.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
+                    thread.setTitle(rs.getString("title"));
+                    HLUser user = new HLUser();
+                    user = getUserById(rs.getString("sender_id"));
+                    HLUserResponse hluser = new HLUserResponse(user);
+                    thread.setSender(hluser);
+                    threads.add(thread);
+                }
+                return ResponseEntity.ok(threads);
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Threads not found");
+    }
+
+    @Override
+    public ResponseEntity<?> getThreadById(String id) throws SQLException {
+        String sql = "SELECT * FROM threads WHERE id = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
+                PreparedStatement statement = con.prepareStatement(sql)) {
+            statement.setString(1, id);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    Message message = new Message();
-                    message.setId(rs.getLong("id"));
-                    message.setContent(rs.getString("content"));
-                    message.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
-                    HLUser user = new HLUserServiceImpl().getUserById(rs.getLong("sender_id"));
+                    Thread thread = new Thread();
+                    thread.setId(rs.getString("id"));
+                    thread.setContent(rs.getString("content"));
+                    thread.setDateSent(rs.getTimestamp("date_sent").toLocalDateTime());
+                    thread.setTitle(rs.getString("title"));
+                    HLUser user = new HLUser();
+                    user = getUserById(rs.getString("sender_id"));
                     HLUserResponse hluser = new HLUserResponse(user);
-                    message.setSender(hluser);
-                    return ResponseEntity.ok(message);
+                    thread.setSender(hluser);
+                    return ResponseEntity.ok(thread);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Thread not found");
                 }
             }
         } catch (SQLException e) {
@@ -904,7 +955,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<?> addProfileComment(Message message) throws SQLException {
-        String sql = "INSERT INTO comments (content, sender_id, date_sent) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO comments (id, content, sender_id, date_sent) VALUES (?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
@@ -914,9 +965,10 @@ public class DatabaseServiceImpl implements DatabaseService {
             } else if (message.getSender() == null || message.getSender().getId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message sender is null");
             } else {
-                statement.setString(1, message.getContent());
-                statement.setLong(2, message.getSender().getId());
-                statement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, message.getContent());
+                statement.setString(3, message.getSender().getId());
+                statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
 
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
@@ -934,7 +986,6 @@ public class DatabaseServiceImpl implements DatabaseService {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error");
         }
-
     }
 
     @Override
@@ -943,7 +994,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setInt(1, user.getCredits() + credits);
-            statement.setLong(2, user.getId());
+            statement.setString(2, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);

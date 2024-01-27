@@ -24,7 +24,7 @@ public class ProductController {
 	private ProductService productService;
 
 	@GetMapping(value = "/getProductById/{id}")
-	public Product getProductById(@PathVariable Long id) throws SQLException {
+	public Product getProductById(@PathVariable String id) throws SQLException {
 		{
 			return productService.getProductById(id);
 		}

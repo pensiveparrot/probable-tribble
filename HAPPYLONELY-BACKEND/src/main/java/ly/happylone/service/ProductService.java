@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
-	Product getProductById(Long id) throws SQLException;
+	Product getProductById(String id) throws SQLException;
 
 	ResponseEntity<Product> getProductByName(String productname) throws SQLException;
 
@@ -16,6 +16,6 @@ public interface ProductService {
 
 	ResponseEntity<Product> updateProduct(Product product) throws SQLException;
 
-	void deleteProduct(Long id) throws SQLException;
+	void deleteProduct(String id) throws SQLException;
 
 }

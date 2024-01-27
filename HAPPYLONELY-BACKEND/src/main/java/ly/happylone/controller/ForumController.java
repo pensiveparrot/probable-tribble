@@ -37,8 +37,9 @@ public class ForumController {
     }
 
     @PostMapping("/addThread")
-    public ResponseEntity<?> addThread(@RequestBody Thread thread) {
+    public ResponseEntity<?> addThread(@RequestBody Thread thread) throws SQLException {
         try {
+
             return databaseService.addThread(thread);
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,8 +47,18 @@ public class ForumController {
         }
     }
 
+    @GetMapping("/getThreads")
+    public ResponseEntity<?> getThreads() {
+        try {
+            return databaseService.getThreads();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get threads");
+        }
+    }
+
     @GetMapping("/getThreadById/{id}")
-    public ResponseEntity<?> getThreadById(@PathVariable Long id) {
+    public ResponseEntity<?> getThreadById(@PathVariable String id) {
         try {
             return databaseService.getThreadById(id);
         } catch (Exception e) {
@@ -80,7 +91,7 @@ public class ForumController {
     }
 
     @GetMapping("/getPostsByThreadId/{id}")
-    public ResponseEntity<?> getPostsByThreadId(@PathVariable Long id) {
+    public ResponseEntity<?> getPostsByThreadId(@PathVariable String id) {
         try {
             return databaseService.getPostsByThreadId(id);
         } catch (Exception e) {

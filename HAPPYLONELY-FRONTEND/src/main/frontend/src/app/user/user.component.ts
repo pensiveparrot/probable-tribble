@@ -11,8 +11,8 @@ import { AuthService } from '../common/service/auth.service';
 })
 export class UserComponent implements OnInit {
   constructor(private userService: UserService, private authService: AuthService) { }
-  user: HLUser = { id: 0, username: "", statusmsg: "", profileimg: "" };
-  updatedUser: HLUser = { id: 0, username: "", statusmsg: "", profileimg: "" };
+  user: HLUser = { id: "", username: "", statusmsg: "", profileimg: "" };
+  updatedUser: HLUser = { id: "", username: "", statusmsg: "", profileimg: "" };
   statusCode: number = 0;
   errorMsgDetail: string = "";
   errorMsg: Message[] = [];

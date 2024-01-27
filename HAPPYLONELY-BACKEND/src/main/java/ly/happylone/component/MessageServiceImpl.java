@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ly.happylone.model.Message;
 import ly.happylone.service.MessageService;
 import ly.happylone.service.DatabaseService;
@@ -45,7 +46,9 @@ public class MessageServiceImpl implements MessageService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String messageJson = objectMapper.writeValueAsString(message);
-            simpMessagingTemplate.convertAndSend("/topic/messages", messageJson);
+            if (simpMessagingTemplate != null && messageJson != null) {
+                simpMessagingTemplate.convertAndSend("/topic/messages", messageJson);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

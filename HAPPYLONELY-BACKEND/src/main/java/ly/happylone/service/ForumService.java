@@ -12,7 +12,7 @@ public interface ForumService {
 
     public ResponseEntity<?> addThread(Message message) throws SQLException;
 
-    public ResponseEntity<?> getThreadById(Long id) throws SQLException;
+    public ResponseEntity<?> getThreadById(String id) throws SQLException;
 
     public ResponseEntity<?> addPost(Message message) throws SQLException;
 }

@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -52,7 +53,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         hlUser.setLastlogindate(new Date(System.currentTimeMillis()));
         hlUser.setUserloggedin(true);
         HLUserResponse hlUserResponse = new HLUserResponse(hlUser);
-        String sql = "insert into hluser_response (username, profileimg, statusmsg) values (?, ?, ?)";
+        String sql = "insert into hluser_response (id, username, profileimg, statusmsg) values (?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
@@ -60,9 +61,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .getStatusCode() == HttpStatus.NOT_FOUND) {
                 System.out.println("User not found, adding to hluser_response");
                 PreparedStatement statement = con.prepareStatement(sql);
-                statement.setString(1, hlUserResponse.getUsername());
-                statement.setString(2, hlUserResponse.getProfileimg());
-                statement.setString(3, hlUserResponse.getStatusmsg());
+                statement.setString(1, hlUser.getId()); // Use hluser id for hluser_response id
+                statement.setString(2, hlUserResponse.getUsername());
+                statement.setString(3, hlUserResponse.getProfileimg());
+                statement.setString(4, hlUserResponse.getStatusmsg());
                 statement.executeUpdate();
             }
         } catch (Exception ex) {
@@ -78,7 +80,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public HLUser register(RegisterRequest registerRequest) throws SQLException {
-        String sql = "insert into hluser (email, username, password, registerdate, lastlogindate, unbandate, statusmsg, profileimg, userloggedin, role) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into hluser (id, email, username, password, registerdate, lastlogindate, unbandate, statusmsg, profileimg, userloggedin, role) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         System.out.println("in register service");
         if (registerRequest.getUsername() == null || registerRequest.getUsername().isEmpty()
                 || registerRequest.getUsername().isBlank()) {
@@ -95,16 +97,17 @@ public class CustomUserDetailsService implements UserDetailsService {
             try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                     System.getenv("PGUSER"), System.getenv("PGPW"))) {
                 PreparedStatement statement = con.prepareStatement(sql);
-                statement.setString(1, registerRequest.getEmail());
-                statement.setString(2, registerRequest.getUsername());
-                statement.setString(3, passwordEncoder.encode(registerRequest.getPassword()));
-                statement.setDate(4, new Date(System.currentTimeMillis()));
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, registerRequest.getEmail());
+                statement.setString(3, registerRequest.getUsername());
+                statement.setString(4, passwordEncoder.encode(registerRequest.getPassword()));
                 statement.setDate(5, new Date(System.currentTimeMillis()));
-                statement.setDate(6, null);
-                statement.setString(7, "I'm new here!");
-                statement.setString(8, "https://i.imgur.com/mCHMpLT.png");
-                statement.setBoolean(9, true);
-                statement.setInt(10, HLRole.Standard.ordinal());
+                statement.setDate(6, new Date(System.currentTimeMillis()));
+                statement.setDate(7, null);
+                statement.setString(8, "I'm new here!");
+                statement.setString(9, "https://i.imgur.com/mCHMpLT.png");
+                statement.setBoolean(10, true);
+                statement.setInt(11, HLRole.Standard.ordinal());
 
                 int rowsUpdated = statement.executeUpdate();
                 if (rowsUpdated > 0) {
@@ -124,5 +127,4 @@ public class CustomUserDetailsService implements UserDetailsService {
             return null;
         }
     }
-
 }

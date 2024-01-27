@@ -1,38 +1,42 @@
 package ly.happylone.model;
 
 import java.util.Date;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "art")
-@AllArgsConstructor
 public class Art {
-    public Art(String artName2, String artAuthor2, Date date, String artImageFilePath2) {
-        artName = artName2;
-        artAuthor = artAuthor2;
-        dateUploaded = date;
-        artImageFilePath = artImageFilePath2;
-    }
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "id", columnDefinition = "VARCHAR(36)")
+    private String id;
+
     @Column(name = "artname")
     private String artName;
+
     @Column(name = "artauthor")
     private String artAuthor;
+
     @Column(name = "dateuploaded")
     private Date dateUploaded;
+
     @Column(name = "artimagefilepath")
     private String artImageFilePath;
 
+    public Art(String artName, String artAuthor, Date dateUploaded, String artImageFilePath) {
+        this.artName = artName;
+        this.artAuthor = artAuthor;
+        this.dateUploaded = dateUploaded;
+        this.artImageFilePath = artImageFilePath;
+    }
 }

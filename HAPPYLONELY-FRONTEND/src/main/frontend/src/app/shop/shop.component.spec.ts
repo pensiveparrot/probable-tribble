@@ -53,8 +53,8 @@ describe('ShopComponent', () => {
 
   it('should load all products', fakeAsync(() => {
     spyOn(productService, 'getAllProducts').and.returnValue(of([
-      { id: 1, productname: "Product 1", price: 100, image: "image1.jpg", inventorystatus: "In Stock", shoplink: "link1" },
-      { id: 2, productname: "Product 2", price: 200, image: "image2.jpg", inventorystatus: "Low Stock", shoplink: "link2" }
+      { id: "1", productname: "Product 1", price: 100, image: "image1.jpg", inventorystatus: "In Stock", shoplink: "link1" },
+      { id: "2", productname: "Product 2", price: 200, image: "image2.jpg", inventorystatus: "Low Stock", shoplink: "link2" }
     ]));
     component.loadAllProducts();
     tick();

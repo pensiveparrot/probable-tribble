@@ -16,7 +16,7 @@ import ly.happylone.model.Thread;
 
 public interface DatabaseService {
     // user code
-    public HLUser getUserById(Long id) throws SQLException;
+    public HLUser getUserById(String id) throws SQLException;
 
     public HLUser getUserByName(String username);
 
@@ -32,11 +32,11 @@ public interface DatabaseService {
 
     public ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException;
 
-    public void deleteUser(Long id) throws SQLException;
+    public void deleteUser(String id) throws SQLException;
 
     public ResponseEntity<HLUser> awardBadge(HLUser user, HLBadge badge) throws SQLException;
 
-    public ResponseEntity<HLUser> banUser(Long id) throws SQLException;
+    public ResponseEntity<HLUser> banUser(String id) throws SQLException;
 
     public ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException;
 
@@ -61,7 +61,7 @@ public interface DatabaseService {
     public void postMessage(Message message) throws SQLException;
 
     // product code
-    public Product getProductById(Long id) throws SQLException;
+    public Product getProductById(String id) throws SQLException;
 
     public List<Product> getAllProducts() throws SQLException;
 
@@ -71,17 +71,19 @@ public interface DatabaseService {
 
     public ResponseEntity<Product> updateProduct(Product product) throws SQLException;
 
-    public void deleteProduct(Long id) throws SQLException;
+    public void deleteProduct(String id) throws SQLException;
 
     // forum code
 
     public ResponseEntity<?> addPost(Post post) throws SQLException;
 
-    public ResponseEntity<?> getPostsByThreadId(Long id) throws SQLException;
+    public ResponseEntity<?> getPostsByThreadId(String id) throws SQLException;
 
     public ResponseEntity<?> addThread(Thread thread) throws SQLException;
 
-    public ResponseEntity<?> getThreadById(Long id) throws SQLException;
+    public ResponseEntity<?> getThreadById(String id) throws SQLException;
+
+    public ResponseEntity<?> getThreads() throws SQLException;
 
     public ResponseEntity<?> addProfileComment(Message message) throws SQLException;
 

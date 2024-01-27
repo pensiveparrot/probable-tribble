@@ -3,10 +3,13 @@ package ly.happylone.controller;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import ly.happylone.model.Art;
 import ly.happylone.service.ArtService;
 
@@ -32,10 +36,15 @@ public class ArtController {
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveArtwork(@PathVariable String filename) {
         Path filePath = Paths.get(artPath, filename);
-        Resource resource = new FileSystemResource(filePath);
 
-        if (resource.exists() && resource.isReadable()) {
-            return ResponseEntity.ok().body(resource);
+        if (filePath != null) {
+            Resource resource = new FileSystemResource(filePath);
+
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok().body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -55,7 +64,15 @@ public class ArtController {
             return ResponseEntity.badRequest().body("Invalid file type.");
         }
 
-        return artService.uploadFile(file, artName, artAuthor);
+        try {
+            // Convert image to Base64
+            String base64Image = Base64.getEncoder().encodeToString(file.getBytes());
+            return artService.uploadFile(base64Image, artName, artAuthor);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while processing the file.");
+        }
     }
 
     private boolean isValidImageMagicNumber(MultipartFile file) {

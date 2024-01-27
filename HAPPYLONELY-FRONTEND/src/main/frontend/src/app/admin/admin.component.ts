@@ -14,8 +14,8 @@ export class AdminComponent {
   bCreateClicked: boolean = false;
   errorMsg: Message[] = [];
   statusCode: number = 0;
-  product: any = { id: 0, productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
-  user: any = { id: 0, username: "", statusmsg: "", profileimg: "" };
+  product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
+  user: any = { id: "", username: "", statusmsg: "", profileimg: "" };
 
   constructor(private productService: ProductService, private userService: UserService) { }
 

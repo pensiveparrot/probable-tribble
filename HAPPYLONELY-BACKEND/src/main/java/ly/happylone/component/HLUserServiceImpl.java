@@ -27,7 +27,7 @@ public class HLUserServiceImpl implements HLUserService {
     private DatabaseService databaseService;
 
     @Override
-    public HLUser getUserById(Long id) {
+    public HLUser getUserById(String id) {
         try {
             return databaseService.getUserById(id);
         } catch (SQLException e) {
@@ -101,7 +101,7 @@ public class HLUserServiceImpl implements HLUserService {
     }
 
     @Override
-    public void deleteUser(Long id) throws SQLException {
+    public void deleteUser(String id) throws SQLException {
         try {
             databaseService.deleteUser(id);
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class HLUserServiceImpl implements HLUserService {
     }
 
     @Override
-    public ResponseEntity<HLUser> banUser(Long id) throws SQLException {
+    public ResponseEntity<HLUser> banUser(String id) throws SQLException {
         try {
             return databaseService.banUser(id);
         } catch (Exception e) {

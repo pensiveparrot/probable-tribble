@@ -33,7 +33,7 @@ public class HLUserController {
     }
 
     @GetMapping("/getUserById/{id}")
-    public HLUserResponse getUserById(@PathVariable Long id) throws SQLException {
+    public HLUserResponse getUserById(@PathVariable String id) throws SQLException {
         System.out.println("USER IN GETUSERBYID CONTROLLER --> " + id);
         HLUser user = hlUserService.getUserById(id);
         return new HLUserResponse(user);
@@ -70,13 +70,13 @@ public class HLUserController {
     }
 
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) throws SQLException {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) throws SQLException {
         hlUserService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/banUser/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> banUser(@PathVariable("id") Long id) throws SQLException {
+    public ResponseEntity<Void> banUser(@PathVariable("id") String id) throws SQLException {
         hlUserService.banUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -89,7 +89,7 @@ public class HLUserController {
 
     // Guest, Banned, Standard, VIP, Moderator, Admin, Owner;
     @RequestMapping(value = "/changeRole/{id}/{role}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeRole(@PathVariable("id") Long id, @PathVariable("role") int role,
+    public ResponseEntity<Void> changeRole(@PathVariable("id") String id, @PathVariable("role") int role,
             @PathVariable String event) throws SQLException {
         HLUser user = hlUserService.getUserById(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
