@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import ly.happylone.model.LoginRequest;
 import ly.happylone.model.RegisterRequest;
 import ly.happylone.service.DatabaseService;
@@ -20,12 +22,13 @@ import ly.happylone.service.DatabaseService;
 @CrossOrigin(origins = "http://localhost:4200")
 public class HLAuthController {
 
-
     @Autowired
     private DatabaseService databaseService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws SQLException {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request,
+            HttpServletResponse response)
+            throws SQLException {
         try {
             return databaseService.login(loginRequest);
         } catch (Exception e) {

@@ -4,7 +4,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import ly.happylone.model.Art;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLUser;
@@ -16,9 +19,10 @@ import ly.happylone.model.Product;
 import ly.happylone.model.RegisterRequest;
 import ly.happylone.model.Thread;
 
-public interface DatabaseService {
+public interface DatabaseService extends UserDetailsService {
     // hlauth code
-    public ResponseEntity<?> login(LoginRequest loginRequest) throws SQLException;
+    public ResponseEntity<?> login(LoginRequest loginRequest)
+            throws SQLException;
 
     public ResponseEntity<?> register(RegisterRequest registerRequest) throws SQLException;
 

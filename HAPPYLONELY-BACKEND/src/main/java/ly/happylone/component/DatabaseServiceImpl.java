@@ -7,12 +7,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
@@ -29,6 +32,7 @@ import ly.happylone.model.Product;
 import ly.happylone.model.RegisterRequest;
 
 import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -46,38 +50,48 @@ import java.util.regex.Pattern;
 import ly.happylone.service.DatabaseService;
 
 @Component
-public class DatabaseServiceImpl implements UserDetailsService, DatabaseService {
+public class DatabaseServiceImpl implements DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
 
+    private PasswordEncoder passwordEncoder;
     private final DataSource dataSource;
 
-    private PasswordEncoder passwordEncoder;
-
-    public DatabaseServiceImpl(DataSource dataSource, @Lazy PasswordEncoder passwordEncoder) {
-        this.dataSource = dataSource;
+    public DatabaseServiceImpl(@Lazy PasswordEncoder passwordEncoder, DataSource dataSource) {
         this.passwordEncoder = passwordEncoder;
-
+        this.dataSource = dataSource;
     }
 
     // start of hlauth code DatabaseServiceImpl
 
+    // ...
+
     @Override
     public ResponseEntity<?> login(LoginRequest loginRequest) throws SQLException {
         String sql = "select * from hluser where username=?";
+        HLUser user = new HLUser();
+        user.setUsername(loginRequest.getUsername());
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, loginRequest.getUsername());
+            statement.setString(1, user.getUsername());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                String hashedPassword = rs.getString("password");
-                if (BCrypt.checkpw(loginRequest.getPassword(), hashedPassword)) {
-                    return ResponseEntity.ok("Login successful");
+                String storedPassword = rs.getString("password");
+                if (passwordEncoder.matches(loginRequest.getPassword(), storedPassword)) {
+                    // Password matches, authenticate user
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), loginRequest.getPassword());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    // Return user details
+                    return ResponseEntity.ok(queryUser(user.getUsername(), user, rs));
                 } else {
+                    // Password does not match
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
                 }
             } else {
+                // No user found with the provided username
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
             }
         } catch (SQLException ex) {
@@ -644,7 +658,7 @@ public class DatabaseServiceImpl implements UserDetailsService, DatabaseService 
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getEmail());
-            statement.setString(3, StringUtils.toString(user.getRole()));
+            statement.setInt(3, user.getRole().ordinal());
             statement.setString(4, user.getStatusmsg());
             statement.setString(5, user.getProfileimg());
             statement.setDate(6, user.getUnbandate());

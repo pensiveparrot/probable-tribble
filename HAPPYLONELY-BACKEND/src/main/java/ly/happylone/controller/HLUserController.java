@@ -40,6 +40,12 @@ public class HLUserController {
 
     }
 
+    @GetMapping("/isAuthenticated")
+    public boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.isAuthenticated();
+    }
+
     @GetMapping("/getUserRole")
     public int getUserByRole() throws SQLException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

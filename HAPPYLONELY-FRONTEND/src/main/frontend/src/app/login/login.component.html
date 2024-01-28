@@ -11,14 +11,14 @@
             <form (ngSubmit)="login()">
                 <div class="p-field">
                     <label for="username">Username</label>
-                    <input id="username" [(ngModel)]="username" name="username" pInputText
-                        placeholder="Enter username" />
+                    <input id="username" [(ngModel)]="username" name="username" pInputText placeholder="Enter username"
+                        class="uniform-input" />
                 </div>
 
                 <div class="p-field">
                     <label for="password">Password</label>
-                    <input id="password" [(ngModel)]="password" name="password" pPassword
-                        placeholder="Enter password" />
+                    <input id="password" [(ngModel)]="password" name="password" type="password" pInputText
+                        placeholder="Enter password" class="uniform-input" />
                 </div>
 
                 <p-button type="submit" label="Login"></p-button>

@@ -7,11 +7,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -25,7 +25,6 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-
 import java.util.Arrays;
 
 @Configuration
@@ -33,19 +32,9 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private DatabaseService databaseService;
-
-    @Bean
-    public AuthenticationProvider authProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(encoder());
-        return provider;
-    }
 
     @Bean
     public PasswordEncoder encoder() {
@@ -53,24 +42,35 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationProvider authProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(databaseService); // Use the service, not the method
+        provider.setPasswordEncoder(encoder());
+        return provider;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(this::configureCsrf)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                         .accessDeniedHandler((request, response, accessDeniedException) -> response.getWriter()
                                 .write("Custom CSRF check failed")))
                 .cors(cors -> cors.configurationSource(configureCors()))
-                .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(formLogin -> formLogin.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/index.html", "/").permitAll() // Allow unauthenticated access to the Angular
-                        .requestMatchers("/login", "/register").permitAll() // application.
+                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/api/user/isAuthenticated").permitAll() // application.
                         .requestMatchers("/styles.css", "/polyfills.js", "polyfills.js.map",
                                 "/runtime.js", "/vendor.js", "vendor.js.map",
-                                "/main.js", "favicon.ico",
+                                "/main.js", "favicon.ico", "runtime.js.map",
                                 "/poppins-v15-latin-ext_latin-regular.woff2",
-                                "/poppins-v15-latin-ext_latin-600.woff2", "main.js.map", "styles.css.map", "/assets/**")
+                                "/poppins-v15-latin-ext_latin-700.woff2",
+                                "/poppins-v15-latin-ext_latin-600.woff2", "main.js.map", "styles.css.map",
+                                "/assets/HL.png")
                         .permitAll()
                         .requestMatchers("/getProductByName/**").access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.POST, "/addProduct/**")
@@ -95,7 +95,7 @@ public class SecurityConfig {
     }
 
     private void configureCsrf(CsrfConfigurer<HttpSecurity> csrf) {
-        CookieCsrfTokenRepository tokenRepository = configureCsrfTokenRepository();
+        CsrfTokenRepository tokenRepository = csrfTokenRepository();
         csrf.csrfTokenRepository(tokenRepository)
                 .requireCsrfProtectionMatcher(request -> {
                     String token = request.getHeader("XSRF-TOKEN"); // Fetch the token from the request header
@@ -103,8 +103,10 @@ public class SecurityConfig {
                 });
     }
 
-    private CookieCsrfTokenRepository configureCsrfTokenRepository() {
-        return CookieCsrfTokenRepository.withHttpOnlyFalse();
+    @Bean
+    public CsrfTokenRepository csrfTokenRepository() {
+        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        return repository;
     }
 
     private CorsConfigurationSource configureCors() {

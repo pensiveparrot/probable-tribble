@@ -11,6 +11,10 @@ export class UserService {
     options = { headers: this.headers, withCredentials: true };
     constructor(private http: HttpClient) { }
 
+    isAuthenticated(): Observable<any> {
+        return this.http.get<boolean>("https://" + window.location.hostname + ":8443/" + "api/user/isAuthenticated", { observe: 'response', withCredentials: true });
+    }
+
     changeEmail(hlUser: HLUser): Observable<any> {
         return this.http.put(`https://${window.location.hostname}:8443/api/user/changeEmail`, hlUser, this.options);
     }

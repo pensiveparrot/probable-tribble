@@ -1,30 +1,33 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { UserService } from './common/service/userservice'; // Import UserService
+import { CanActivate, Router } from '@angular/router';
+import { UserService } from './common/service/userservice';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard {
+export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router, private userService: UserService) { } // Inject UserService
+  constructor(private userService: UserService, private router: Router) { }
 
-  canActivate: CanActivateFn = (
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree => {
-    return this.userService.getUser().pipe(
-      map(response => {
-        console.log('User status:', response.status); // Log user status
-        if (response.status === 200) {
-          return true;
-        } else {
-          this.router.navigate(['/login']);
-          return false;
+  canActivate = (): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      this.userService.isAuthenticated().subscribe({
+        next: (response) => {
+          console.log(response);
+          if (response.status == 200) {
+            console.log("data: " + JSON.stringify(response));
+            resolve(true);
+          } else {
+            this.router.navigate(['login']);
+            reject(false);
+          }
+        },
+        error: (error) => {
+          console.error("An error occurred:", error);
+          this.router.navigate(['login']);
+          reject(false);
         }
-      })
-    );
+      });
+    });
   }
 }
