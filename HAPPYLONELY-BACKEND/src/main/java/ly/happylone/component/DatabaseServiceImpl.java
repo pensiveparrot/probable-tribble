@@ -2,15 +2,20 @@ package ly.happylone.component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import ly.happylone.model.Art;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLRole;
@@ -33,6 +40,7 @@ import ly.happylone.model.RegisterRequest;
 
 import javax.sql.DataSource;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -46,58 +54,129 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import ly.happylone.service.DatabaseService;
+import ly.happylone.service.JwtService;
 
 @Component
 public class DatabaseServiceImpl implements DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
 
     private PasswordEncoder passwordEncoder;
-    private final DataSource dataSource;
+    private DataSource dataSource;
+    private ObjectProvider<AuthenticationManager> authenticationManagerProvider;
 
-    public DatabaseServiceImpl(@Lazy PasswordEncoder passwordEncoder, DataSource dataSource) {
+    public DatabaseServiceImpl(@Lazy PasswordEncoder passwordEncoder, DataSource dataSource,
+            ObjectProvider<AuthenticationManager> authenticationManagerProvider,
+            JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.dataSource = dataSource;
+        this.authenticationManagerProvider = authenticationManagerProvider;
+        this.jwtService = jwtService;
     }
 
-    // start of hlauth code DatabaseServiceImpl
+    @Autowired
+    private JwtService jwtService;
 
-    // ...
+    public static final long EXPIRATION_TIME = 864_000_000; // 10 days
+    public static final String SECRET = "hwND#iGZUUB}o.3m}HVZHf*0\\!<lVv\"_-YzgKG_DiW7"; // Make sure this key is at
+    // least 256 bits
+
+    // JWTAuthenticationFilter.java
+    // start of hlauth code DatabaseServiceImpl
+    // 54.39.246.104:2304
 
     @Override
-    public ResponseEntity<?> login(LoginRequest loginRequest) throws SQLException {
-        String sql = "select * from hluser where username=?";
-        HLUser user = new HLUser();
-        user.setUsername(loginRequest.getUsername());
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
-                System.getenv("PGUSER"), System.getenv("PGPW"))) {
-
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, user.getUsername());
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                String storedPassword = rs.getString("password");
-                if (passwordEncoder.matches(loginRequest.getPassword(), storedPassword)) {
-                    // Password matches, authenticate user
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            user.getUsername(), loginRequest.getPassword());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                    // Return user details
-                    return ResponseEntity.ok(queryUser(user.getUsername(), user, rs));
-                } else {
-                    // Password does not match
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-                }
-            } else {
-                // No user found with the provided username
+    public ResponseEntity<?> login(LoginRequest loginRequest) {
+        try {
+            HLUser user = getUserFromDatabase(loginRequest.getUsername());
+            if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
             }
+
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            }
+
+            Authentication authentication = authenticateUser(user, loginRequest.getPassword());
+            String token = jwtService.generateToken(authentication);
+            setAuthenticationInContext(authentication, token);
+
+            user.setToken(token);
+            user.setPassword(null);
+            loginRequest.setPassword(null);
+
+            return ResponseEntity.ok(user);
         } catch (SQLException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
+    }
+
+    private HLUser getUserFromDatabase(String username) throws SQLException {
+        String sql = "select * from hluser where username=?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                HLUser user = new HLUser();
+                user.setUsername(username);
+                user.setPassword(rs.getString("password"));
+                user.setRole(HLRole.values()[rs.getInt("role")]); // assuming the role is stored as an integer in the
+                                                                  // database
+                return user;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private Authentication authenticateUser(HLUser user, String rawPassword) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+        AuthenticationManager authenticationManager = authenticationManagerProvider.getIfAvailable();
+        if (authenticationManager != null) {
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    user.getUsername(), rawPassword, authorities));
+        }
+        throw new IllegalStateException("AuthenticationManager is not available.");
+    }
+
+    private void setAuthenticationInContext(Authentication authentication, String token) {
+        CustomAuthentication customAuthentication = new CustomAuthentication(
+                authentication.getPrincipal(),
+                authentication.getCredentials(),
+                authentication.getAuthorities(),
+                token);
+        SecurityContextHolder.getContext().setAuthentication(customAuthentication);
+    }
+
+    @Override
+    public CustomAuthentication authenticateAndGenerateToken(Authentication authentication) {
+        // Generate JWT token
+        String token = Jwts.builder()
+                .subject(authentication.getName())
+                .claim("roles", authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()))
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+
+        // Create a CustomAuthentication object
+        CustomAuthentication customAuthentication = new CustomAuthentication(
+                authentication.getPrincipal(),
+                authentication.getCredentials(),
+                authentication.getAuthorities(),
+                token);
+
+        return customAuthentication;
     }
 
     @Override
@@ -330,6 +409,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             user.setRegisterdate(rs.getDate("registerdate"));
             user.setUnbandate(rs.getDate("unbandate"));
             user.setLastlogindate(rs.getDate("lastlogindate"));
+
         }
         return user;
 

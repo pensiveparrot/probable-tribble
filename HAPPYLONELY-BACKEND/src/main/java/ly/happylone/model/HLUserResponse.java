@@ -3,7 +3,6 @@ package ly.happylone.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -42,10 +41,4 @@ public class HLUserResponse {
         this.statusmsg = user.getStatusmsg();
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (id == null) {
-            id = UUID.randomUUID().toString();
-        }
-    }
 }

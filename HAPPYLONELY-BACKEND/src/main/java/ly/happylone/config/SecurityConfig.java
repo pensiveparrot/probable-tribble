@@ -7,34 +7,42 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import ly.happylone.model.HLRole;
 import ly.happylone.service.DatabaseService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import java.util.Arrays;
+import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    private DatabaseService databaseService;
 
     @Autowired
-    private DatabaseService databaseService;
+    public void setDatabaseService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
+    }
 
     @Bean
     public PasswordEncoder encoder() {
@@ -50,14 +58,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(Arrays.asList(authProvider()));
+    }
 
-        http
-                .csrf(this::configureCsrf)
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler((request, response, accessDeniedException) -> response.getWriter()
-                                .write("Custom CSRF check failed")))
+    @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JWTAuthenticationFilter();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
+
+        // rest of your code
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(configureCors()))
+                .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeHttpRequests(authorize -> authorize
@@ -89,24 +107,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").access(adminAuthorizationManager())
                         .requestMatchers("/websocket/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/download/**").authenticated()
+
                         .anyRequest().authenticated());
 
         return http.build();
-    }
-
-    private void configureCsrf(CsrfConfigurer<HttpSecurity> csrf) {
-        CsrfTokenRepository tokenRepository = csrfTokenRepository();
-        csrf.csrfTokenRepository(tokenRepository)
-                .requireCsrfProtectionMatcher(request -> {
-                    String token = request.getHeader("XSRF-TOKEN"); // Fetch the token from the request header
-                    return token != null && token.equals(tokenRepository.loadToken(request).getToken());
-                });
-    }
-
-    @Bean
-    public CsrfTokenRepository csrfTokenRepository() {
-        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        return repository;
     }
 
     private CorsConfigurationSource configureCors() {
@@ -127,9 +131,9 @@ public class SecurityConfig {
             try {
                 Authentication authentication = authenticationSupplier.get();
                 String username = authentication.getName();
-                int role = databaseService.getUserRole(username);
-                boolean isAdmin = role == 5;
-                logger.info("Username: {}, Role: {}, Is Admin: {}", username, role, isAdmin);
+                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+                boolean isAdmin = authorities.contains(new SimpleGrantedAuthority("ROLE_" + HLRole.Admin.name()));
+                logger.info("Username: {}, Is Admin: {}", username, isAdmin);
                 return new AuthorizationDecision(isAdmin);
             } catch (Exception e) {
                 logger.error("Authorization error", e);

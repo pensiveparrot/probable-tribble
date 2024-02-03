@@ -18,7 +18,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angu
 import { AdminComponent } from './admin/admin.component';
 import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
-import { CsrfInterceptor } from './csrf-interceptor.guard';
+import { JwtInterceptor } from './JwtInterceptor';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { UserComponent } from './user/user.component';
 import { CardModule } from 'primeng/card';
@@ -80,7 +80,7 @@ import { HeaderComponent } from './header/header.component';
 
   providers: [{
     provide: HTTP_INTERCEPTORS,
-    useClass: CsrfInterceptor,
+    useClass: JwtInterceptor,
     multi: true
   }],
   bootstrap: [AppComponent]

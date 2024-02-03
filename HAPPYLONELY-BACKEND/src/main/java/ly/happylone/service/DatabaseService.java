@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import ly.happylone.component.CustomAuthentication;
 import ly.happylone.model.Art;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLUser;
@@ -23,6 +23,8 @@ public interface DatabaseService extends UserDetailsService {
     // hlauth code
     public ResponseEntity<?> login(LoginRequest loginRequest)
             throws SQLException;
+
+    public CustomAuthentication authenticateAndGenerateToken(Authentication authentication);
 
     public ResponseEntity<?> register(RegisterRequest registerRequest) throws SQLException;
 

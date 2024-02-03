@@ -18,16 +18,19 @@ export class LoginComponent {
   msgs: Message[] = [];
 
   constructor(private http: HttpClient, private router: Router) { }
-
   login() {
     const url = `https://${window.location.hostname}:8443/login`;
     const loginRequest: LoginRequest = {
       username: this.username,
-      password: this.password
+      password: this.password,
+      token: ''
     };
     this.http.post(url, loginRequest)
       .subscribe({
-        next: () => {
+        next: (response: any) => {
+          // Store the token in the local storage
+          localStorage.setItem('token', response.token);
+
           this.failedAttempts = 0;
           this.msgs = [{ severity: 'success', summary: 'Success Message', detail: 'Login successful.' }];
           this.router.navigate(['home']);

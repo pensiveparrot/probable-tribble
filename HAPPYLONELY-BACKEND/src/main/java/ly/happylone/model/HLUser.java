@@ -26,6 +26,8 @@ public class HLUser {
 	@Column(name = "email")
 	private String email;
 
+	private String token;
+
 	@Column(nullable = false, unique = true, name = "username")
 	private String username;
 
