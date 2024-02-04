@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,8 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import ly.happylone.model.Art;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLRole;
@@ -40,7 +37,6 @@ import ly.happylone.model.RegisterRequest;
 
 import javax.sql.DataSource;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -54,7 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import ly.happylone.service.DatabaseService;
 import ly.happylone.service.JwtService;
@@ -79,11 +74,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Autowired
     private JwtService jwtService;
 
-    public static final long EXPIRATION_TIME = 864_000_000; // 10 days
-    public static final String SECRET = "hwND#iGZUUB}o.3m}HVZHf*0\\!<lVv\"_-YzgKG_DiW7"; // Make sure this key is at
-    // least 256 bits
-
-    // JWTAuthenticationFilter.java
     // start of hlauth code DatabaseServiceImpl
     // 54.39.246.104:2304
 
@@ -91,11 +81,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     public ResponseEntity<?> login(LoginRequest loginRequest) {
         try {
             HLUser user = getUserFromDatabase(loginRequest.getUsername());
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-            }
-
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
             }
 
@@ -154,29 +140,6 @@ public class DatabaseServiceImpl implements DatabaseService {
                 authentication.getAuthorities(),
                 token);
         SecurityContextHolder.getContext().setAuthentication(customAuthentication);
-    }
-
-    @Override
-    public CustomAuthentication authenticateAndGenerateToken(Authentication authentication) {
-        // Generate JWT token
-        String token = Jwts.builder()
-                .subject(authentication.getName())
-                .claim("roles", authentication.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()))
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
-                .compact();
-
-        // Create a CustomAuthentication object
-        CustomAuthentication customAuthentication = new CustomAuthentication(
-                authentication.getPrincipal(),
-                authentication.getCredentials(),
-                authentication.getAuthorities(),
-                token);
-
-        return customAuthentication;
     }
 
     @Override
@@ -263,7 +226,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     public ResponseEntity<?> register(RegisterRequest registerRequest) throws SQLException {
-        String sql = "insert into hluser (id, email, username, password, registerdate, lastlogindate, unbandate, statusmsg, profileimg, userloggedin, role) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into hluser (id, email, username, password, registerdate, unbandate, statusmsg, profileimg, userloggedin, role) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         System.out.println("in register service");
         if (registerRequest.getUsername() == null || registerRequest.getUsername().isEmpty()
                 || registerRequest.getUsername().isBlank()) {
@@ -285,13 +248,12 @@ public class DatabaseServiceImpl implements DatabaseService {
                 statement.setString(2, registerRequest.getEmail());
                 statement.setString(3, registerRequest.getUsername());
                 statement.setString(4, passwordEncoder.encode(registerRequest.getPassword()));
-                hlUser.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
-                hlUser.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
-                statement.setDate(7, null);
-                statement.setString(8, "I'm new here!");
-                statement.setString(9, "https://i.imgur.com/mCHMpLT.png");
-                statement.setBoolean(10, true);
-                statement.setInt(11, HLRole.Standard.ordinal());
+                statement.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+                statement.setDate(6, null);
+                statement.setString(7, "I'm new here!");
+                statement.setString(8, "https://i.imgur.com/mCHMpLT.png");
+                statement.setBoolean(9, false);
+                statement.setInt(10, HLRole.Standard.ordinal());
 
                 int rowsUpdated = statement.executeUpdate();
                 if (rowsUpdated > 0) {

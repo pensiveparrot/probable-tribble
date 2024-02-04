@@ -5,6 +5,7 @@ import { Message } from './message';
 import { HLUser } from './hluser';
 import * as SockJS from 'sockjs-client';
 import { Client, Stomp } from '@stomp/stompjs';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -17,25 +18,29 @@ export class ChatService {
     }
 
     initializeWebSocketConnection(): void {
-        this.stompClient = new Client({
-            webSocketFactory: () => new SockJS('https://' + window.location.hostname + ':8443/websocket'),
-            reconnectDelay: 5000,
-            onConnect: (receipt) => {
-                console.log('Connected:', receipt);
-                this.stompClient?.subscribe('/topic/messages', (messageOutput: { body: string; }) => {
-                    const message: Message = JSON.parse(messageOutput.body);
-                    if (message) {
-                        this.messageSubject.next(message);
-                    }
-                });
-            },
-            onStompError: (error) => {
-                console.error('STOMP Error:', error);
-            }
-        });
+        const token = localStorage.getItem('token'); // get the JWT token from local storage
+        if (token != null) {
+            this.stompClient = new Client({
+                webSocketFactory: () => new SockJS(`https://${window.location.hostname}:8443/websocket?token=${token}`),
+                reconnectDelay: 5000,
+                onConnect: (receipt) => {
+                    console.log('Connected:', receipt);
+                    this.stompClient?.subscribe('/topic/messages', (messageOutput: { body: string; }) => {
+                        const message: Message = JSON.parse(messageOutput.body);
+                        if (message) {
+                            this.messageSubject.next(message);
+                        }
+                    });
+                },
+                onStompError: (error) => {
+                    console.error('STOMP Error:', error);
+                }
+            });
 
-        this.stompClient.activate();
+            this.stompClient.activate();
+        }
     }
+
     getNewMessageObservable(): Observable<Message> {
         return this.messageSubject.asObservable();
     }

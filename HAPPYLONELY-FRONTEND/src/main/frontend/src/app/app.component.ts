@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
-
+  constructor(public auth: AuthService, private router: Router) { }
+  userAuthenticated(): boolean {
+    return this.auth.loggedIn();
+  }
 }

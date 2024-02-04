@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import ly.happylone.model.HLRole;
 import ly.happylone.service.DatabaseService;
@@ -71,29 +72,25 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthenticationFilter jwtAuthenticationFilter)
             throws Exception {
 
-        // rest of your code
-
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.configurationSource(configureCors()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/index.html", "/").permitAll() // Allow unauthenticated access to the Angular
                         .requestMatchers("/login", "/register").permitAll()
                         .requestMatchers("/api/user/isAuthenticated").permitAll() // application.
-                        .requestMatchers("/styles.css", "/polyfills.js", "polyfills.js.map",
-                                "/runtime.js", "/vendor.js", "vendor.js.map",
-                                "/main.js", "favicon.ico", "runtime.js.map",
-                                "/poppins-v15-latin-ext_latin-regular.woff2",
-                                "/poppins-v15-latin-ext_latin-700.woff2",
-                                "/poppins-v15-latin-ext_latin-600.woff2", "main.js.map", "styles.css.map",
-                                "/assets/HL.png")
+                        .requestMatchers("**.woff2", "**.woff", "**.ttf", "**.eot", "**.svg", "**.png", "**.jpg",
+                                "**.jpeg", "**.gif", "**.ico", "*.css", "*.js", "*.html", "*.map", "*.json",
+                                "/assets/**")
                         .permitAll()
                         .requestMatchers("/getProductByName/**").access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.POST, "/addProduct/**")
                         .access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.POST, "/messages/**").authenticated()
+                        .requestMatchers("/api/forum/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "updateProduct/**")
                         .access(adminAuthorizationManager())
@@ -105,22 +102,27 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/changePassword/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/editUser/**").access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").access(adminAuthorizationManager())
-                        .requestMatchers("/websocket/**").authenticated()
+                        .requestMatchers("/websocket/**").permitAll() // Allow unauthenticated
+                        // access to WebSocket
+                        // endpoint
                         .requestMatchers(HttpMethod.POST, "/download/**").authenticated()
 
                         .anyRequest().authenticated());
-
         return http.build();
     }
 
-    private CorsConfigurationSource configureCors() {
+    public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-            configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
+            // replace with your actual origins
+            configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:4200"));
+            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH",
+                    "DELETE", "OPTIONS"));
+            configuration.setAllowedHeaders(Arrays.asList("Authorization",
+                    "Content-Type"));
             configuration.setAllowCredentials(true);
-            configuration.setAllowedHeaders(Arrays.asList(
-                    "Authorization", "Cache-Control", "Content-Type", "X-XSRF-TOKEN", "X-CSRF-TOKEN"));
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
             return configuration;
         };
     }

@@ -16,9 +16,8 @@ import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
 import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { AdminComponent } from './admin/admin.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
-import { JwtInterceptor } from './JwtInterceptor';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { UserComponent } from './user/user.component';
 import { CardModule } from 'primeng/card';
@@ -33,7 +32,14 @@ import { ThreadCreateComponent } from './thread-create/thread-create.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ToolbarModule } from 'primeng/toolbar';
+import { ToastModule } from 'primeng/toast';
 import { HeaderComponent } from './header/header.component';
+import { JwtModule } from '@auth0/angular-jwt';
+import { MessageModule } from 'primeng/message';
+export function tokenGetter() {
+  return localStorage.getItem('token');
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -53,13 +59,13 @@ import { HeaderComponent } from './header/header.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    TabMenuModule,
+    TabMenuModule, ToastModule,
     ImageModule,
     GalleriaModule,
     DialogModule,
     ButtonModule,
     CarouselModule,
-    TagModule,
+    TagModule, MessageModule,
     InputTextModule,
     InputTextareaModule,
     MessagesModule,
@@ -70,19 +76,17 @@ import { HeaderComponent } from './header/header.component';
     FileUploadModule,
     TableModule,
     ToolbarModule,
-    HttpClientModule,
-    HttpClientXsrfModule.withOptions({
-      cookieName: 'XSRF-TOKEN',
-      headerName: 'X-XSRF-TOKEN',
-    }),
-
+    HttpClientModule, ReactiveFormsModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['https://localhost:8443'],  // replace with your API domain
+        disallowedRoutes: []  // optional, routes that don't need the token
+      }
+    })
   ],
 
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: JwtInterceptor,
-    multi: true
-  }],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

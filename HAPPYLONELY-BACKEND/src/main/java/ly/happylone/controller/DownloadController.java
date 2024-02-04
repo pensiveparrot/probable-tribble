@@ -109,10 +109,11 @@ public class DownloadController {
         Process process = processBuilder.start();
         int exitCode = process.waitFor();
         if (exitCode != 0) {
-            String errorMessage = new BufferedReader(new InputStreamReader(process.getErrorStream()))
-                    .lines().collect(Collectors.joining("\n"));
-            LOGGER.error("Command execution failed with exit code: {}. Error Message: {}", exitCode, errorMessage);
-            throw new IOException("Command execution failed: " + errorMessage);
+            try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                String errorMessage = errorReader.lines().collect(Collectors.joining("\n"));
+                LOGGER.error("Command execution failed with exit code: {}. Error Message: {}", exitCode, errorMessage);
+                throw new IOException("Command execution failed: " + errorMessage);
+            }
         }
     }
 }

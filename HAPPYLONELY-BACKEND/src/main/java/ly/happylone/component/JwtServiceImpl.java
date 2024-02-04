@@ -16,6 +16,10 @@ import ly.happylone.service.JwtService;
 
 @Component
 public class JwtServiceImpl implements JwtService {
+    private static final long EXPIRATION_TIME = 864_000_000; // 10 days
+    private static final String SECRET = "hwND#iGZUUB}o.3m}HVZHf*0\\!<lVv\"_-YzgKG_DiW7"; // Make sure this key is at
+    // least 256 bits
+
     @Override
     public String generateToken(Authentication authentication) {
         // Generate JWT token
@@ -25,15 +29,16 @@ public class JwtServiceImpl implements JwtService {
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + DatabaseServiceImpl.EXPIRATION_TIME))
-                .signWith(Keys.hmacShaKeyFor(DatabaseServiceImpl.SECRET.getBytes(StandardCharsets.UTF_8)))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
                 .compact();
     }
 
     @Override
     public Jws<Claims> parseToken(String jwt) {
         return Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(DatabaseServiceImpl.SECRET.getBytes(StandardCharsets.UTF_8)))
+                .verifyWith(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
                 .build().parseSignedClaims(jwt);
     }
+
 }

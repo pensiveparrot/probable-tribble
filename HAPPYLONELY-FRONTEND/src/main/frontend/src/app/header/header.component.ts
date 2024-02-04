@@ -10,7 +10,13 @@ import { AuthService } from '../common/service/auth.service';
 })
 export class HeaderComponent implements OnInit {
   title = 'HAPPYLONELY';
-  items: MenuItem[] = [];
+  items: MenuItem[] = [
+    { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: 'home' },
+    { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: 'shop' },
+    { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: 'art' },
+    { label: 'User', icon: 'pi pi-fw pi-user', routerLink: 'user' },
+    { label: 'Download YouTube', icon: 'pi pi-fw pi-youtube', routerLink: 'youtube-dl' }
+  ];
   activeItem!: MenuItem;
   constructor(private authService: AuthService, private router: Router) {
     this.getUserRole();
@@ -25,12 +31,12 @@ export class HeaderComponent implements OnInit {
         if (response > 5) {
           console.log("data: " + JSON.stringify(response));
           this.items = [
-            { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['home'] },
-            { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: ['shop'] },
-            { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: ['art'] },
-            { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['user'] },
-            { label: 'Download YouTube', icon: 'pi pi-fw pi-youtube', routerLink: ['youtube-dl'] },
-            { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: ['admin'] }
+            { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: 'home' },
+            { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: 'shop' },
+            { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: 'art' },
+            { label: 'User', icon: 'pi pi-fw pi-user', routerLink: 'user' },
+            { label: 'Download YouTube', icon: 'pi pi-fw pi-youtube', routerLink: 'youtube-dl' },
+            { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: 'admin' }
           ];
         }
       },

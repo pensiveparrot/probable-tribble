@@ -5,13 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import ly.happylone.component.CustomAuthentication;
-import ly.happylone.component.DatabaseServiceImpl;
-import ly.happylone.service.DatabaseService;
 import ly.happylone.service.JwtService;
-
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,12 +25,8 @@ import io.jsonwebtoken.JwtException;
 
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
-    // Make sure this key is at
-    // least 256 bits
     @Autowired
     private JwtService jwtService;
-    @Autowired
-    private DatabaseService databaseService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -44,25 +35,28 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         String authorizationHeader = httpRequest.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String jwt = authorizationHeader.substring(7);
-            try {
-                Jws<Claims> claims = jwtService.parseToken(jwt);
-                String username = claims.getPayload().getSubject();
-                List<?> authoritiesClaim = (List<?>) claims.getPayload().get("authorities");
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                if (authoritiesClaim != null) {
-                    authorities = authoritiesClaim.stream()
-                            .map(authority -> new SimpleGrantedAuthority((String) authority))
-                            .collect(Collectors.toList());
-                }
-                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                CustomAuthentication customAuthentication = databaseService
-                        .authenticateAndGenerateToken(authentication);
-                SecurityContextHolder.getContext().setAuthentication(customAuthentication);
-            } catch (JwtException e) {
-                // The JWT token's signature doesn't match the locally computed signature.
-                // You can handle this case as you see fit.
+            Authentication authentication = getAuthentication(jwt);
+            if (authentication != null) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
         chain.doFilter(request, response);
+    }
+
+    public Authentication getAuthentication(String jwt) {
+        try {
+            Jws<Claims> claims = jwtService.parseToken(jwt);
+            String username = claims.getPayload().getSubject();
+            List<?> authoritiesClaim = (List<?>) claims.getPayload().get("authorities");
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            if (authoritiesClaim != null) {
+                authorities = authoritiesClaim.stream()
+                        .map(authority -> new SimpleGrantedAuthority((String) authority))
+                        .collect(Collectors.toList());
+            }
+            return new UsernamePasswordAuthenticationToken(username, null, authorities);
+        } catch (JwtException e) {
+            return null;
+        }
     }
 }

@@ -10,4 +10,5 @@ public interface JwtService {
     public String generateToken(Authentication authentication);
 
     public Jws<Claims> parseToken(String jwt);
+
 }

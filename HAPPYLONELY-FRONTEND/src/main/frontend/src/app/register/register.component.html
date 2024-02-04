@@ -1,1 +1,31 @@
-<p>register works!</p>
+<div class="p-grid p-justify-center">
+    <div class="p-col-8">
+        <p-card header="Register">
+            <ng-template pTemplate="content">
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                    <div class="p-field">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" pInputText formControlName="email">
+                        <p-message severity="error" text="Email is required"
+                            *ngIf="registerForm.get('email')?.errors?.['required']"></p-message>
+
+                    </div>
+                    <div class="p-field">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" pInputText formControlName="username">
+                        <p-message severity="error" text="Username is required"
+                            *ngIf="registerForm.get('username')?.errors?.['required']"></p-message>
+                    </div>
+                    <div class="p-field">
+                        <label for="password">Password</label>
+                        <input id="password" name="password" type="password" pInputText formControlName="password">
+                        <p-message severity="error" text="Password is required"
+                            *ngIf="registerForm.get('password')?.errors?.['required']"></p-message>
+                    </div>
+                    <p-button type="submit" label="Register" [disabled]="registerForm.invalid"></p-button>
+                    <span>Already registered? <a routerLink="/login">Login here</a></span>
+                </form>
+            </ng-template>
+        </p-card>
+    </div>
+</div>
