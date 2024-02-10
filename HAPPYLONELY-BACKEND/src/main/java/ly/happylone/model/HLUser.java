@@ -61,4 +61,7 @@ public class HLUser {
 	@Column(name = "credits")
 	private int credits;
 
+	@Column(name = "gptapikey")
+	private String gptApiKey;
+
 }

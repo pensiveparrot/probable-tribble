@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked, ChangeDetectorRef, APP_ID } from '@angular/core';
 import { ChatService } from './chat.service';
 import { Message } from './message';
 import { HLUser } from './hluser';
@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   selectedUser: HLUser | null = null;
   showUserProfileDialog: boolean = false;
   backendBaseUrl: string;
+  isUserHaveChatGptApiKey: boolean = false;
 
   showUserProfile(user: HLUser): void {
     this.selectedUser = user;
@@ -176,15 +177,79 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   async sendMessage(): Promise<void> {
     if (this.newMessageContent.trim()) {
       if (this.hluser && this.hluser.username) {
-        const newMessage: Message = {
-          content: this.newMessageContent,
-          sender: this.hluser,
-          date_sent: new Date()
-        };
-        this.chatService.sendMessage(newMessage);
-        console.log("newMessage:", JSON.stringify(newMessage));
-        this.newMessageContent = '';  // Reset the newMessageContent
+        // Check if the message is a slash command for ChatGPT
+        if (this.newMessageContent.startsWith('/chatgpt')) {
+          // Extract the API key and the message from the command
+          this.newMessageContent = this.newMessageContent.substring(9);  // Remove the '/chatgpt' part
+          const parts = this.newMessageContent.split(':');
+          let apiKey = '';
+          let message = '';
+          let isApiKeyInDb = false;
+          switch (parts.length) {
+            case 2:
+              apiKey = parts[0];
+              message = parts[1].trim();  // Join the remaining parts to form the message
+              // Store the API key in the user's session
+              sessionStorage.setItem('chatgptApiKey', apiKey);
+              break;
+            case 1:
+              // Check if the user has stored the API key in the database
+              this.chatService.userHasChatGptApiKey().subscribe({
+                next: (hasApiKey: boolean) => {
+                  isApiKeyInDb = hasApiKey;
+                },
+                error: (error: any) => {
+                  console.error('Error checking if user has ChatGPT API key:', error);
+                }
+              });
+              if (isApiKeyInDb) {
+                this.user.getUser().subscribe({
+                  next: (user: HLUser) => {
+                    if (user.gptApiKey) {
+                      apiKey = user.gptApiKey;
+                    }
+                  },
+                  error: (error: any) => {
+                    console.error('Error getting user details:', error);
+                  }
+                });
+              } else {
+                this.newMessageContent = 'You need to provide an API key to use ChatGPT. Use the format /chatgpt:your-api-key:message';
+                this.sendMessage();
+              }
+              break; // Add a break statement here
+            default:  // If the command is not in the correct format
+              this.newMessageContent = 'You need to provide an API key to use ChatGPT. Use the format /chatgpt:your-api-key:message';
+              this.sendMessage();
+              break;
+          }
 
+          // Send a request to the backend to use ChatGPT
+          const request = {
+            'message': message,
+            'apiKey': apiKey || '' // Ensure apiKey is always a string, even if it's null
+          };
+          this.chatService.useChatGPT(request).subscribe({
+            next: (response: any) => {
+              console.log('ChatGPT response:', response);
+              this.newMessageContent = response;
+              this.sendMessage();
+            },
+            error: (error: any) => {
+              console.error('Error using ChatGPT:', error);
+            }
+          });
+        }
+        else {
+          const newMessage: Message = {
+            content: this.newMessageContent,
+            sender: this.hluser,
+            date_sent: new Date()
+          };
+          this.chatService.sendMessage(newMessage);
+          console.log("newMessage:", JSON.stringify(newMessage));
+        }
+        this.newMessageContent = '';  // Reset the newMessageContent
         this.cdr.detectChanges(); // Trigger change detection
       } else {
         console.error("User details are not available");
@@ -192,5 +257,47 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     }
   }
 
-
 }
+
+//         this.chatService.useChatGPT(request).subscribe(response => {
+//           console.log('ChatGPT response:', response);
+//         }, error => {
+//           console.error('Error using ChatGPT:', error);
+//         });
+//       } else {
+//         const newMessage: Message = {
+//           content: this.newMessageContent,
+//           sender: this.hluser,
+//           date_sent: new Date()
+//         };
+//         this.chatService.sendMessage(newMessage);
+//         console.log("newMessage:", JSON.stringify(newMessage));
+//       }
+//       this.newMessageContent = '';  // Reset the newMessageContent
+//       this.cdr.detectChanges(); // Trigger change detection
+//     } else {
+//       console.error("User details are not available");
+//     }
+//   }
+// }
+// async sendMessage(): Promise<void> {
+//   if (this.newMessageContent.trim()) {
+//     if (this.hluser && this.hluser.username) {
+//       const newMessage: Message = {
+//         content: this.newMessageContent,
+//         sender: this.hluser,
+//         date_sent: new Date()
+//       };
+//       this.chatService.sendMessage(newMessage);
+//       console.log("newMessage:", JSON.stringify(newMessage));
+//       this.newMessageContent = '';  // Reset the newMessageContent
+
+//       this.cdr.detectChanges(); // Trigger change detection
+//     } else {
+//       console.error("User details are not available");
+//     }
+//   }
+// }
+
+// }
+// async sendMessage(): Promise<void> 

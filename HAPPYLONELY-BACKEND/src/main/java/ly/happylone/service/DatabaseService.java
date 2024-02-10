@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import ly.happylone.model.Art;
+import ly.happylone.model.EmailRequest;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
@@ -27,11 +28,17 @@ public interface DatabaseService extends UserDetailsService {
     public Boolean isProfaneUsername(String username);
 
     // user code
+    public HLUser getLoggedInUser() throws SQLException;
+
     public HLUser getUserById(String id) throws SQLException;
 
     public HLUser getUserByName(String username);
 
     public boolean userExists(String username);
+
+    public boolean updateUserGptApiKey(String username, String apiKey) throws SQLException;
+
+    public boolean userHasChatGptApiKey(String username) throws SQLException;
 
     public ResponseEntity<HLUserResponse> getUserByUsernameMin(String username);
 
@@ -99,4 +106,9 @@ public interface DatabaseService extends UserDetailsService {
     public ResponseEntity<?> addProfileComment(Message message) throws SQLException;
 
     public ResponseEntity<?> addCredits(HLUser user, int credits) throws SQLException;
+
+    // start email code
+    public ResponseEntity<?> sendEmail(EmailRequest emailRequest) throws SQLException;
+
+    public ResponseEntity<?> getEmails() throws SQLException;
 }

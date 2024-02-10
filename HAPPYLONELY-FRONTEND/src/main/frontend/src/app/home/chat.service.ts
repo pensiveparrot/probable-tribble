@@ -41,6 +41,13 @@ export class ChatService {
         }
     }
 
+    userHasChatGptApiKey(): Observable<boolean> {
+        return this.http.get<boolean>("https://" + window.location.hostname + ":8443/" + "api/chat/userHasChatGptApiKey", { withCredentials: true });
+    }
+
+    useChatGPT(request: { [key: string]: string }): Observable<string> {
+        return this.http.post<string>("https://" + window.location.hostname + ":8443/" + "api/chat/useChatGPT", request, { withCredentials: true });
+    }
     getNewMessageObservable(): Observable<Message> {
         return this.messageSubject.asObservable();
     }

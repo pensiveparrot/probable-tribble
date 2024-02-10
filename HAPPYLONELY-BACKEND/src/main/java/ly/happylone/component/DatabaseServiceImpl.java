@@ -9,6 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
 import ly.happylone.model.Art;
+import ly.happylone.model.EmailRequest;
 import ly.happylone.model.HLBadge;
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
@@ -53,6 +56,9 @@ import java.util.regex.Pattern;
 
 import ly.happylone.service.DatabaseService;
 import ly.happylone.service.JwtService;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import ly.happylone.model.Email;
 
 @Component
 public class DatabaseServiceImpl implements DatabaseService {
@@ -88,7 +94,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             Authentication authentication = authenticateUser(user, loginRequest.getPassword());
             String token = jwtService.generateToken(authentication);
             setAuthenticationInContext(authentication, token);
-
+            user.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
             user.setToken(token);
             user.setPassword(null);
             loginRequest.setPassword(null);
@@ -304,6 +310,33 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
+    public boolean updateUserGptApiKey(String username, String apiKey) throws SQLException {
+        String sql = "UPDATE hluser SET gptapikey = ? WHERE username = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, apiKey);
+            statement.setString(2, username);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public HLUser getLoggedInUser() throws SQLException {
+        // get user by authentication context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        String username = authentication.getName();
+        return getUserByName(username);
+    }
+
+    @Override
     public HLUser getUserByName(String username) {
         String sql = "select * from hluser where username=?";
         HLUser user = new HLUser();
@@ -375,6 +408,21 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
         return user;
 
+    }
+
+    @Override
+    public boolean userHasChatGptApiKey(String username) throws SQLException {
+        String sql = "SELECT gptapikey FROM hluser WHERE username = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("gptapikey") != null;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -1258,4 +1306,48 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     // end of forum code
+
+    // start of email code
+    @Autowired
+    private JavaMailSender emailSender;
+
+    @Override
+    public ResponseEntity<?> sendEmail(EmailRequest emailRequest) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(emailRequest.getEmail());
+            message.setTo(emailRequest.getSendTo());
+            message.setSubject(emailRequest.getSubject());
+            message.setText(emailRequest.getMessage());
+            emailSender.send(message);
+            return ResponseEntity.ok("Email sent successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send email");
+        }
+    }
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Override
+    public ResponseEntity<?> getEmails() {
+        List<Email> emails = new ArrayList<>();
+
+        // Get the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Get the email from the JavaMailSender
+            String email = ((JavaMailSenderImpl) javaMailSender).getUsername();
+
+            Email emailObj = new Email();
+            emailObj.setId(authentication.getName()); // Use the username as the ID
+            emailObj.setEmail(email);
+            emails.add(emailObj);
+
+            return ResponseEntity.ok(emails);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
+        }
+    }
 }

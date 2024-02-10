@@ -84,7 +84,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/isAuthenticated").permitAll() // application.
                         .requestMatchers("**.woff2", "**.woff", "**.ttf", "**.eot", "**.svg", "**.png", "**.jpg",
                                 "**.jpeg", "**.gif", "**.ico", "*.css", "*.js", "*.html", "*.map", "*.json",
-                                "/assets/**")
+                                "/assets/**.png", "/assets/**.jpg", "/assets/**.jpeg", "/assets/*.gif",
+                                "/assets/**.ico",
+                                "/artwork/**.png, /artwork/**.jpg, /artwork/**.jpeg, /artwork/**.gif, /artwork/**.ico")
                         .permitAll()
                         .requestMatchers("/getProductByName/**").access(adminAuthorizationManager())
                         .requestMatchers(HttpMethod.POST, "/addProduct/**")
