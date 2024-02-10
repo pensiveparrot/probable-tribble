@@ -205,7 +205,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         hlUser.setLastlogindate(new java.sql.Date(System.currentTimeMillis()));
         hlUser.setUserloggedin(true);
         HLUserResponse hlUserResponse = new HLUserResponse(hlUser);
-        String sql = "insert into hluser_response (id, username, profileimg, statusmsg) values (?, ?, ?, ?)";
+        String sql = "insert into hluser_response (id, username, profileimg, statusmsg, gptapikey) values (?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
 
@@ -217,6 +217,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                 statement.setString(2, hlUserResponse.getUsername());
                 statement.setString(3, hlUserResponse.getProfileimg());
                 statement.setString(4, hlUserResponse.getStatusmsg());
+                statement.setString(5, hlUser.getGptapikey());
                 statement.executeUpdate();
             }
         } catch (Exception ex) {
@@ -404,7 +405,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             user.setRegisterdate(rs.getDate("registerdate"));
             user.setUnbandate(rs.getDate("unbandate"));
             user.setLastlogindate(rs.getDate("lastlogindate"));
-
+            user.setGptapikey(rs.getString("gptapikey"));
         }
         return user;
 
@@ -477,6 +478,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         user.setUsername(rs.getString("username"));
         user.setProfileimg(rs.getString("profileimg"));
         user.setStatusmsg(rs.getString("statusmsg"));
+        user.setGptapikey(rs.getString("gptapikey"));
         HLUserResponse userResp = new HLUserResponse(user);
 
         return userResp;
@@ -501,7 +503,10 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) {
+    public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) throws SQLException {
+        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         String sql = "UPDATE hluser_response SET username=?, profileimg=?, statusmsg=? WHERE id=?";
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
@@ -647,6 +652,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public void deleteUser(String id) throws SQLException {
+        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+            throw new SQLException("User not authorized to delete user");
+        }
         String sql = "DELETE FROM hluser WHERE id = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
@@ -723,6 +731,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUser> banUser(String id) throws SQLException {
+        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         String sql = "UPDATE hluser SET role = ?, unbandate = ? WHERE id = ?";
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
@@ -767,6 +778,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException {
+        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         String sql = "UPDATE hluser SET unbandate = ? WHERE id = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"));
@@ -950,8 +964,15 @@ public class DatabaseServiceImpl implements DatabaseService {
         return products;
     }
 
+    private boolean isUserAdmin(String username) {
+        return getUserRole(username) >= 5;
+    }
+
     @Override
     public ResponseEntity<Product> addProduct(Product product) throws SQLException {
+        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         String sql = "INSERT INTO product (id, productname, price, inventorystatus, image, shoplink) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
@@ -1013,6 +1034,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<Product> updateProduct(Product product) throws SQLException {
+        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         if (product.getId() != null) {
             String sql = "update product set productname=?, price=?, inventorystatus=?, image=?, shoplink=? where id=?";
             try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",

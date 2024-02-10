@@ -29,6 +29,9 @@ public class HLUserResponse {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Message> messages;
 
+    @Column(name = "gptapikey")
+    private String gptapikey;
+
     public HLUserResponse() {
         // Default constructor
     }
@@ -39,6 +42,7 @@ public class HLUserResponse {
         this.username = user.getUsername();
         this.profileimg = user.getProfileimg();
         this.statusmsg = user.getStatusmsg();
+        this.gptapikey = user.getGptapikey();
     }
 
 }

@@ -44,7 +44,7 @@ public interface DatabaseService extends UserDetailsService {
 
     public int getUserRole(String username);
 
-    public ResponseEntity<HLUserResponse> editUser(HLUserResponse user);
+    public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) throws SQLException;
 
     List<ResponseEntity<HLUser>> getAllUsers() throws SQLException;
 

@@ -1,8 +1,6 @@
 package ly.happylone.component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -56,12 +54,15 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public String contactChatGPT(String message, String apiKey)
             throws SQLException, JsonMappingException, JsonProcessingException {
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalStateException("API key is not specified");
-        }
-
-        // get user currently logged in
         HLUser user = databaseService.getLoggedInUser();
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            if (user.getGptapikey() != null) {
+                apiKey = user.getGptapikey();
+            } else {
+                throw new IllegalStateException("No API key provided");
+            }
+        }
 
         // Update the GPT API key for the user
         if (!databaseService.userHasChatGptApiKey(user.getUsername())) {

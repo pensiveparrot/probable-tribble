@@ -5,6 +5,7 @@ import { HLUser } from './hluser';
 import { UserService } from '../common/service/userservice';
 import { PrimeNGConfig } from 'primeng/api';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import hljs from 'highlight.js';
 
 @Component({
   selector: 'app-home',
@@ -47,6 +48,7 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     username: "",
     statusmsg: "",
     profileimg: "",
+    gptapikey: ""
   };
 
   constructor(private chatService: ChatService, private user: UserService, private primengConfig: PrimeNGConfig, private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
@@ -86,6 +88,7 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     setTimeout(() => { this.hidden = true }, 3000);
     setTimeout(() => { this.showText = true }, 4000);
     await this.getUsername();  // Fetch the username once on initialization
+    hljs.initHighlightingOnLoad();
   }
 
   ngAfterViewChecked(): void {
@@ -95,7 +98,13 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   artAuthor: string = "";
   selectedFile!: File;
   showUploadDialog = false;
-
+  formatMessage(message: string): string {
+    const codeBlockRegex = /```(\w+)\n([\s\S]*?)```/g;
+    return message.replace(codeBlockRegex, (_match, language, code) => {
+      const highlightedCode = hljs.highlight(language, code).value;
+      return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
+    });
+  }
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
@@ -163,7 +172,8 @@ export class HomeComponent implements OnInit, AfterViewChecked {
             id: data.id,
             username: data.username,
             statusmsg: data.statusmsg,
-            profileimg: data.profileimg
+            profileimg: data.profileimg,
+            gptapikey: data.gptapikey
           };
           console.log("final");
           console.log("data: " + JSON.stringify(data));
@@ -177,70 +187,46 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   async sendMessage(): Promise<void> {
     if (this.newMessageContent.trim()) {
       if (this.hluser && this.hluser.username) {
-        // Check if the message is a slash command for ChatGPT
         if (this.newMessageContent.startsWith('/chatgpt')) {
-          // Extract the API key and the message from the command
-          this.newMessageContent = this.newMessageContent.substring(9);  // Remove the '/chatgpt' part
-          const parts = this.newMessageContent.split(':');
-          let apiKey = '';
-          let message = '';
-          let isApiKeyInDb = false;
-          switch (parts.length) {
-            case 2:
-              apiKey = parts[0];
-              message = parts[1].trim();  // Join the remaining parts to form the message
-              // Store the API key in the user's session
-              sessionStorage.setItem('chatgptApiKey', apiKey);
-              break;
-            case 1:
-              // Check if the user has stored the API key in the database
-              this.chatService.userHasChatGptApiKey().subscribe({
-                next: (hasApiKey: boolean) => {
-                  isApiKeyInDb = hasApiKey;
-                },
-                error: (error: any) => {
-                  console.error('Error checking if user has ChatGPT API key:', error);
-                }
-              });
-              if (isApiKeyInDb) {
-                this.user.getUser().subscribe({
-                  next: (user: HLUser) => {
-                    if (user.gptApiKey) {
-                      apiKey = user.gptApiKey;
-                    }
-                  },
-                  error: (error: any) => {
-                    console.error('Error getting user details:', error);
-                  }
-                });
-              } else {
-                this.newMessageContent = 'You need to provide an API key to use ChatGPT. Use the format /chatgpt:your-api-key:message';
-                this.sendMessage();
-              }
-              break; // Add a break statement here
-            default:  // If the command is not in the correct format
-              this.newMessageContent = 'You need to provide an API key to use ChatGPT. Use the format /chatgpt:your-api-key:message';
-              this.sendMessage();
-              break;
+          let messageMap = new Map<string, string>();
+          let toParts = [];
+          if (this.newMessageContent.includes('sk-')) {
+            toParts = this.newMessageContent.split(' ', 3);
+          }
+          else {
+            toParts = this.newMessageContent.split(' ', 2);
+          }
+          const parts = toParts;
+          if (parts.length === 3) {
+            messageMap.set('apiKey', parts[1]);
+            messageMap.set('message', this.newMessageContent.split(parts[1] + ' ')[1]);
+          } else if (parts.length === 2) {
+            messageMap.set('message', this.newMessageContent.split(parts[0] + ' ')[1]);
+            if (this.hluser.gptapikey) {
+              messageMap.set('apiKey', this.hluser.gptapikey);
+            } else {
+              throw new Error('You need to provide an API key to use ChatGPT. Use the format /chatgpt your-api-key message');
+            }
+          } else {
+            throw new Error('Invalid command format. Use /chatgpt your-api-key message or /chatgpt message');
           }
 
-          // Send a request to the backend to use ChatGPT
           const request = {
-            'message': message,
-            'apiKey': apiKey || '' // Ensure apiKey is always a string, even if it's null
+            'message': messageMap.get('message')!,
+            'apiKey': messageMap.get('apiKey')!
           };
+
           this.chatService.useChatGPT(request).subscribe({
             next: (response: any) => {
               console.log('ChatGPT response:', response);
               this.newMessageContent = response;
-              this.sendMessage();
             },
             error: (error: any) => {
               console.error('Error using ChatGPT:', error);
             }
           });
-        }
-        else {
+
+        } else {
           const newMessage: Message = {
             content: this.newMessageContent,
             sender: this.hluser,
@@ -249,16 +235,14 @@ export class HomeComponent implements OnInit, AfterViewChecked {
           this.chatService.sendMessage(newMessage);
           console.log("newMessage:", JSON.stringify(newMessage));
         }
-        this.newMessageContent = '';  // Reset the newMessageContent
-        this.cdr.detectChanges(); // Trigger change detection
+        this.newMessageContent = '';
+        this.cdr.detectChanges();
       } else {
         console.error("User details are not available");
       }
     }
   }
-
 }
-
 //         this.chatService.useChatGPT(request).subscribe(response => {
 //           console.log('ChatGPT response:', response);
 //         }, error => {

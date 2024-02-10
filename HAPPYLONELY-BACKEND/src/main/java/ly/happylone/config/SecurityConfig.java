@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import ly.happylone.model.HLRole;
 import ly.happylone.service.DatabaseService;
+import ly.happylone.service.JwtService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 @Configuration
 @EnableWebSecurity
@@ -79,31 +81,35 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/index.html", "/").permitAll() // Allow unauthenticated access to the Angular
+                        .requestMatchers("/index.html", "/").permitAll()
                         .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/api/user/isAuthenticated").permitAll() // application.
+                        .requestMatchers("/api/user/isAuthenticated").permitAll()
                         .requestMatchers("**.woff2", "**.woff", "**.ttf", "**.eot", "**.svg", "**.png", "**.jpg",
                                 "**.jpeg", "**.gif", "**.ico", "*.css", "*.js", "*.html", "*.map", "*.json",
                                 "/assets/**.png", "/assets/**.jpg", "/assets/**.jpeg", "/assets/*.gif",
                                 "/assets/**.ico",
                                 "/artwork/**.png, /artwork/**.jpg, /artwork/**.jpeg, /artwork/**.gif, /artwork/**.ico")
                         .permitAll()
-                        .requestMatchers("/getProductByName/**").access(adminAuthorizationManager())
+                        // admin endpoints
+                        .requestMatchers("/getProductByName/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/addProduct/**")
-                        .access(adminAuthorizationManager())
+                        .authenticated()
+                        .requestMatchers(HttpMethod.PUT, "updateProduct/**")
+                        .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/editUser/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/banUser/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/unbanUser/**").authenticated()
+                        // end admin endpoints
                         .requestMatchers(HttpMethod.POST, "/messages/**").authenticated()
                         .requestMatchers("/api/forum/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "updateProduct/**")
-                        .access(adminAuthorizationManager())
-                        .requestMatchers(HttpMethod.PUT, "/banUser/**").access(adminAuthorizationManager())
-                        .requestMatchers(HttpMethod.PUT, "/unbanUser/**").access(adminAuthorizationManager())
+
                         .requestMatchers(HttpMethod.POST, "/changeRole/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/changeUsername/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/changeEmail/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/changePassword/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/editUser/**").access(adminAuthorizationManager())
-                        .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").access(adminAuthorizationManager())
+
                         .requestMatchers("/websocket/**").permitAll() // Allow unauthenticated
                         // access to WebSocket
                         // endpoint
@@ -129,20 +135,4 @@ public class SecurityConfig {
         };
     }
 
-    @Bean
-    public AuthorizationManager<RequestAuthorizationContext> adminAuthorizationManager() {
-        return (authenticationSupplier, context) -> {
-            try {
-                Authentication authentication = authenticationSupplier.get();
-                String username = authentication.getName();
-                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-                boolean isAdmin = authorities.contains(new SimpleGrantedAuthority("ROLE_" + HLRole.Admin.name()));
-                logger.info("Username: {}, Is Admin: {}", username, isAdmin);
-                return new AuthorizationDecision(isAdmin);
-            } catch (Exception e) {
-                logger.error("Authorization error", e);
-                return new AuthorizationDecision(false);
-            }
-        };
-    }
 }

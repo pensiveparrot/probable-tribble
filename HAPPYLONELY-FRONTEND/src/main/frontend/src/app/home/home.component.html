@@ -27,7 +27,8 @@
                 <span class="message-content" *ngIf="!isValidImageURL(message.content)">
                     <strong>{{ message.sender.username }}</strong>: {{ message.content }}
                 </span>
-                <div class="message-content" *ngIf="isValidImageURL(message.content)">
+                <div class="message-content" *ngIf="!isValidImageURL(message.content)"
+                    [innerHTML]="formatMessage(message.content)">
                     <strong>{{ message.sender.username }}</strong>:
                     <img [src]="(message?.content)" alt="Image content" />
                 </div>
