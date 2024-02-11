@@ -312,7 +312,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public boolean updateUserGptApiKey(String username, String apiKey) throws SQLException {
-        String sql = "UPDATE hluser SET gptapikey = ? WHERE username = ?";
+        String sql = "UPDATE hluser_response SET gptapikey = ? WHERE username = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
                 System.getenv("PGUSER"), System.getenv("PGPW"))) {
             PreparedStatement statement = con.prepareStatement(sql);

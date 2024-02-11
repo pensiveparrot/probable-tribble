@@ -65,7 +65,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         // Update the GPT API key for the user
-        if (!databaseService.userHasChatGptApiKey(user.getUsername())) {
+        if (databaseService.userHasChatGptApiKey(user.getUsername()) == false) {
             try {
                 databaseService.updateUserGptApiKey(user.getUsername(), apiKey);
             } catch (SQLException ex) {
@@ -78,8 +78,6 @@ public class MessageServiceImpl implements MessageService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
-        user.setGptapikey(apiKey);
-        databaseService.updateUser(user);
 
         Map<String, Object> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
