@@ -28,4 +28,10 @@ public class Message {
     @Column(name = "date_sent", nullable = false)
     private LocalDateTime dateSent;
 
+    @Column(name = "prev_message_id")
+    private String prevMessageId;
+
+    @Column(name = "next_message_id")
+    private String nextMessageId;
+
 }

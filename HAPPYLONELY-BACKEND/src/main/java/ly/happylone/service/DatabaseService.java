@@ -1,5 +1,6 @@
 package ly.happylone.service;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public interface DatabaseService extends UserDetailsService {
     // message code
     public List<Message> fetchAllMessages();
 
-    public void postMessage(Message message) throws SQLException;
+    public void postMessage(Message message) throws SQLException, IOException;
 
     // product code
     public Product getProductById(String id) throws SQLException;

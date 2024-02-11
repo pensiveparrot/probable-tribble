@@ -40,6 +40,8 @@ import ly.happylone.model.RegisterRequest;
 
 import javax.sql.DataSource;
 
+import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -53,6 +55,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import ly.happylone.service.DatabaseService;
 import ly.happylone.service.JwtService;
@@ -906,55 +909,61 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public void postMessage(Message message) throws SQLException {
-        String sql = "INSERT INTO messages (id, content, sender_id, date_sent) VALUES (?, ?, ?, ?)";
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
-                System.getenv("PGUSER"), System.getenv("PGPW"))) {
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
-            statement.setString(2, message.getContent());
-            statement.setString(3, message.getSender().getId());
-            statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
-            statement.executeUpdate();
-            System.out.println("Message posted postMessage service: " + message);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-
-        }
-    }
-    // end of message code
-
-    // start of product code
-    @Override
-    public Product getProductById(String id) throws SQLException {
-
-        String sql = "select * from product where id=?";
-        Product product = new Product();
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
-                System.getenv("PGUSER"), System.getenv("PGPW"))) {
-
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, id);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-
-                product.setId(rs.getString("id"));
-                product.setProductname(rs.getString("productname"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setInventorystatus(rs.getString("inventorystatus"));
-                product.setImage(rs.getString("image"));
-                product.setShoplink(rs.getString("shoplink"));
-
-            } else {
-                System.out.println("No product found with ID " + id);
+    public void postMessage(Message message) throws SQLException, IOException {
+        String content = message.getContent();
+        int contentLength = content.length();
+        if (contentLength > 255) {
+            // Split content into chunks and insert each chunk into the database
+            String sql = "INSERT INTO messages (id, content, sender_id, date_sent, prev_message_id, next_message_id) VALUES (?, ?, ?, ?, ?, ?)";
+            try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                    System.getenv("PGUSER"), System.getenv("PGPW"))) {
+                String[] prevMessageId = { null }; // Use an array to allow modification inside lambda
+                IntStream.range(0, (contentLength + 254) / 255).forEach(i -> {
+                    int start = i * 255;
+                    String chunk = content.substring(start, Math.min(start + 255, contentLength));
+                    String messageId = UUID.randomUUID().toString(); // Generate UUID for id
+                    try {
+                        PreparedStatement statement = con.prepareStatement(sql);
+                        statement.setString(1, messageId);
+                        statement.setString(2, chunk);
+                        statement.setString(3, message.getSender().getId());
+                        statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                        statement.setString(5, prevMessageId[0]);
+                        statement.setString(6, null);
+                        statement.executeUpdate();
+                        // Update next_message_id of previous message
+                        if (prevMessageId[0] != null) {
+                            PreparedStatement updateStatement = con
+                                    .prepareStatement("UPDATE messages SET next_message_id = ? WHERE id = ?");
+                            updateStatement.setString(1, messageId);
+                            updateStatement.setString(2, prevMessageId[0]);
+                            updateStatement.executeUpdate();
+                        }
+                        prevMessageId[0] = messageId;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                });
+                System.out.println("Message posted postMessage service: " + message);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Insert into database
+            String sql = "INSERT INTO messages (id, content, sender_id, date_sent) VALUES (?, ?, ?, ?)";
+            try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                    System.getenv("PGUSER"), System.getenv("PGPW"))) {
+                PreparedStatement statement = con.prepareStatement(sql);
+                statement.setString(1, UUID.randomUUID().toString()); // Generate UUID for id
+                statement.setString(2, content);
+                statement.setString(3, message.getSender().getId());
+                statement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                statement.executeUpdate();
+                System.out.println("Message posted postMessage service: " + message);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
-
-        catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return product;
     }
 
     @Override
@@ -1050,6 +1059,35 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(product);
 
+    }
+
+    @Override
+    public Product getProductById(String id) throws SQLException {
+        String sql = "select * from product where id=?";
+        Product product = new Product();
+        product.setId(id);
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, product.getId());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                product.setProductname(rs.getString("productname"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setInventorystatus(rs.getString("inventorystatus"));
+                product.setImage(rs.getString("image"));
+                product.setShoplink(rs.getString("shoplink"));
+            } else {
+                System.out.println("No product found with ID " + product.getId());
+                throw new SQLException("No product found with ID " + product.getId());
+            }
+        }
+
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return product;
     }
 
     @Override
@@ -1394,4 +1432,5 @@ public class DatabaseServiceImpl implements DatabaseService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
     }
+
 }
