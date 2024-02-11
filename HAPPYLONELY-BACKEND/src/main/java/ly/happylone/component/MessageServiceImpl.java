@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,7 +22,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
@@ -56,8 +56,9 @@ public class MessageServiceImpl implements MessageService {
     public String contactChatGPT(String message, String apiKey)
             throws SQLException, JsonMappingException, JsonProcessingException {
         HLUser user = databaseService.getLoggedInUser();
-        HLUserResponse chatGPT = databaseService.getUserByUsernameMin("000").getBody();
-        if (chatGPT == null) {
+        HttpStatusCode status = databaseService.getUserByUsernameMin("chatgpt").getStatusCode();
+        HLUserResponse chatGPT;
+        if (status != HttpStatusCode.valueOf(200)) {
             chatGPT = new HLUserResponse();
             chatGPT.setId("000");
             chatGPT.setUsername("chatgpt");
