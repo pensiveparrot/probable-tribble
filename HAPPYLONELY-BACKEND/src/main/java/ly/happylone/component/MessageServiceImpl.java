@@ -78,6 +78,8 @@ public class MessageServiceImpl implements MessageService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
+        user.setGptapikey(apiKey);
+        databaseService.updateUser(user);
 
         Map<String, Object> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");

@@ -754,7 +754,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException {
-        String sql = "UPDATE hluser SET username = ?, email = ?, role = ?, statusmsg = ?, profileimg = ?, unbandate = ? WHERE id = ?";
+        String sql = "UPDATE hluser SET username = ?, email = ?, role = ?, statusmsg = ?, profileimg = ?, unbandate = ?, gptapikey = ? WHERE id = ?";
         try (Connection con = dataSource.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
@@ -763,7 +763,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             statement.setString(4, user.getStatusmsg());
             statement.setString(5, user.getProfileimg());
             statement.setDate(6, user.getUnbandate());
-            statement.setString(7, user.getId());
+            statement.setString(7, user.getGptapikey());
+            statement.setString(8, user.getId());
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 return ResponseEntity.ok(user);

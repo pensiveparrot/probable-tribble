@@ -88,7 +88,7 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     setTimeout(() => { this.hidden = true }, 3000);
     setTimeout(() => { this.showText = true }, 4000);
     await this.getUsername();  // Fetch the username once on initialization
-    hljs.initHighlightingOnLoad();
+    hljs.highlightAll();
   }
 
   ngAfterViewChecked(): void {
@@ -100,10 +100,22 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   showUploadDialog = false;
   formatMessage(message: string): string {
     const codeBlockRegex = /```(\w+)\n([\s\S]*?)```/g;
-    return message.replace(codeBlockRegex, (_match, language, code) => {
-      const highlightedCode = hljs.highlight(language, code).value;
-      return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
-    });
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    const headingRegex = /### (.*?)(\n|$)/g;
+    const lineBreakRegex = /\n/g;
+    const orderedListRegex = /(\d+\..*?)(\n|$)/g;
+    const unorderedListRegex = /(\* .*?)(\n|$)/g;
+
+    return message
+      .replace(codeBlockRegex, (_match, language, code) => {
+        const highlightedCode = hljs.highlight(language, code).value;
+        return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
+      })
+      .replace(boldRegex, '<strong>$1</strong>')
+      .replace(headingRegex, '<h3>$1</h3>')
+      .replace(lineBreakRegex, '<br/>')
+      .replace(orderedListRegex, '<ol><li>$1</li></ol>')
+      .replace(unorderedListRegex, '<ul><li>$1</li></ul>');
   }
 
   onFileSelected(event: any) {
