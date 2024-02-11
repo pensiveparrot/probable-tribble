@@ -99,25 +99,35 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   selectedFile!: File;
   showUploadDialog = false;
   formatMessage(message: string): string {
-    const codeBlockRegex = /```(\w+)\n([\s\S]*?)```/g;
-    const boldRegex = /\*\*(.*?)\*\*/g;
-    const headingRegex = /### (.*?)(\n|$)/g;
-    const lineBreakRegex = /\n/g;
-    const orderedListRegex = /(\d+\..*?)(\n|$)/g;
-    const unorderedListRegex = /(\* .*?)(\n|$)/g;
+      const codeBlockRegex = /```(\w+)\n([\s\S]*?)```/g;
+      const boldRegex = /\*\*(.*?)\*\*/g;
+      const headingRegex = /### (.*?)(\n|$)/g;
+      const lineBreakRegex = /\n/g;
+      const orderedListRegex = /(\d+\..*?)(\n|$)/g;
+      const unorderedListRegex = /(\* .*?)(\n|$)/g;
 
-    return message
-      .replace(codeBlockRegex, (_match, language, code) => {
-        const highlightedCode = hljs.highlight(language, code).value;
-        return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
-      })
-      .replace(boldRegex, '<strong>$1</strong>')
-      .replace(headingRegex, '<h3>$1</h3>')
-      .replace(lineBreakRegex, '<br/>')
-      .replace(orderedListRegex, '<ol><li>$1</li></ol>')
-      .replace(unorderedListRegex, '<ul><li>$1</li></ul>');
+      // Replace list items first
+      let formattedMessage = message
+        .replace(orderedListRegex, '<li>$1</li>')
+        .replace(unorderedListRegex, '<li>$1</li>');
+
+      // Then wrap all consecutive list items in <ol> or <ul> tags
+      const orderedListBlockRegex = /((<li>\d+\..*?<\/li>)+)/g;
+      const unorderedListBlockRegex = /((<li>\* .*?<\/li>)+)/g;
+      formattedMessage = formattedMessage
+        .replace(orderedListBlockRegex, '<ol>$1</ol>')
+        .replace(unorderedListBlockRegex, '<ul>$1</ul>');
+
+      // Replace other markdown syntax
+      return formattedMessage
+        .replace(codeBlockRegex, (_match, language, code) => {
+          const highlightedCode = hljs.highlight(language, code).value;
+          return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
+        })
+        .replace(boldRegex, '<strong>$1</strong>')
+        .replace(headingRegex, '<h3>$1</h3>')
+        .replace(lineBreakRegex, '<br/>');
   }
-
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
   }

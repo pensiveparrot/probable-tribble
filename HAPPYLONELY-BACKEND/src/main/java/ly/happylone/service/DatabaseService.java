@@ -28,6 +28,8 @@ public interface DatabaseService extends UserDetailsService {
     public Boolean isProfaneUsername(String username);
 
     // user code
+    public HLUserResponse addChatGptUser(HLUserResponse user) throws SQLException;
+
     public HLUser getLoggedInUser() throws SQLException;
 
     public HLUser getUserById(String id) throws SQLException;

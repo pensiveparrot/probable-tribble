@@ -24,11 +24,11 @@
                 <span class="message-timestamp">{{ message.date_sent | date:'MMM d, y, h:mm a' }}</span>
                 <img [src]="message.sender.profileimg" (click)="showUserProfile(message.sender)" class="message-image"
                     alt="{{ message.sender.username }}'s profile image">
-                <span class="message-content" *ngIf="!isValidImageURL(message.content)">
-                    <strong>{{ message.sender.username }}</strong>: {{ message.content }}
-                </span>
-                <div class="message-content" *ngIf="!isValidImageURL(message.content)"
-                    [innerHTML]="formatMessage(message.content)">
+                <div class="message-content" *ngIf="!isValidImageURL(message.content)">
+                    <strong>{{ message.sender.username }}</strong>: <span
+                        [innerHTML]="formatMessage(message.content)"></span>
+                </div>
+                <div class="message-content" *ngIf="isValidImageURL(message.content)">
                     <strong>{{ message.sender.username }}</strong>:
                     <img [src]="(message?.content)" alt="Image content" />
                 </div>

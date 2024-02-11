@@ -283,6 +283,25 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     // start of user code DatabaseServiceImpl
+
+    @Override
+    public HLUserResponse addChatGptUser(HLUserResponse user) throws SQLException {
+        String sql = "insert into hluser_response (id, username, profileimg, statusmsg) values (?, ?, ?, ?)";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, user.getId());
+            statement.setString(2, user.getUsername());
+            statement.setString(3, user.getProfileimg());
+            statement.setString(4, user.getStatusmsg());
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     @Override
     public HLUser getUserById(String id) throws SQLException {
         String sql = "select * from hluser where id=?";

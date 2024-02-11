@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.Message;
@@ -55,7 +56,16 @@ public class MessageServiceImpl implements MessageService {
     public String contactChatGPT(String message, String apiKey)
             throws SQLException, JsonMappingException, JsonProcessingException {
         HLUser user = databaseService.getLoggedInUser();
+        HLUserResponse chatGPT = databaseService.getUserByUsernameMin("000").getBody();
+        if (chatGPT == null) {
+            chatGPT = new HLUserResponse();
+            chatGPT.setId("000");
+            chatGPT.setUsername("chatgpt");
 
+            chatGPT.setProfileimg("https://openai.com/favicon.ico");
+            chatGPT.setStatusmsg("I am a helpful assistant.");
+            databaseService.addChatGptUser(chatGPT);
+        }
         if (apiKey == null || apiKey.isEmpty()) {
             if (user.getGptapikey() != null) {
                 apiKey = user.getGptapikey();
@@ -106,7 +116,7 @@ public class MessageServiceImpl implements MessageService {
             String content = messageNode.path("content").asText();
             // Create a new message with the content from the API response and post it
             Message apiResponseMessage = new Message();
-            HLUserResponse chatGPT = new HLUserResponse();
+            chatGPT = new HLUserResponse();
             chatGPT.setUsername("ChatGPT");
             chatGPT.setProfileimg("https://openai.com/favicon.ico");
             chatGPT.setId("000");
