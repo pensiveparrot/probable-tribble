@@ -46,6 +46,9 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public boolean userHasChatGptApiKey() throws SQLException {
         HLUser user = databaseService.getLoggedInUser();
@@ -57,16 +60,12 @@ public class MessageServiceImpl implements MessageService {
             throws SQLException, JsonMappingException, JsonProcessingException {
         HLUser user = databaseService.getLoggedInUser();
         HttpStatusCode status = databaseService.getUserByUsernameMin("chatgpt").getStatusCode();
-        HLUserResponse chatGPT;
-        if (status != HttpStatusCode.valueOf(200)) {
-            chatGPT = new HLUserResponse();
-            chatGPT.setId("000");
-            chatGPT.setUsername("chatgpt");
+        HLUserResponse chatGPT = createChatGptUser();
 
-            chatGPT.setProfileimg("https://openai.com/favicon.ico");
-            chatGPT.setStatusmsg("I am a helpful assistant.");
+        if (status != HttpStatusCode.valueOf(200)) {
             databaseService.addChatGptUser(chatGPT);
         }
+
         if (apiKey == null || apiKey.isEmpty()) {
             if (user.getGptapikey() != null) {
                 apiKey = user.getGptapikey();
@@ -76,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         // Update the GPT API key for the user
-        if (databaseService.userHasChatGptApiKey(user.getUsername()) == false) {
+        if (!userHasChatGptApiKey()) {
             try {
                 databaseService.updateUserGptApiKey(user.getUsername(), apiKey);
             } catch (SQLException ex) {
@@ -85,11 +84,37 @@ public class MessageServiceImpl implements MessageService {
         }
 
         String url = "https://api.openai.com/v1/chat/completions";
+        HttpHeaders headers = createHeaders(apiKey);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(createBody(message), headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
+        // Create a new message with the API response and post it
+        JsonNode root = mapper.readTree(response.getBody());
+        JsonNode choices = root.path("choices");
+        if (choices.isArray() && choices.size() > 0) {
+            JsonNode firstChoice = choices.get(0);
+            JsonNode messageNode = firstChoice.path("message");
+            String content = messageNode.path("content").asText();
+            // Create a new message with the content from the API response and post it
+            Message apiResponseMessage = new Message();
+            apiResponseMessage.setSender(chatGPT);
+            apiResponseMessage.setContent(content);
+            postMessage(apiResponseMessage);
+
+            return content;
+        } else {
+            throw new IllegalStateException("No choices in response");
+        }
+    }
+
+    private HttpHeaders createHeaders(String apiKey) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
+        return headers;
+    }
 
+    private Map<String, Object> createBody(String message) {
         Map<String, Object> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
         systemMessage.put("content", "You are a helpful assistant.");
@@ -101,35 +126,16 @@ public class MessageServiceImpl implements MessageService {
         Map<String, Object> body = new HashMap<>();
         body.put("model", "gpt-4-turbo-preview");
         body.put("messages", List.of(systemMessage, userMessage));
+        return body;
+    }
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-
-        // Create a new message with the API response and post it
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(response.getBody());
-        JsonNode choices = root.path("choices");
-        if (choices.isArray() && choices.size() > 0) {
-            JsonNode firstChoice = choices.get(0);
-            JsonNode messageNode = firstChoice.path("message");
-            String content = messageNode.path("content").asText();
-            // Create a new message with the content from the API response and post it
-            Message apiResponseMessage = new Message();
-            chatGPT = new HLUserResponse();
-            chatGPT.setUsername("ChatGPT");
-            chatGPT.setProfileimg("https://openai.com/favicon.ico");
-            chatGPT.setId("000");
-            chatGPT.setStatusmsg("I am a helpful assistant.");
-            apiResponseMessage.setSender(chatGPT);
-            apiResponseMessage.setContent(content);
-            postMessage(apiResponseMessage);
-
-            return content;
-        } else {
-            throw new IllegalStateException("No choices in response");
-        }
+    private HLUserResponse createChatGptUser() {
+        HLUserResponse chatGPT = new HLUserResponse();
+        chatGPT.setId("000");
+        chatGPT.setUsername("chatgpt");
+        chatGPT.setProfileimg("https://openai.com/favicon.ico");
+        chatGPT.setStatusmsg("I am a helpful assistant.");
+        return chatGPT;
     }
 
     @Override

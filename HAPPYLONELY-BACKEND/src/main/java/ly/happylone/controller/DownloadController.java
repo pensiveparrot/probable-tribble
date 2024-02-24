@@ -97,7 +97,7 @@ public class DownloadController {
     }
 
     private boolean isValidYouTubeUrl(String url) {
-        String youtubeRegex = "(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(.com)?\\/.*";
+        String youtubeRegex = "(http(s)?:\\/\\/)?((w|m){1,3}.)?youtu(be|.be)?(.com)?\\/.*";
         return url != null && url.matches(youtubeRegex);
     }
 

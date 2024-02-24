@@ -10,5 +10,10 @@
             placeholder="Select a Type"></p-dropdown>
     </div>
 
+    <div class="p-field">
+        <label for="filename">Filename</label>
+        <input id="filename" [(ngModel)]="filename" class="p-inputtext p-component" type="text" pInputText />
+    </div>
+
     <button pButton type="button" label="Download" (click)="download()"></button>
 </div>

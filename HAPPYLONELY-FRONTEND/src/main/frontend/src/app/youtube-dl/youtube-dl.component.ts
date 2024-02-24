@@ -1,6 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-youtube-dl',
   templateUrl: './youtube-dl.component.html',
@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
 
 export class YoutubeDLComponent {
   url = '';
+  filename = '';
   selectedType: string | undefined;
   types: DownloadType[] = [
     { name: 'Music', value: 'music' },
@@ -18,32 +19,23 @@ export class YoutubeDLComponent {
   constructor(private http: HttpClient) { }
 
   download() {
-    if (this.url && this.selectedType) {
+    if (this.url && this.selectedType && this.filename) {
       const body = { url: this.url, type: this.selectedType };
       this.http.post('https://' + window.location.hostname + ':8443' + '/download', body, { observe: 'response', responseType: 'blob' }).subscribe(response => {
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let filename = 'download';
-        if (contentDisposition) {
-          const matches = /filename="?([^;]+)"?;?/.exec(contentDisposition);
-          if (matches?.length === 2) {
-            filename = matches[1];
-          }
-        }
+        let filename = this.filename;
+        // Append the file extension based on the selected type
+        filename += this.selectedType === 'music' ? '.mp3' : '.mp4';
         if (response.body) {
           this.createAndDownloadBlobFile(response.body, filename);
         }
       });
     } else {
-      alert('Please enter a URL and select a type.');
+      alert('Please enter a URL, select a type, and enter a filename.');
     }
   }
 
   private createAndDownloadBlobFile(blob: Blob, filename: string) {
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    window.URL.revokeObjectURL(link.href);
+    saveAs(blob, filename);
   }
 }
 
