@@ -5,12 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,7 +35,7 @@ public class DownloadController {
 
     @Async
     @PostMapping
-    public CompletableFuture<ResponseEntity<Resource>> download(@RequestBody Map<String, String> payload) {
+    public CompletableFuture<ResponseEntity<byte[]>> download(@RequestBody Map<String, String> payload) {
         String url = payload.get("url");
         String type = payload.get("type");
 
@@ -42,7 +45,6 @@ public class DownloadController {
         }
 
         try {
-            String output = sanitizeFileName(type.equals("music") ? "output.mp3" : "output.mp4");
             String downloadScriptPath = Paths.get(scriptLocation, "download.js").toString();
 
             // Ensure the script directory exists
@@ -73,7 +75,7 @@ public class DownloadController {
             }
 
             // Execute the download script
-            executeCommand(scriptLocation, "node", downloadScriptPath, url, type, output);
+            String output = executeCommand(scriptLocation, "node", downloadScriptPath, url, type);
 
             // Load the file as a resource
             File outputFile = new File(scriptLocation, output);
@@ -84,16 +86,18 @@ public class DownloadController {
                 return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.NOT_FOUND));
             }
 
+            byte[] fileContent = Files.readAllBytes(outputFile.toPath());
+
             LOGGER.info("File successfully downloaded and found at path: {}", outputFile.getAbsolutePath());
-            return CompletableFuture.completedFuture(new ResponseEntity<>(resource, HttpStatus.OK));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(
+                    type.equals("music") ? MediaType.valueOf("audio/mpeg") : MediaType.valueOf("video/mp4"));
+            headers.setContentDispositionFormData("attachment", outputFile.getName());
+            return CompletableFuture.completedFuture(new ResponseEntity<>(fileContent, headers, HttpStatus.OK));
         } catch (IOException | InterruptedException e) {
             LOGGER.error("An error occurred during file download or command execution", e);
             return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
-    }
-
-    private String sanitizeFileName(String input) {
-        return input.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
     }
 
     private boolean isValidYouTubeUrl(String url) {
@@ -101,7 +105,7 @@ public class DownloadController {
         return url != null && url.matches(youtubeRegex);
     }
 
-    private void executeCommand(String workingDirectory, String... command) throws IOException, InterruptedException {
+    private String executeCommand(String workingDirectory, String... command) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         if (workingDirectory != null) {
             processBuilder.directory(new File(workingDirectory));
@@ -114,6 +118,9 @@ public class DownloadController {
                 LOGGER.error("Command execution failed with exit code: {}. Error Message: {}", exitCode, errorMessage);
                 throw new IOException("Command execution failed: " + errorMessage);
             }
+        }
+        try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            return outputReader.lines().collect(Collectors.joining("\n"));
         }
     }
 }
