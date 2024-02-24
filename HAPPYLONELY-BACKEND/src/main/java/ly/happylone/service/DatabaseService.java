@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import ly.happylone.model.Art;
 import ly.happylone.model.EmailRequest;
 import ly.happylone.model.HLBadge;
+import ly.happylone.model.HLPlayer;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
 import ly.happylone.model.LoginRequest;
@@ -114,4 +115,11 @@ public interface DatabaseService extends UserDetailsService {
     public ResponseEntity<?> sendEmail(EmailRequest emailRequest) throws SQLException;
 
     public ResponseEntity<?> getEmails() throws SQLException;
+
+    // end email code
+
+    // start hlplayer code
+    public ResponseEntity<?> getPlayerByName(String name) throws SQLException;
+
+    public ResponseEntity<?> performAction(HLPlayer player, String action, int actionQty) throws SQLException;
 }

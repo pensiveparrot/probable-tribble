@@ -28,7 +28,6 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     private DatabaseService databaseService;
 
     @Autowired
@@ -68,17 +67,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/index.html", "/").permitAll()
-                        .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/api/user/isAuthenticated").permitAll()
-                        .requestMatchers("**.woff2", "**.woff", "**.ttf", "**.eot", "**.svg", "**.png", "**.jpg",
-                                "**.jpeg", "**.gif", "**.ico", "*.css", "*.js", "*.html", "*.map", "*.json",
-                                "/assets/**.png", "/assets/**.jpg", "/assets/**.jpeg", "/assets/*.gif",
-                                "/assets/**.ico",
-                                "/artwork/**.png, /artwork/**.jpg, /artwork/**.jpeg, /artwork/**.gif, /artwork/**.ico")
-                        .permitAll()
                         // admin endpoints
                         .requestMatchers("/getProductByName/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/addProduct/**")
@@ -103,7 +92,15 @@ public class SecurityConfig {
                         // access to WebSocket
                         // endpoint
                         .requestMatchers(HttpMethod.POST, "/download/**").authenticated()
-
+                        .requestMatchers("/index.html", "/").permitAll()
+                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/api/user/isAuthenticated").permitAll()
+                        .requestMatchers("**.woff2", "**.woff", "**.ttf", "**.eot", "**.svg", "**.png", "**.jpg",
+                                "**.jpeg", "**.gif", "**.ico", "*.css", "*.js", "*.html", "*.map", "*.json",
+                                "/assets/**.png", "/assets/**.jpg", "/assets/**.jpeg", "/assets/*.gif",
+                                "/assets/**.ico",
+                                "/artwork/**.png, /artwork/**.jpg, /artwork/**.jpeg, /artwork/**.gif, /artwork/**.ico")
+                        .permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }

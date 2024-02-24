@@ -28,6 +28,7 @@ import org.thymeleaf.util.StringUtils;
 import ly.happylone.model.Art;
 import ly.happylone.model.EmailRequest;
 import ly.happylone.model.HLBadge;
+import ly.happylone.model.HLPlayer;
 import ly.happylone.model.HLRole;
 import ly.happylone.model.HLUser;
 import ly.happylone.model.HLUserResponse;
@@ -43,6 +44,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -286,6 +288,14 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     // start of user code DatabaseServiceImpl
+    private boolean isAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        String username = authentication.getName();
+        return getUserRole(username) >= 5;
+    }
 
     @Override
     public HLUserResponse addChatGptUser(HLUserResponse user) throws SQLException {
@@ -510,8 +520,9 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public int getUserRole(String username) {
         String sql = "SELECT role FROM hluser WHERE username = ?";
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement statement = con.prepareStatement(sql)) {
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, username);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
@@ -526,11 +537,12 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) throws SQLException {
-        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+        if (isAdmin() == false) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         String sql = "UPDATE hluser_response SET username=?, profileimg=?, statusmsg=? WHERE id=?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getProfileimg());
@@ -551,7 +563,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> changeStatus(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET statusmsg = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getStatusmsg());
             statement.setString(2, user.getId());
@@ -570,7 +583,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> changeProfileImg(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET profileimg = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getProfileimg());
             statement.setString(2, user.getId());
@@ -589,7 +603,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> changeRole(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET role = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, StringUtils.toString(user.getRole()));
             statement.setString(2, user.getId());
@@ -618,7 +633,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             logger.error("Error changing username", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getId());
@@ -637,7 +653,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> awardBadge(HLUser user, HLBadge badge) throws SQLException {
         String sql = "UPDATE hluser SET badges = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, StringUtils.toString(user.getBadges()));
             statement.setString(2, user.getId());
@@ -656,7 +673,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> changeEmail(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET email = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getId());
@@ -674,8 +692,8 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public void deleteUser(String id) throws SQLException {
-        if (!isUserAdmin(getLoggedInUser().getUsername())) {
-            throw new SQLException("User not authorized to delete user");
+        if (isAdmin() == false) {
+            throw new SQLException("You are not authorized to delete users");
         }
         String sql = "DELETE FROM hluser WHERE id = ?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
@@ -753,11 +771,12 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUser> banUser(String id) throws SQLException {
-        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+        if (isAdmin() == false) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         String sql = "UPDATE hluser SET role = ?, unbandate = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, StringUtils.toString(HLRole.Banned));
             statement.setDate(2, new java.sql.Date(new Date().getTime()));
@@ -777,7 +796,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<HLUser> updateUser(HLUser user) throws SQLException {
         String sql = "UPDATE hluser SET username = ?, email = ?, role = ?, statusmsg = ?, profileimg = ?, unbandate = ?, gptapikey = ? WHERE id = ?";
-        try (Connection con = dataSource.getConnection();
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"));
                 PreparedStatement statement = con.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getEmail());
@@ -801,7 +821,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUser> unbanUser(HLUser user) throws SQLException {
-        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+        if (isAdmin() == false) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         String sql = "UPDATE hluser SET unbandate = ? WHERE id = ?";
@@ -993,13 +1013,9 @@ public class DatabaseServiceImpl implements DatabaseService {
         return products;
     }
 
-    private boolean isUserAdmin(String username) {
-        return getUserRole(username) >= 5;
-    }
-
     @Override
     public ResponseEntity<Product> addProduct(Product product) throws SQLException {
-        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+        if (isAdmin() == false) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         String sql = "INSERT INTO product (id, productname, price, inventorystatus, image, shoplink) VALUES (?, ?, ?, ?, ?, ?)";
@@ -1030,6 +1046,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<Product> getProductByName(String productname) throws SQLException {
+        if (isAdmin() == false) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         String sql = "select * from product where productname=?";
         Product product = new Product();
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
@@ -1092,7 +1111,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<Product> updateProduct(Product product) throws SQLException {
-        if (!isUserAdmin(getLoggedInUser().getUsername())) {
+        if (isAdmin() == false) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         if (product.getId() != null) {
@@ -1431,6 +1450,111 @@ public class DatabaseServiceImpl implements DatabaseService {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
+    }
+    // end of email code
+
+    // start of player code
+
+    @Override
+    public ResponseEntity<?> getPlayerByName(String name) throws SQLException {
+        String sql = "SELECT * FROM hlplayer WHERE name = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                HLPlayer player = new HLPlayer();
+                player.setName(rs.getString("name"));
+                player.setId(rs.getString("id"));
+                player.setBackpackId(rs.getString("backpack_id"));
+                player.setCopper(rs.getInt("copper"));
+                player.setSilver(rs.getInt("silver"));
+                player.setGold(rs.getInt("gold"));
+                player.setPlatinum(rs.getInt("platinum"));
+                player.setHitpoints(rs.getInt("hitpoints"));
+                player.setMaxHitpoints(rs.getInt("max_hitpoints"));
+                player.setBankId(rs.getString("bank_id"));
+                player.setCharisma(rs.getInt("charisma"));
+                player.setIntelligence(rs.getInt("intelligence"));
+                player.setStrength(rs.getInt("strength"));
+                player.setDexterity(rs.getInt("dexterity"));
+                player.setConstitution(rs.getInt("constitution"));
+                player.setWisdom(rs.getInt("wisdom"));
+                player.setGuildId(rs.getString("guild_id"));
+                player.setLevel(rs.getInt("level"));
+                player.setExperience(rs.getInt("experience"));
+                player.setStamina(rs.getInt("stamina"));
+                player.setMaxHitpoints(rs.getInt("max_hitpoints"));
+                player.setMaxMana(rs.getInt("max_mana"));
+                player.setMaxStamina(rs.getInt("max_stamina"));
+                player.setHouseId(rs.getString("house_id"));
+                player.setQuestsId(rs.getString("quests_id"));
+                player.setSpellsId(rs.getString("spells_id"));
+                player.setStatus(rs.getString("status"));
+                player.setTitle(rs.getString("title"));
+                player.setMana(rs.getInt("mana"));
+                return ResponseEntity.ok(player);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Player not found");
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Player not found");
+    }
+
+    @Override
+    public ResponseEntity<?> performAction(HLPlayer player, String action, int actionQty) throws SQLException {
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",
+                System.getenv("PGUSER"), System.getenv("PGPW"))) {
+            switch (action) {
+                case "attack":
+                    player.setHitpoints(player.getHitpoints() - actionQty);
+                    break;
+                case "heal":
+                    player.setHitpoints(player.getHitpoints() + actionQty);
+                    break;
+                case "cast":
+                    player.setMana(player.getMana() - actionQty);
+                    break;
+                case "rest":
+                    player.setHitpoints(player.getHitpoints() + actionQty);
+                    player.setMana(player.getMana() + actionQty);
+                    break;
+                case "levelup":
+                    player.setLevel(player.getLevel() + actionQty);
+                    break;
+                case "gainexp":
+                    player.setExperience(player.getExperience() + actionQty);
+                    break;
+                case "gaincopper":
+                    player.setCopper(player.getCopper() + actionQty);
+                    break;
+                case "gainsilver":
+                    player.setSilver(player.getSilver() + actionQty);
+                    break;
+                default:
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid action");
+            }
+            String sql = "UPDATE hlplayer SET hitpoints = ?, mana = ?, level = ?, experience = ?, copper = ?, silver = ? WHERE id = ?";
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setInt(1, player.getHitpoints());
+            statement.setInt(2, player.getMana());
+            statement.setInt(3, player.getLevel());
+            statement.setInt(4, player.getExperience());
+            statement.setInt(5, player.getCopper());
+            statement.setInt(6, player.getSilver());
+            statement.setString(7, player.getId());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(player);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to perform action");
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to perform action");
     }
 
 }
