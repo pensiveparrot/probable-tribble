@@ -14,7 +14,10 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/artwork/**")
-                .addResourceLocations("file:" + artPath);
+                .addResourceLocations("file:" + artPath)
+                .setCachePeriod(3600)
+                .resourceChain(true);
+
         registry.addResourceHandler("/css/**", "/js/**", "/images/**", "/webjars/**", "favicon.ico")
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(3600)

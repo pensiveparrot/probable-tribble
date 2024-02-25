@@ -536,8 +536,10 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public ResponseEntity<HLUserResponse> editUser(HLUserResponse user) throws SQLException {
-        if (isAdmin() == false) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        if (!user.getUsername().equals(username)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         String sql = "UPDATE hluser_response SET username=?, profileimg=?, statusmsg=? WHERE id=?";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/happylonely",

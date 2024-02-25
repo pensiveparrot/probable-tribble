@@ -98,9 +98,9 @@ public class SecurityConfig {
                         .requestMatchers("**.woff2", "**.woff", "**.ttf", "**.eot", "**.svg", "**.png", "**.jpg",
                                 "**.jpeg", "**.gif", "**.ico", "*.css", "*.js", "*.html", "*.map", "*.json",
                                 "/assets/**.png", "/assets/**.jpg", "/assets/**.jpeg", "/assets/*.gif",
-                                "/assets/**.ico",
-                                "/artwork/**.png, /artwork/**.jpg, /artwork/**.jpeg, /artwork/**.gif, /artwork/**.ico")
+                                "/assets/**.ico")
                         .permitAll()
+                        .requestMatchers("/artwork/**").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }

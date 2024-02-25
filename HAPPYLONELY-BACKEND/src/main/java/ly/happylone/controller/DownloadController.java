@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -92,7 +93,11 @@ public class DownloadController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(
                     type.equals("music") ? MediaType.valueOf("audio/mpeg") : MediaType.valueOf("video/mp4"));
-            headers.setContentDispositionFormData("attachment", outputFile.getName());
+            ContentDisposition contentDisposition = ContentDisposition
+                    .builder("attachment")
+                    .filename(outputFile.getName())
+                    .build();
+            headers.setContentDisposition(contentDisposition);
             return CompletableFuture.completedFuture(new ResponseEntity<>(fileContent, headers, HttpStatus.OK));
         } catch (IOException | InterruptedException e) {
             LOGGER.error("An error occurred during file download or command execution", e);

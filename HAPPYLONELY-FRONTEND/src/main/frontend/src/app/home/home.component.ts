@@ -96,52 +96,50 @@ export class HomeComponent implements OnInit, AfterViewChecked {
   }
   artName: string = "";
   artAuthor: string = "";
-  selectedFile!: File;
+  selectedFile: File | null = null;
+  selectedFileBase64: string | null = null;
   showUploadDialog = false;
   formatMessage(message: string): string {
-      const codeBlockRegex = /```(\w+)\n([\s\S]*?)```/g;
-      const boldRegex = /\*\*(.*?)\*\*/g;
-      const headingRegex = /### (.*?)(\n|$)/g;
-      const lineBreakRegex = /\n/g;
-      const orderedListRegex = /(\d+\..*?)(\n|$)/g;
-      const unorderedListRegex = /(\* .*?)(\n|$)/g;
+    const codeBlockRegex = /```(\w+)\n([\s\S]*?)```/g;
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    const headingRegex = /### (.*?)(\n|$)/g;
+    const lineBreakRegex = /\n/g;
+    const orderedListRegex = /(\d+\..*?)(\n|$)/g;
+    const unorderedListRegex = /(\* .*?)(\n|$)/g;
 
-      // Replace list items first
-      let formattedMessage = message
-        .replace(orderedListRegex, '<li>$1</li>')
-        .replace(unorderedListRegex, '<li>$1</li>');
+    // Replace list items first
+    let formattedMessage = message
+      .replace(orderedListRegex, '<li>$1</li>')
+      .replace(unorderedListRegex, '<li>$1</li>');
 
-      // Then wrap all consecutive list items in <ol> or <ul> tags
-      const orderedListBlockRegex = /((<li>\d+\..*?<\/li>)+)/g;
-      const unorderedListBlockRegex = /((<li>\* .*?<\/li>)+)/g;
-      formattedMessage = formattedMessage
-        .replace(orderedListBlockRegex, '<ol>$1</ol>')
-        .replace(unorderedListBlockRegex, '<ul>$1</ul>');
+    // Then wrap all consecutive list items in <ol> or <ul> tags
+    const orderedListBlockRegex = /((<li>\d+\..*?<\/li>)+)/g;
+    const unorderedListBlockRegex = /((<li>\* .*?<\/li>)+)/g;
+    formattedMessage = formattedMessage
+      .replace(orderedListBlockRegex, '<ol>$1</ol>')
+      .replace(unorderedListBlockRegex, '<ul>$1</ul>');
 
-      // Replace other markdown syntax
-      return formattedMessage
-        .replace(codeBlockRegex, (_match, language, code) => {
-          const highlightedCode = hljs.highlight(language, code).value;
-          return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
-        })
-        .replace(boldRegex, '<strong>$1</strong>')
-        .replace(headingRegex, '<h3>$1</h3>')
-        .replace(lineBreakRegex, '<br/>');
+    // Replace other markdown syntax
+    return formattedMessage
+      .replace(codeBlockRegex, (_match, language, code) => {
+        const highlightedCode = hljs.highlight(language, code).value;
+        return `<pre><code class="hljs ${language}">${highlightedCode}</code></pre>`;
+      })
+      .replace(boldRegex, '<strong>$1</strong>')
+      .replace(headingRegex, '<h3>$1</h3>')
+      .replace(lineBreakRegex, '<br/>');
   }
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
   }
-  convertPathToUrl(path: string): string {
-    const filename = path.split('/').pop();
-    if (!filename) {  // Check if filename is undefined or an empty string
-      throw new Error("Filename could not be extracted from the provided path");
-    }
+  convertPathToUrl(artName: string, artAuthor: string): string {
+    const filename = `${artName}_${artAuthor}.jpg`;
     const encodedFilename = encodeURIComponent(filename);
     const backendBaseUrl = `${window.location.protocol}//${window.location.hostname}:8443`;
     return `${backendBaseUrl}/artwork/${encodedFilename}`;
   }
   onUploadClicked() {
-    if (this.artName && this.artAuthor && this.selectedFile) {
+    if (this.artName && this.artName.trim() !== '' && this.artAuthor && this.artAuthor.trim() !== '' && this.selectedFile) {
       this.user.uploadArt(this.selectedFile, this.artName, this.artAuthor).subscribe(async response => {
         console.log('Received response:', response);
 
@@ -151,17 +149,11 @@ export class HomeComponent implements OnInit, AfterViewChecked {
 
           this.cdr.detectChanges(); // Trigger change detection
 
-          const imageUrl = response.body;
-          if (imageUrl) {
-            const isValid = this.isValidImageURL(imageUrl);
-            if (isValid) {
-              const src = this.convertPathToUrl(imageUrl);
-              this.newMessageContent = `${src}`;  // Updated this line
-              this.sendMessage();
-            }
-          } else {
-            console.error('Response body did not contain a valid image URL:', imageUrl);
-          }
+          // Rebuild the artImageFilePath into a URL
+          const artImageUrl = this.convertPathToUrl(this.artName, this.artAuthor);
+          // The newMessageContent now contains the URL of the image
+          this.newMessageContent = artImageUrl;
+          this.sendMessage();
         } else {
           console.error('Failed to upload art with response status:', response.status);
         }
@@ -172,14 +164,14 @@ export class HomeComponent implements OnInit, AfterViewChecked {
       console.warn('Please ensure all fields are filled.');
     }
   }
-
-
   isValidImageURL(url: string): boolean {
-    const acceptedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-    const extension = url.split('.').pop()?.toLowerCase();
-    return acceptedExtensions.includes(extension || "");
+    const backendBaseUrl = `${window.location.protocol}//${window.location.hostname}:8443`;
+    const isArtworkUrl = url.startsWith(`${backendBaseUrl}/artwork/`);
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    const urlExtension = url.slice(url.lastIndexOf('.'));
+    const isImageExtension = imageExtensions.includes(urlExtension);
+    return isArtworkUrl && isImageExtension;
   }
-
   private scrollToBottom(): void {
     try {
       this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
@@ -248,6 +240,14 @@ export class HomeComponent implements OnInit, AfterViewChecked {
             }
           });
 
+        } else if (this.isValidImageURL(this.newMessageContent)) {
+          const newMessage: Message = {
+            content: this.newMessageContent,
+            sender: this.hluser,
+            date_sent: new Date()
+          };
+          this.chatService.sendMessage(newMessage);
+          console.log("newMessage:", JSON.stringify(newMessage));
         } else {
           const newMessage: Message = {
             content: this.newMessageContent,
@@ -264,7 +264,10 @@ export class HomeComponent implements OnInit, AfterViewChecked {
       }
     }
   }
+
 }
+
+
 //         this.chatService.useChatGPT(request).subscribe(response => {
 //           console.log('ChatGPT response:', response);
 //         }, error => {
