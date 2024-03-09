@@ -10,39 +10,36 @@ import { AuthService } from '../common/service/auth.service';
 })
 export class HeaderComponent implements OnInit {
   title = 'HAPPYLONELY';
-  items: MenuItem[] = [];
+  items: MenuItem[] = [
+    { icon: 'pi pi-home', routerLink: 'home' },
+    { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
+    { icon: 'pi pi-pencil', routerLink: 'art' },
+    { icon: 'pi pi-user', routerLink: 'user' },
+    { icon: 'pi pi-youtube', routerLink: 'youtube-dl' }
+  ];
 
-  constructor(private authService: AuthService, private router: Router) {
-    this.getUserRole();
-  }
+  constructor(private authService: AuthService, private router: Router) { }
 
   async ngOnInit() {
+    await this.getUserRole();
   }
 
-  getUserRole() {
+  async getUserRole() {
     this.authService.getUserRole().subscribe({
       next: (response) => {
         console.log(response);
         if (response >= 5) {
           console.log("data: " + JSON.stringify(response));
           this.items = [
-            { icon: 'fas fa-home', routerLink: 'home' },
-            { icon: 'fas fa-shopping-bag', routerLink: 'shop' },
-            { icon: 'fas fa-pencil', routerLink: 'art' },
-            { icon: 'fas fa-user', routerLink: 'user' },
-            { icon: 'fas fa-youtube', routerLink: 'youtube-dl' },
-            { icon: 'fas fa-lock', routerLink: 'admin' }
+            { icon: 'pi pi-home', routerLink: 'home' },
+            { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
+            { icon: 'pi pi-pencil', routerLink: 'art' },
+            { icon: 'pi pi-user', routerLink: 'user' },
+            { icon: 'pi pi-youtube', routerLink: 'youtube-dl' },
+            { icon: 'pi pi-lock', routerLink: 'admin' }
           ];
         }
-        else if (response > 2 && response < 5) {
-          this.items = [
-            { icon: 'fas fa-home', routerLink: 'home' },
-            { icon: 'fas fa-shopping-bag', routerLink: 'shop' },
-            { icon: 'fas fa-pencil', routerLink: 'art' },
-            { icon: 'fas fa-user', routerLink: 'user' },
-            { icon: 'fas fa-youtube', routerLink: 'youtube-dl' }
-          ];
-        }
+
       },
       error: (error) => {
         console.error("An error occurred:", error);
