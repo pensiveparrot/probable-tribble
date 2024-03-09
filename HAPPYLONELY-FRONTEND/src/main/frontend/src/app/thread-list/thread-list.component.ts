@@ -27,7 +27,7 @@ export class ThreadListComponent implements OnInit {
   }
 
   addThread(): void {
-    this.router.navigate(['/thread-create']);
+    this.router.navigate(['/create-thread']);
   }
 
   viewThread(id: string): void {

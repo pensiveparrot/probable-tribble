@@ -1,12 +1,14 @@
 <div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <h2>Forum</h2>
-    <div style="text-align: right;">
-        <button (click)="addThread()">
-            <i class="fa fa-plus"></i>
+
+    <div class="forum-header">
+        <h2>Forum</h2>
+        <button class="add-thread-button" (click)="addThread()">
+            <i class="fa fa-plus"></i> Add Thread
         </button>
     </div>
-    <p-table [value]="threads">
+
+    <p-table [value]="threads" styleClass="forum-table">
         <ng-template pTemplate="header">
             <tr>
                 <th>Title</th>
@@ -17,12 +19,18 @@
         </ng-template>
         <ng-template pTemplate="body" let-thread>
             <tr>
-                <td>{{ thread.title }}</td>
-                <td>{{ thread.category }}</td>
-                <td>{{ thread.sender.username }}</td>
                 <td>
-                    <button (click)="viewThread(thread.id)">
-                        <i class="fa fa-eye"></i>
+                    <div class="thread-title">{{ thread.title }}</div>
+                </td>
+                <td>
+                    <div class="thread-category">{{ thread.category }}</div>
+                </td>
+                <td>
+                    <div class="thread-creator">{{ thread.sender.username }}</div>
+                </td>
+                <td>
+                    <button class="view-thread-button" (click)="viewThread(thread.id)">
+                        <i class="fa fa-eye"></i> View
                     </button>
                 </td>
             </tr>

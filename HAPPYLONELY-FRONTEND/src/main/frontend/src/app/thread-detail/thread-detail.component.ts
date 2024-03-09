@@ -45,6 +45,13 @@ export class ThreadDetailComponent implements OnInit {
           this.thread.title = response.body.title;
           this.thread.category = response.body.category;
           this.thread.posts = response.body.posts;
+          if (this.thread.posts != null) {
+            this.thread.posts.forEach(post => {
+              if (post.sender.id === this.user.id) {
+                post.sender.profileimg = this.user.profileimg;
+              }
+            });
+          }
           this.thread.date_sent = response.body.date_sent;
           this.thread.content = response.body.content;
           this.thread.sender = {} as HLUser;

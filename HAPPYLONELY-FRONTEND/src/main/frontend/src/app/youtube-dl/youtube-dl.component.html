@@ -1,14 +1,22 @@
-<div class="p-fluid">
-    <div class="p-field">
-        <label for="url">URL</label>
-        <input id="url" [(ngModel)]="url" class="p-inputtext p-component" type="text" pInputText />
+<div class="p-grid p-fluid">
+    <div class="p-col-12">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-globe"></i></span>
+            <input id="url" [(ngModel)]="url" class="p-inputtext p-component" type="text" pInputText
+                placeholder="Enter URL" />
+        </div>
     </div>
 
-    <div class="p-field">
-        <label for="type">Type</label>
-        <p-dropdown [options]="types" [(ngModel)]="selectedType" optionLabel="name" optionValue="value"
-            placeholder="Select a Type"></p-dropdown>
+    <div class="p-col-12">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-list"></i></span>
+            <p-dropdown [options]="types" [(ngModel)]="selectedType" optionLabel="name" optionValue="value"
+                placeholder="Select a Type" styleClass="p-inputtext-sm"></p-dropdown>
+        </div>
     </div>
 
-    <button pButton type="button" label="Download" (click)="download()"></button>
+    <div class="p-col-12">
+        <button pButton type="button" label="Download" icon="pi pi-download" (click)="download()"
+            styleClass="p-button-success p-button-rounded"></button>
+    </div>
 </div>

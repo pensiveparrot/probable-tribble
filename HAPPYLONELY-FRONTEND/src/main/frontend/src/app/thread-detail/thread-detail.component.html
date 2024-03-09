@@ -1,19 +1,31 @@
-<div *ngIf="thread">
-    <h3>{{ thread.title }}</h3>
-    <p>{{ thread.category }}</p>
-    <p>{{thread.content}}</p>
-
-    <h4>Posts</h4>
-    <div *ngFor="let post of thread.posts" class="post">
-        <img [src]="post.sender.profileimg" alt="User Image" width="50" height="50">
-        <div>
-            <p>{{ post.sender.username }}</p>
-            <p>{{ post.content }}</p>
+<div *ngIf="thread" class="thread-container">
+    <div class="thread-header">
+        <h2>{{ thread.title }}</h2>
+        <p class="category">{{ thread.category }}</p>
+    </div>
+    <div class="thread-content">
+        <p>{{ thread.content }}</p>
+    </div>
+    <div class="posts-section">
+        <h3>Posts</h3>
+        <div *ngFor="let post of thread.posts" class="post">
+            <img [src]="post.sender.profileimg" alt="User Image" class="user-image">
+            <div class="post-content">
+                <div class="post-header">
+                    <span class="username">{{ post.sender.username }}</span>
+                    <span class="timestamp">{{ post.date_sent | date:'short' }}</span>
+                </div>
+                <p>{{ post.content }}</p>
+            </div>
         </div>
     </div>
-
-    <form (ngSubmit)="addPost()" class="input-area">
-        <textarea pInputTextarea [(ngModel)]="newPost.content" name="postContent"></textarea>
-        <button type="submit" pButton label="Add Post"></button>
-    </form>
+    <div class="input-area">
+        <form (ngSubmit)="addPost()">
+            <div class="input-container">
+                <textarea pInputTextarea [(ngModel)]="newPost.content" name="postContent"
+                    placeholder="Write a post..."></textarea>
+                <button type="submit" pButton icon="pi pi-send" label="Add Post" class="p-button-rounded"></button>
+            </div>
+        </form>
+    </div>
 </div>
