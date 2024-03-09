@@ -26,21 +26,21 @@ export class HeaderComponent implements OnInit {
         if (response >= 5) {
           console.log("data: " + JSON.stringify(response));
           this.items = [
-            { icon: 'pi pi-home', routerLink: 'home' },
-            { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
-            { icon: 'pi pi-pencil', routerLink: 'art' },
-            { icon: 'pi pi-user', routerLink: 'user' },
-            { icon: 'pi pi-youtube', routerLink: 'youtube-dl' },
-            { icon: 'pi pi-lock', routerLink: 'admin' }
+            { icon: 'fas fa-home', routerLink: 'home' },
+            { icon: 'fas fa-shopping-bag', routerLink: 'shop' },
+            { icon: 'fas fa-pencil', routerLink: 'art' },
+            { icon: 'fas fa-user', routerLink: 'user' },
+            { icon: 'fas fa-youtube', routerLink: 'youtube-dl' },
+            { icon: 'fas fa-lock', routerLink: 'admin' }
           ];
         }
         else if (response > 2 && response < 5) {
           this.items = [
-            { icon: 'pi pi-home', routerLink: 'home' },
-            { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
-            { icon: 'pi pi-pencil', routerLink: 'art' },
-            { icon: 'pi pi-user', routerLink: 'user' },
-            { icon: 'pi pi-youtube', routerLink: 'youtube-dl' }
+            { icon: 'fas fa-home', routerLink: 'home' },
+            { icon: 'fas fa-shopping-bag', routerLink: 'shop' },
+            { icon: 'fas fa-pencil', routerLink: 'art' },
+            { icon: 'fas fa-user', routerLink: 'user' },
+            { icon: 'fas fa-youtube', routerLink: 'youtube-dl' }
           ];
         }
       },
