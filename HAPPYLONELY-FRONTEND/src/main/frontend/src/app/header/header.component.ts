@@ -10,33 +10,37 @@ import { AuthService } from '../common/service/auth.service';
 })
 export class HeaderComponent implements OnInit {
   title = 'HAPPYLONELY';
-  items: MenuItem[] = [
-    { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: 'home' },
-    { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: 'shop' },
-    { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: 'art' },
-    { label: 'User', icon: 'pi pi-fw pi-user', routerLink: 'user' },
-    { label: 'Download YouTube', icon: 'pi pi-fw pi-youtube', routerLink: 'youtube-dl' }
-  ];
-  activeItem!: MenuItem;
+  items: MenuItem[] = [];
+
   constructor(private authService: AuthService, private router: Router) {
     this.getUserRole();
   }
-  async ngOnInit() {
 
+  async ngOnInit() {
   }
+
   getUserRole() {
     this.authService.getUserRole().subscribe({
       next: (response) => {
         console.log(response);
-        if (response > 5) {
+        if (response >= 5) {
           console.log("data: " + JSON.stringify(response));
           this.items = [
-            { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: 'home' },
-            { label: 'Shop', icon: 'pi pi-fw pi-shopping-bag', routerLink: 'shop' },
-            { label: 'Art', icon: 'pi pi-fw pi-pencil', routerLink: 'art' },
-            { label: 'User', icon: 'pi pi-fw pi-user', routerLink: 'user' },
-            { label: 'Download YouTube', icon: 'pi pi-fw pi-youtube', routerLink: 'youtube-dl' },
-            { label: 'Admin', icon: 'pi pi-fw pi-user', routerLink: 'admin' }
+            { icon: 'pi pi-home', routerLink: 'home' },
+            { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
+            { icon: 'pi pi-pencil', routerLink: 'art' },
+            { icon: 'pi pi-user', routerLink: 'user' },
+            { icon: 'pi pi-youtube', routerLink: 'youtube-dl' },
+            { icon: 'pi pi-lock', routerLink: 'admin' }
+          ];
+        }
+        else if (response > 2 && response < 5) {
+          this.items = [
+            { icon: 'pi pi-home', routerLink: 'home' },
+            { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
+            { icon: 'pi pi-pencil', routerLink: 'art' },
+            { icon: 'pi pi-user', routerLink: 'user' },
+            { icon: 'pi pi-youtube', routerLink: 'youtube-dl' }
           ];
         }
       },

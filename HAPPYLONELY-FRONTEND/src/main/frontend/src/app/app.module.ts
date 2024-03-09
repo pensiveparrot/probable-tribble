@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ArtComponent } from './art/art.component';
 import { HomeComponent } from './home/home.component';
-import { TabMenuModule } from 'primeng/tabmenu';
+import { MenuModule } from 'primeng/menu';
 import { ImageModule } from 'primeng/image';
 import { GalleriaModule } from 'primeng/galleria';
 import { DialogModule } from 'primeng/dialog';
@@ -14,7 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
 import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
-import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AdminComponent } from './admin/admin.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
@@ -59,8 +59,9 @@ export function tokenGetter() {
   imports: [
     BrowserModule,
     AppRoutingModule,
-    TabMenuModule, ToastModule,
+    ToastModule,
     ImageModule,
+    MenuModule,
     GalleriaModule,
     DialogModule,
     ButtonModule,

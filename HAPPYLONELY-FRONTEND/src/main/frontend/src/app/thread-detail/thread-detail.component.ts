@@ -103,7 +103,7 @@ export class ThreadDetailComponent implements OnInit {
           } else {
             // If the sender is not the current user, fetch their details
             const userResponse = await firstValueFrom(this.userService.getUserById(post.sender.id));
-            post.sender.profileimg = userResponse.body.profileimg;
+            post.sender.profileimg = userResponse.profileimg;
           }
         }
       },
