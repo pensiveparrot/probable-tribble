@@ -9,13 +9,11 @@ import { ProductService } from './product/product.service';
 })
 export class ShopComponent implements OnInit {
   showText: boolean = false;
-  hidden: boolean = false;
   products: Product[] = [];
   product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
 
   constructor(private productService: ProductService) { }
   ngOnInit(): void {
-    setTimeout(() => { this.hidden = true }, 3000);
     setTimeout(() => {
       this.showText = true;
     }, 4000);

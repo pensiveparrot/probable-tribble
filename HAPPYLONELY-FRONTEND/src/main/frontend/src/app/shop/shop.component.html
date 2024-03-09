@@ -1,11 +1,4 @@
 <!-- https://buy.stripe.com/test_8wM5mQcoKcxhdHOcMM -->
-<div id="shoppingLoadingImg">
-    <p-image *ngIf="this.hidden === false" src="../../assets/5.gif" [preview]="false" alt="Image" width="500px">
-        <ng-template pTemplate="indicator">
-            <i class="pi pi-check"></i>
-        </ng-template>
-    </p-image>
-</div>
 <div class="shoppingPage" *ngIf="this.showText === true">
     <p-carousel [value]="products" [numVisible]="1" [numScroll]="1" [circular]="false"
         [responsiveOptions]="responsiveOptions">

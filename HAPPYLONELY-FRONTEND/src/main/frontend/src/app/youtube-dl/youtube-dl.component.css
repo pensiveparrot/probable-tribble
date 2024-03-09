@@ -1,4 +1,25 @@
 .custom-dropdown {
-    width: 120px;
-    /* Adjust the width as needed */
+    width: 100%;
+}
+
+.custom-dropdown .p-dropdown {
+    width: 100%;
+}
+
+.custom-dropdown .p-dropdown .p-dropdown-label {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    height: auto;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+}
+
+.custom-dropdown .p-dropdown-panel {
+    width: 100%;
+}
+
+.custom-dropdown .p-dropdown-items {
+    width: 100%;
 }

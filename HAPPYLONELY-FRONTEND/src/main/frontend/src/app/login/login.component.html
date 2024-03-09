@@ -1,25 +1,31 @@
-<div class="p-grid p-justify-center">
+<div class="p-grid p-justify-center login-container">
     <div class="p-col-12 p-md-6 p-lg-4">
-        <p-messages [(value)]="msgs"></p-messages>
-        <p-card header="Login">
-            <form (ngSubmit)="login()">
+        <p-messages [(value)]="msgs" class="messages-panel"></p-messages>
+        <p-card header="Login" class="login-card">
+            <form (ngSubmit)="login()" class="login-form">
                 <div class="p-field">
-                    <label for="username">Username</label>
-                    <input id="username" [(ngModel)]="username" name="username" pInputText placeholder="Enter username"
-                        class="uniform-input" />
+                    <label for="username" class="input-label">Username</label>
+                    <div class="input-wrapper">
+                        <i class="pi pi-user"></i>
+                        <input id="username" [(ngModel)]="username" name="username" pInputText
+                            placeholder="Enter username" class="uniform-input" />
+                    </div>
                 </div>
-
                 <div class="p-field">
-                    <label for="password">Password</label>
-                    <input id="password" [(ngModel)]="password" name="password" type="password" pInputText
-                        placeholder="Enter password" class="uniform-input" />
+                    <label for="password" class="input-label">Password</label>
+                    <div class="input-wrapper">
+                        <i class="pi pi-lock"></i>
+                        <input id="password" [(ngModel)]="password" name="password" type="password" pInputText
+                            placeholder="Enter password" class="uniform-input" />
+                    </div>
                 </div>
-
-                <p-button type="submit" label="Login"></p-button>
-                <p-button routerLink="/register" label="Register"></p-button>
-                <span> Not registered ?
-                    <a routerLink="/register">Register here</a>
-                </span>
+                <div class="button-group">
+                    <p-button type="submit" label="Login" styleClass="p-button-primary"></p-button>
+                    <p-button routerLink="/register" label="Register" styleClass="p-button-secondary"></p-button>
+                </div>
+                <div class="register-link">
+                    Not registered? <a routerLink="/register">Register here</a>
+                </div>
             </form>
         </p-card>
     </div>

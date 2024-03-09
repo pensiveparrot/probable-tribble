@@ -1,14 +1,37 @@
-.thread-form {
+.thread-form-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: transparent;
+}
+
+.thread-form-card {
+    width: 100%;
     max-width: 600px;
-    margin: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.thread-form {
+    padding: 2rem;
 }
 
 .form-control {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 1.5rem;
 }
 
 .submit-button {
     display: block;
     margin: auto;
+    width: 100%;
+}
+
+.p-field label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.p-fluid .p-field {
+    margin-bottom: 1.5rem;
 }

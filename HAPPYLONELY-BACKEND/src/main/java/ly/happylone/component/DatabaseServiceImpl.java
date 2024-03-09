@@ -1199,10 +1199,8 @@ public class DatabaseServiceImpl implements DatabaseService {
                 statement.setString(5, post.getThread().getId());
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted > 0) {
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.TEXT_PLAIN);
                     post.setId(id);
-                    return new ResponseEntity<>(post, headers, HttpStatus.CREATED);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(post);
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add message");
                 }

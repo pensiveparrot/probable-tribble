@@ -6,10 +6,8 @@ import { Component, Output } from '@angular/core';
   styleUrls: ['./art.component.css']
 })
 export class ArtComponent {
-  hidden: boolean = false;
   showText: boolean = false;
   ngOnInit(): void {
-    setTimeout(() => { this.hidden = true }, 3000);
     setTimeout(() => {
       this.showText = true;
     }, 4000);

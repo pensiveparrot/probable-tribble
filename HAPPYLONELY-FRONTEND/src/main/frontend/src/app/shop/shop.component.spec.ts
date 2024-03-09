@@ -33,11 +33,6 @@ describe('ShopComponent', () => {
     expect(component.ngOnInit).toHaveBeenCalled();
   });
 
-  it('should set hidden to true after 3 seconds', fakeAsync(() => {
-    component.ngOnInit();
-    tick(3000);
-    expect(component.hidden).toBeTrue();
-  }));
 
   it('should set showText to true after 4 seconds', fakeAsync(() => {
     component.ngOnInit();

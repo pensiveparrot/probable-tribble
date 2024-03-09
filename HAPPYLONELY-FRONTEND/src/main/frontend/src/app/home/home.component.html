@@ -1,23 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-<div id="homeLoadingImg">
-    <p-image *ngIf="this.hidden === false" id="homeLoadingImg" src="../../assets/5.gif" [preview]="false" alt="Image"
-        width="500px">
-        <ng-template pTemplate="indicator">
-            <i class="pi pi-check"></i>
-        </ng-template>
-    </p-image>
-</div>
-
-<div *ngIf="this.hidden === true" class="main-container">
-    <h1>Welcome to the Forum</h1>
-    <nav>
-        <ul>
-            <li><a routerLink="/threads">Threads</a></li>
-            <li><a routerLink="/create-thread">Create Thread</a></li>
-        </ul>
-    </nav>
-    <router-outlet></router-outlet>
-
+<div class="main-container">
     <div #messagesContainer class="messages-container">
         <ng-container *ngIf="showText">
             <div class="messages-wrapper">

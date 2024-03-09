@@ -6,12 +6,15 @@
                 placeholder="Enter URL" />
         </div>
     </div>
-
+    <!--
+        fix later
+                     placeholder="Select a Type"
+                -->
     <div class="p-col-12">
-        <div class="p-inputgroup">
+        <div class="p-inputgroup custom-dropdown">
             <span class="p-inputgroup-addon"><i class="pi pi-list"></i></span>
-            <p-dropdown [options]="types" [(ngModel)]="selectedType" optionLabel="name" optionValue="value"
-                placeholder="Select a Type" styleClass="custom-dropdown"></p-dropdown>
+            <p-dropdown [options]="types" [(ngModel)]="selectedType" optionLabel="name" optionValue="value">
+            </p-dropdown>
         </div>
     </div>
 
