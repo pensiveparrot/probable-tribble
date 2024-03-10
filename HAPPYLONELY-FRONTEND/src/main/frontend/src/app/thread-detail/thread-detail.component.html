@@ -9,7 +9,9 @@
     <div class="posts-section">
         <h3>Posts</h3>
         <div *ngFor="let post of thread.posts" class="post">
-            <img [src]="post.sender.profileimg" alt="User Image" class="user-image">
+            <div class="user-image-container">
+                <img *ngIf="post.sender.profileimg" [src]="post.sender.profileimg" alt="User Image" class="user-image">
+            </div>
             <div class="post-content">
                 <div class="post-header">
                     <span class="username">{{ post.sender.username }}</span>

@@ -18,13 +18,21 @@ export class ThreadDetailComponent implements OnInit {
   newPost: Post = {} as Post;
   id: string = this.forumService.currentThreadId;
   posterProfileImg: string = "";
-
   ngOnInit(): void {
-    this.id = this.aRoute.snapshot.params['id'];
-
+    const idFromRoute = this.aRoute.snapshot.params['id'];
+    if (idFromRoute) {
+      this.id = idFromRoute;
+      localStorage.setItem('threadId', this.id);
+    } else {
+      const storedId = localStorage.getItem('threadId');
+      if (storedId) {
+        this.id = storedId;
+      }
+    }
+    this.getThread();
   }
   constructor(private forumService: ForumService, private userService: UserService, private aRoute: ActivatedRoute, private router: Router) {
-    this.getThread();
+
   }
   async getUser() {
     try {
@@ -37,14 +45,7 @@ export class ThreadDetailComponent implements OnInit {
       console.error("An error occurred:", error);
     }
   }
-  async getUserById(id: string) {
-    try {
-      const response = await firstValueFrom(this.userService.getUserById(id));
-      this.posterProfileImg = response.profileimg;
-    } catch (error) {
-      console.error("An error occurred:", error)
-    }
-  }
+
   async getThread() {
     this.forumService.getThreadById(this.id).subscribe(
       {
@@ -54,12 +55,6 @@ export class ThreadDetailComponent implements OnInit {
           this.thread.title = response.body.title;
           this.thread.category = response.body.category;
           this.thread.posts = response.body.posts;
-          if (this.thread.posts != null) {
-            this.thread.posts.forEach(async post => {
-              await this.getUserById(post.sender.id);
-              post.sender.profileimg = this.posterProfileImg!;
-            });
-          }
           this.thread.date_sent = response.body.date_sent;
           this.thread.content = response.body.content;
           this.thread.sender = {} as HLUser;
@@ -87,32 +82,21 @@ export class ThreadDetailComponent implements OnInit {
     this.newPost.thread = {} as Thread;
     this.newPost.thread.id = this.aRoute.snapshot.paramMap.get('id')!;
     this.forumService.addPost(this.newPost).subscribe({
-      next: (response) => {
+      next: async (response) => {
         console.log(response);
-        this.getPosts();
+        await this.getPosts();
       },
       error: (error) => {
         console.error("An error occurred:", error);
       }
     });
   }
-  getPosts() {
-    const id = this.aRoute.snapshot.paramMap.get('id')!;
+  async getPosts() {
+    const id = this.id!;
     this.forumService.getPostsByThreadId(id).subscribe({
       next: async (response) => {
         console.log(response);
         this.thread.posts = response.body;
-
-        // Update the profileimg of the sender in each post
-        for (let post of this.thread.posts!) {
-          if (post.sender.id === this.user.id) {
-            post.sender.profileimg = this.user.profileimg;
-          } else {
-            // If the sender is not the current user, fetch their details
-            const userResponse = await firstValueFrom(this.userService.getUserById(post.sender.id));
-            post.sender.profileimg = userResponse.profileimg;
-          }
-        }
       },
       error: (error) => {
         console.error("An error occurred:", error);

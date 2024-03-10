@@ -1227,8 +1227,9 @@ public class DatabaseServiceImpl implements DatabaseService {
                     post.setDateSent(rs.getDate("date_sent"));
                     HLUser user = new HLUser();
                     user = getUserById(rs.getString("sender_id"));
-                    HLUserResponse hluser = new HLUserResponse(user);
+                    HLUserResponse hluser = getUserByUsernameMin(user.getUsername()).getBody();
                     post.setSender(hluser);
+
                     posts.add(post);
                 }
                 return ResponseEntity.ok(posts);
