@@ -1,0 +1,62 @@
+.shoppingPage {
+    padding: 20px;
+}
+
+.pageTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.product-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.product-img {
+    max-width: 100%;
+    height: auto;
+}
+
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    color: #ff4081;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.product-name {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.product-rating {
+    margin-bottom: 5px;
+}
+
+.product-price {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.product-actions {
+    margin-top: 10px;
+}

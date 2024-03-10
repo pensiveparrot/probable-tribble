@@ -1,0 +1,46 @@
+.artPage {
+    text-align: center;
+    padding: 20px;
+}
+
+.pageTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.artItem {
+    position: relative;
+}
+
+.artImgs {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.artCaption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);   
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.artItem:hover .artCaption {
+    opacity: 1;
+}
+
+.artCaption h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.artCaption p {
+    font-size: 14px;
+}

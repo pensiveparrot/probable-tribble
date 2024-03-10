@@ -1,22 +1,29 @@
 <!-- https://buy.stripe.com/test_8wM5mQcoKcxhdHOcMM -->
 <div class="shoppingPage">
-    <p-carousel [value]="products" [numVisible]="1" [numScroll]="1" [circular]="false"
+    <h2 class="pageTitle">Featured Products</h2>
+
+    <p-carousel [value]="products" [numVisible]="3" [numScroll]="1" [circular]="false"
         [responsiveOptions]="responsiveOptions">
-
-        <ng-template let-product of products pTemplate="item">
-            <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-                <div class="mb-3">
-                    <img src="{{ product.image }}" [alt]="product.productname" class="productImgs" />
+        <ng-template let-product pTemplate="item">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ product.image }}" [alt]="product.productname" class="product-img" />
+                    <button class="favorite-btn" (click)="toggleFavorite(product)">
+                        <i class="pi"
+                            [ngClass]="{'pi-heart': !product.isFavorite, 'pi-heart-fill': product.isFavorite}"></i>
+                    </button>
                 </div>
-                <div>
-                    <h4 class="mb-1">{{ product.productname }}</h4>
-                    <h6 class="mt-0 mb-3">{{ '$' + product.price }}</h6>
+                <div class="product-details">
+                    <h4 class="product-name">{{ product.productname }}</h4>
+                    <div class="product-rating">
+                        <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
+                    </div>
+                    <h6 class="product-price">{{ '$' + product.price }}</h6>
                     <p-tag [value]="product.inventorystatus" [severity]="getSeverity(product.inventorystatus)"></p-tag>
-
-                    <div class="car-buttons mt-5">
+                    <div class="product-actions">
                         <p-button [disabled]="setDisabled(product.inventorystatus)" type="button"
-                            (click)="onClick(product.shoplink)" styleClass="p-button p-button-rounded mr-2"
-                            icon="pi pi-shopping-bag"></p-button>
+                            (click)="onClick(product.shoplink)" label="Add to Cart" icon="pi pi-shopping-cart"
+                            styleClass="p-button-rounded p-button-primary"></p-button>
                     </div>
                 </div>
             </div>

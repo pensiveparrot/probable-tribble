@@ -36,6 +36,7 @@ import { ToastModule } from 'primeng/toast';
 import { HeaderComponent } from './header/header.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MessageModule } from 'primeng/message';
+import { RatingModule } from 'primeng/rating';
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
@@ -61,7 +62,7 @@ export function tokenGetter() {
     AppRoutingModule,
     ToastModule,
     ImageModule,
-    MenuModule,
+    MenuModule, RatingModule,
     GalleriaModule,
     DialogModule,
     ButtonModule,

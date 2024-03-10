@@ -17,6 +17,11 @@ export class AdminComponent {
   product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
   user: any = { id: "", username: "", statusmsg: "", profileimg: "" };
 
+  inventoryStatusOptions = [
+    { label: 'In Stock', value: 'INSTOCK' },
+    { label: 'Low Stock', value: 'LOWSTOCK' },
+    { label: 'Out of Stock', value: 'OUTOFSTOCK' }
+  ];
   constructor(private productService: ProductService, private userService: UserService) { }
 
   get buttonLabel(): string {

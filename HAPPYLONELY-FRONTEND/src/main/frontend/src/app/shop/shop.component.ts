@@ -9,9 +9,10 @@ import { ProductService } from './product/product.service';
 })
 export class ShopComponent implements OnInit {
   products: Product[] = [];
-  product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
+  product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "", isFavorite: false, rating: 0 };
 
   constructor(private productService: ProductService) { }
+
   ngOnInit(): void {
     this.loadAllProducts();
   }
@@ -27,6 +28,8 @@ export class ShopComponent implements OnInit {
             product.inventorystatus = product.inventorystatus;
             product.image = product.image;
             product.shoplink = product.shoplink;
+            product.isFavorite = false;
+            product.rating = Math.floor(Math.random() * 5) + 1; // Simulate random ratings
             this.products.push(product);
           });
         }
@@ -35,6 +38,7 @@ export class ShopComponent implements OnInit {
       });
     });
   }
+
   loadProduct() {
     return new Promise((resolve, reject) => {
       this.productService.getProductById(1).subscribe((data) => {
@@ -45,8 +49,9 @@ export class ShopComponent implements OnInit {
           this.product.inventorystatus = data.inventorystatus;
           this.product.image = data.image;
           this.product.shoplink = data.shoplink;
+          this.product.isFavorite = false;
+          this.product.rating = Math.floor(Math.random() * 5) + 1; // Simulate random rating
         }
-
         console.log("product: " + JSON.stringify(this.product));
         this.products.push(this.product);
         resolve(data);
@@ -54,31 +59,35 @@ export class ShopComponent implements OnInit {
     });
   }
 
-  responsiveOptions: any[] = [{ breakpoint: '1024px', numVisible: 3, numScroll: 3 }, { breakpoint: '768px', numVisible: 2, numScroll: 2 }, { breakpoint: '560px', numVisible: 1, numScroll: 1 }];
+  responsiveOptions: any[] = [
+    { breakpoint: '1024px', numVisible: 3, numScroll: 3 },
+    { breakpoint: '768px', numVisible: 2, numScroll: 2 },
+    { breakpoint: '560px', numVisible: 1, numScroll: 1 }
+  ];
+
   getSeverity(status: string) {
     switch (status) {
       case 'In Stock':
         return 'success';
-
       case 'Low Stock':
         return 'warning';
-
       case 'Out Of Stock':
         return 'danger';
-
-
       default:
         return 'medium';
-
     }
-
-
   }
+
   setDisabled(status: string) {
     return status === "Out Of Stock";
   }
+
   onClick(productLink: string) {
     if (productLink != '')
       window.open(productLink, "_self");
+  }
+
+  toggleFavorite(product: Product) {
+    product.isFavorite = !product.isFavorite;
   }
 }
