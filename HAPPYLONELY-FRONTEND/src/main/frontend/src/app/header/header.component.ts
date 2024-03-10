@@ -12,10 +12,10 @@ export class HeaderComponent implements OnInit {
   title = 'HAPPYLONELY';
   items: MenuItem[] = [
     { icon: 'pi pi-home', routerLink: 'home' },
+    { icon: 'pi pi-comments', routerLink: 'threads' },
     { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
     { icon: 'pi pi-pencil', routerLink: 'art' },
     { icon: 'pi pi-user', routerLink: 'user' },
-    { icon: 'pi pi-users', routerLink: 'threads' },
     { icon: 'pi pi-youtube', routerLink: 'youtube-dl' }
   ];
 
@@ -37,7 +37,6 @@ export class HeaderComponent implements OnInit {
             { icon: 'pi pi-shopping-bag', routerLink: 'shop' },
             { icon: 'pi pi-pencil', routerLink: 'art' },
             { icon: 'pi pi-user', routerLink: 'user' },
-            { icon: 'pi pi-users', routerLink: 'threads' },
             { icon: 'pi pi-youtube', routerLink: 'youtube-dl' },
             { icon: 'pi pi-lock', routerLink: 'admin' }
           ];

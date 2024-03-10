@@ -34,11 +34,6 @@ describe('ShopComponent', () => {
   });
 
 
-  it('should set showText to true after 4 seconds', fakeAsync(() => {
-    component.ngOnInit();
-    tick(4000);
-    expect(component.showText).toBeTrue();
-  }));
 
   it('should call loadAllProducts when ngOnInit is executed', () => {
     spyOn(component, 'loadAllProducts').and.callThrough();

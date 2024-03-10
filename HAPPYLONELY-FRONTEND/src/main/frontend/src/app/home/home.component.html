@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 <div class="main-container">
     <div #messagesContainer class="messages-container">
-        <ng-container *ngIf="showText">
+        <ng-container>
             <div class="messages-wrapper">
                 <div *ngFor="let message of Messages" class="message-item">
                     <span class="message-timestamp">{{ message.date_sent | date:'MMM d, y, h:mm a' }}</span>
@@ -20,11 +20,11 @@
         </ng-container>
     </div>
     <div *ngIf="isDialogMinimized" (click)="openDialog()" class="minimized-dialog">
-        <i class="fas fa-window-minimize"></i>
+        <i class="pi pi-window-minimize"></i>
     </div>
 
     <!-- Input Section -->
-    <div class="input-section" *ngIf="showText">
+    <div class="input-section">
         <textarea rows="1" cols="80" pInputTextarea [(ngModel)]="newMessageContent" class="input-textarea"
             (keydown.enter)="sendMessage()"></textarea>
         <p-fileUpload #fileInput name="file" url="https://localhost:8443/api/art/uploadArt" accept="image/*"
@@ -32,19 +32,20 @@
 
         <!-- Upload Button -->
         <button pButton type="button" class="ui-button-secondary btn-upload" (click)="openDialog()">
-            <i class="fas fa-upload"></i>
+            <i class="pi pi-upload"></i>
         </button>
 
         <!-- Art Upload Dialog -->
         <div *ngIf="isDialogOpen" @fadeInOut>
-            <p-dialog [(visible)]="isDialogOpen" [modal]="true" [closable]="false" header="Upload Art">
+            <p-dialog [(visible)]="isDialogOpen" [modal]="true" [closable]="false" header="Upload Art"
+                [styleClass]="'custom-dialog'">
                 <ng-template pTemplate="header">
                     <div class="modal-header">
                         <span class="modal-title">Upload Art</span>
                         <button (click)="minimizeModal()" class="modal-control" pRipple><i
-                                class="fas fa-minus"></i></button>
+                                class="pi pi-minus"></i></button>
                         <button (click)="closeModal()" class="modal-control" pRipple><i
-                                class="fas fa-times"></i></button>
+                                class="pi pi-times"></i></button>
                     </div>
                 </ng-template>
                 <div class="ui-g">
@@ -69,7 +70,7 @@
 
         <!-- Send Button -->
         <button pButton type="button" class="ui-button-success btn-send" (click)="sendMessage()">
-            <i class="fas fa-paper-plane"></i>
+            <i class="pi pi-send"></i>
         </button>
     </div>
 

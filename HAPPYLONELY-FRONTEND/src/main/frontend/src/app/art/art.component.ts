@@ -6,11 +6,8 @@ import { Component, Output } from '@angular/core';
   styleUrls: ['./art.component.css']
 })
 export class ArtComponent {
-  showText: boolean = false;
   ngOnInit(): void {
-    setTimeout(() => {
-      this.showText = true;
-    }, 4000);
+
   }
 
   images: any[] = [{

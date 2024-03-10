@@ -1,6 +1,6 @@
 .header-container {
     position: fixed;
-    top: 420px;
+    top: 360px;
     left: 0;
     bottom: 0;
     width: 80px;
@@ -35,18 +35,8 @@
 
 @media screen and (max-width: 768px) {
     .header-container {
-        width: 100%;
-        height: 80px;
-        padding: 0 20px;
+        top: -30px;
+        width: 65px;
     }
 
-    :host ::ng-deep .p-menu {
-        flex-direction: row;
-        justify-content: space-around;
-    }
-
-    :host ::ng-deep .p-menu .p-menuitem {
-        margin-right: 20px;
-        margin-bottom: 0;
-    }
 }

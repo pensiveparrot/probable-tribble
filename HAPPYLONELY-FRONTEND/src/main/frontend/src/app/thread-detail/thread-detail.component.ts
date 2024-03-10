@@ -17,13 +17,15 @@ export class ThreadDetailComponent implements OnInit {
   thread: Thread = {} as Thread;
   newPost: Post = {} as Post;
   id: string = this.forumService.currentThreadId;
-
+  posterProfileImg: string = "";
 
   ngOnInit(): void {
     this.id = this.aRoute.snapshot.params['id'];
+
+  }
+  constructor(private forumService: ForumService, private userService: UserService, private aRoute: ActivatedRoute, private router: Router) {
     this.getThread();
   }
-  constructor(private forumService: ForumService, private userService: UserService, private aRoute: ActivatedRoute, private router: Router) { }
   async getUser() {
     try {
       const response = await firstValueFrom(this.userService.getUser());
@@ -35,8 +37,15 @@ export class ThreadDetailComponent implements OnInit {
       console.error("An error occurred:", error);
     }
   }
-  getThread() {
-
+  async getUserById(id: string) {
+    try {
+      const response = await firstValueFrom(this.userService.getUserById(id));
+      this.posterProfileImg = response.profileimg;
+    } catch (error) {
+      console.error("An error occurred:", error)
+    }
+  }
+  async getThread() {
     this.forumService.getThreadById(this.id).subscribe(
       {
         next: (response) => {
@@ -46,10 +55,9 @@ export class ThreadDetailComponent implements OnInit {
           this.thread.category = response.body.category;
           this.thread.posts = response.body.posts;
           if (this.thread.posts != null) {
-            this.thread.posts.forEach(post => {
-              if (post.sender.id === this.user.id) {
-                post.sender.profileimg = this.user.profileimg;
-              }
+            this.thread.posts.forEach(async post => {
+              await this.getUserById(post.sender.id);
+              post.sender.profileimg = this.posterProfileImg!;
             });
           }
           this.thread.date_sent = response.body.date_sent;
@@ -59,7 +67,6 @@ export class ThreadDetailComponent implements OnInit {
           this.thread.sender.username = response.body.sender.username;
           this.thread.sender.profileimg = response.body.sender.profileimg;
           this.thread.sender.statusmsg = response.body.sender.statusmsg;
-
           this.getPosts();
         },
         error: (error) => {

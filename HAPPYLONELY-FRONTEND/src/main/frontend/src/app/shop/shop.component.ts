@@ -8,18 +8,12 @@ import { ProductService } from './product/product.service';
   styleUrls: ['./shop.component.css']
 })
 export class ShopComponent implements OnInit {
-  showText: boolean = false;
   products: Product[] = [];
   product: any = { id: "", productname: "", price: 0, image: "", inventorystatus: "", shoplink: "" };
 
   constructor(private productService: ProductService) { }
   ngOnInit(): void {
-    setTimeout(() => {
-      this.showText = true;
-    }, 4000);
-
     this.loadAllProducts();
-
   }
 
   loadAllProducts() {

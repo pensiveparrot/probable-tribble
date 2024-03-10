@@ -27,7 +27,6 @@ import hljs from 'highlight.js';
 export class HomeComponent implements OnInit, AfterViewChecked {
   Messages: Message[] = [];
   newMessageContent: string = '';
-  showText: boolean = false;
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
   selectedUser: HLUser | null = null;
   showUserProfileDialog: boolean = false;
@@ -84,7 +83,6 @@ export class HomeComponent implements OnInit, AfterViewChecked {
     this.isDialogMinimized = false;
   }
   async ngOnInit(): Promise<void> {
-    setTimeout(() => { this.showText = true }, 4000);
     await this.getUsername();  // Fetch the username once on initialization
     hljs.highlightAll();
   }
