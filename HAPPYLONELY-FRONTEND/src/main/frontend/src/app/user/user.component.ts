@@ -3,6 +3,7 @@ import { UserService } from '../common/service/userservice';
 import { HLUser } from '../home/hluser';
 import { Message } from 'primeng/api';
 import { AuthService } from '../common/service/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -20,51 +21,46 @@ export class UserComponent implements OnInit {
 
   }
   async getUser() {
-    return new Promise((resolve, reject) => {
-      this.userService.getUser().subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.user = response.body;
-          console.log("user: " + JSON.stringify(this.user));
-          console.log("status code: " + this.statusCode);
-          resolve(this.user);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error getting user.  Response code: " + this.statusCode;
+    try {
+      const response: any = await firstValueFrom(this.userService.getUser());
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.user = response.body!;
+        console.log("user: ", this.user!);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
-  }
-  async updateUser() {
-    await this.getUser();
-    if (this.user !== null) {
-      this.updatedUser.username = this.user.username;
-      this.updatedUser.id = this.user.id;
+        this.errorMsgDetail = "Error getting user.  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+    } catch (error) {
+      console.error(error);
     }
-    return new Promise((resolve, reject) => {
-      this.userService.editUser(this.updatedUser).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.updatedUser = response.body;
-          console.log("user: " + JSON.stringify(this.updatedUser));
-          console.log("status code: " + this.statusCode);
-          resolve(this.updatedUser);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error updating user with id: " + this.updatedUser.id + ".  Response code: " + this.statusCode;
+  }
+
+  async updateUser() {
+    try {
+      await this.getUser();
+      if (this.user !== null) {
+        this.updatedUser.username = this.user.username;
+        this.updatedUser.id = this.user.id;
+      }
+      const response: any = await firstValueFrom(this.userService.editUser(this.updatedUser!));
+      this.statusCode = response.status;
+      if (this.statusCode === 200) {
+        this.updatedUser = response.body!;
+        console.log("user: ", this.updatedUser);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+        this.errorMsgDetail = "Error updating user with id: " + this.updatedUser.id + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
   async changeEmail() {
     this.userService.changeEmail(this.updatedUser).subscribe({

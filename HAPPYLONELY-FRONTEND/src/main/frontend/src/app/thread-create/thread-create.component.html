@@ -12,12 +12,9 @@
                     <textarea id="content" pInputTextarea placeholder="Enter content" [(ngModel)]="newThread.content"
                         name="content" class="form-control" rows="5"></textarea>
                 </div>
-                <div class="p-field">
-                    <label for="category">Category</label>
-                    <p-dropdown id="category" [options]="categories" [(ngModel)]="newThread.category"
-                        placeholder="Select a Category" name="category" class="form-control" optionLabel="name"
-                        optionValue="value"></p-dropdown>
-                </div>
+                <p-dropdown id="category" [options]="categories" [(ngModel)]="newThread.category"
+                    placeholder="Select a Category" name="category" class="form-control" optionLabel="name"
+                    optionValue="value"></p-dropdown>
                 <div class="p-field">
                     <button type="submit" pButton label="Create Thread" class="submit-button"></button>
                 </div>

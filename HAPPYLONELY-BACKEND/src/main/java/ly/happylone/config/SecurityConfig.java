@@ -87,11 +87,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/changeUsername/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/changeEmail/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/changePassword/**").authenticated()
-
                         .requestMatchers("/websocket/**").permitAll() // Allow unauthenticated
                         // access to WebSocket
                         // endpoint
-                        .requestMatchers(HttpMethod.POST, "/download/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/youtube-dl/**").authenticated()
                         .requestMatchers("/index.html", "/").permitAll()
                         .requestMatchers("/login", "/register").permitAll()
                         .requestMatchers("/api/user/isAuthenticated").permitAll()

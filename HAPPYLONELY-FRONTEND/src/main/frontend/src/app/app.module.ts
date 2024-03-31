@@ -83,7 +83,6 @@ export function tokenGetter() {
       config: {
         tokenGetter: tokenGetter,
         allowedDomains: ['https://localhost:8443'],  // replace with your API domain
-        disallowedRoutes: []  // optional, routes that don't need the token
       }
     })
   ],

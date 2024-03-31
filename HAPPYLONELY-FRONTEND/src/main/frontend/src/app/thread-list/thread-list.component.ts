@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Thread } from '../home/message';
 import { ForumService } from '../common/service/forum.service'; // Import the service
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-thread-list',
@@ -14,16 +14,14 @@ export class ThreadListComponent implements OnInit {
 
   constructor(private router: Router, private forumService: ForumService) { } // Inject the service
 
-  ngOnInit() {
-    this.getThreads();
+  async ngOnInit() {
+    await this.getThreads();
   }
 
-  getThreads(): void {
-    this.forumService.fetchThreadsList()
-      .subscribe(response => {
-        console.log(response);
-        this.threads = response.body;
-      });
+  async getThreads() {
+    const response: any = await firstValueFrom(this.forumService.fetchThreadsList());
+    console.log(response!);
+
   }
 
   addThread(): void {

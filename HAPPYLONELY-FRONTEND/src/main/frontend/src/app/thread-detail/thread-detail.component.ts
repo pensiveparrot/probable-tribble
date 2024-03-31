@@ -4,7 +4,7 @@ import { Post, Thread } from '../home/message';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../common/service/userservice';
 import { HLUser } from '../home/hluser';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 
 
 @Component({
@@ -47,29 +47,24 @@ export class ThreadDetailComponent implements OnInit {
   }
 
   async getThread() {
-    this.forumService.getThreadById(this.id).subscribe(
-      {
-        next: (response) => {
-          console.log(response);
-          this.thread.id = response.body.id;
-          this.thread.title = response.body.title;
-          this.thread.category = response.body.category;
-          this.thread.posts = response.body.posts;
-          this.thread.date_sent = response.body.date_sent;
-          this.thread.content = response.body.content;
-          this.thread.sender = {} as HLUser;
-          this.thread.sender.id = response.body.sender.id;
-          this.thread.sender.username = response.body.sender.username;
-          this.thread.sender.profileimg = response.body.sender.profileimg;
-          this.thread.sender.statusmsg = response.body.sender.statusmsg;
-          this.getPosts();
-        },
-        error: (error) => {
-          console.error("An error occurred:", error);
-        }
-      }
-    );
-
+    try {
+      const response = await firstValueFrom(this.forumService.getThreadById(this.id));
+      this.thread.id = response.body.id;
+      this.thread.title = response.body.title;
+      this.thread.category = response.body.category;
+      this.thread.posts = response.body.posts;
+      this.thread.date_sent = response.body.date_sent;
+      this.thread.content = response.body.content;
+      this.thread.sender = {} as HLUser;
+      this.thread.sender.id = response.body.sender.id;
+      this.thread.sender.username = response.body.sender.username;
+      this.thread.sender.profileimg = response.body.sender.profileimg;
+      this.thread.sender.statusmsg = response.body.sender.statusmsg;
+      await this.getPosts();
+    }
+    catch (error) {
+      console.error(error);
+    }
   }
   async addPost() {
     await this.getUser();
@@ -81,26 +76,16 @@ export class ThreadDetailComponent implements OnInit {
     this.newPost.date_sent = new Date();
     this.newPost.thread = {} as Thread;
     this.newPost.thread.id = this.aRoute.snapshot.paramMap.get('id')!;
-    this.forumService.addPost(this.newPost).subscribe({
-      next: async (response) => {
-        console.log(response);
-        await this.getPosts();
-      },
-      error: (error) => {
-        console.error("An error occurred:", error);
-      }
-    });
+    await firstValueFrom(this.forumService.addPost(this.newPost));
+    await this.getPosts();
   }
   async getPosts() {
     const id = this.id!;
-    this.forumService.getPostsByThreadId(id).subscribe({
-      next: async (response) => {
-        console.log(response);
-        this.thread.posts = response.body;
-      },
-      error: (error) => {
-        console.error("An error occurred:", error);
-      }
-    });
+    try {
+      const response = await firstValueFrom(this.forumService.getPostsByThreadId(id));
+      this.thread.posts = response.body!;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

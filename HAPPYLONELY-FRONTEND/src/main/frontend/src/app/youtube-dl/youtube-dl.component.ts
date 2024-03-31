@@ -1,6 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { saveAs } from 'file-saver';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-youtube-dl',
@@ -18,16 +19,21 @@ export class YoutubeDLComponent {
 
   constructor(private http: HttpClient) { }
 
-  download() {
+  async download() {
     if (this.url && this.selectedType) {
       const body = { url: this.url, type: this.selectedType };
-      this.http.post('https://' + window.location.hostname + ':8443' + '/download', body, { observe: 'response', responseType: 'arraybuffer' }).subscribe(response => {
+      try {
+        const response: HttpResponse<ArrayBuffer> = await firstValueFrom(
+          this.http.post('https://' + window.location.hostname + ':8443/api/youtube-dl/download', body, { observe: 'response', responseType: 'arraybuffer' })
+        );
         let filename = response.headers.get('Content-Disposition')?.split('=')[1];
         if (response.body && filename) {
           let blob = new Blob([response.body], { type: this.selectedType === 'music' ? 'audio/mpeg' : 'video/mp4' });
           this.createAndDownloadBlobFile(blob, filename);
         }
-      });
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       alert('Please enter a URL and select a type.');
     }

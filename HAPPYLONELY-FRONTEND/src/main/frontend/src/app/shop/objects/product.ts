@@ -6,4 +6,5 @@ export interface Product {
     shoplink: string;
     productname: string;
     isFavorite: boolean;
+    rating: number;
 }

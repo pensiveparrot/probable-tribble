@@ -102,8 +102,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             user.setToken(token);
             user.setPassword(null);
             loginRequest.setPassword(null);
-
-            return ResponseEntity.ok(user);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
         } catch (SQLException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");

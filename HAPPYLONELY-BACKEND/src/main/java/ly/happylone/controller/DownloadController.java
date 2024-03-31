@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/download")
+@RequestMapping("/api/youtube-dl")
 public class DownloadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadController.class);
@@ -35,7 +35,7 @@ public class DownloadController {
     private final Set<String> executedCommands = new HashSet<>();
 
     @Async
-    @PostMapping
+    @PostMapping("/download")
     public CompletableFuture<ResponseEntity<byte[]>> download(@RequestBody Map<String, String> payload) {
         String url = payload.get("url");
         String type = payload.get("type");
@@ -47,15 +47,12 @@ public class DownloadController {
 
         try {
             String downloadScriptPath = Paths.get(scriptLocation, "download.js").toString();
-
-            // Ensure the script directory exists
             File scriptDirectory = new File(scriptLocation);
             if (!scriptDirectory.exists() && !scriptDirectory.mkdirs()) {
                 LOGGER.error("Failed to create script directory at: {}", scriptLocation);
                 return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
-            // Ensure Node.js and npm are installed
             if (!executedCommands.contains("node --version")) {
                 executeCommand(null, "node", "--version");
                 executedCommands.add("node --version");
@@ -65,7 +62,6 @@ public class DownloadController {
                 executedCommands.add("npm --version");
             }
 
-            // Initialize a Node.js project and install required modules
             if (!executedCommands.contains("npm init -y")) {
                 executeCommand(scriptLocation, "npm", "init", "-y");
                 executedCommands.add("npm init -y");
@@ -74,11 +70,8 @@ public class DownloadController {
                 executeCommand(scriptLocation, "npm", "install", "ytdl-core");
                 executedCommands.add("npm install ytdl-core");
             }
-
-            // Execute the download script
             String output = executeCommand(scriptLocation, "node", downloadScriptPath, url, type);
 
-            // Load the file as a resource
             File outputFile = new File(scriptLocation, output);
             Resource resource = new FileSystemResource(outputFile);
 

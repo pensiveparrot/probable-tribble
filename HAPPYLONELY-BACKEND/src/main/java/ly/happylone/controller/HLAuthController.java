@@ -26,8 +26,7 @@ public class HLAuthController {
     private DatabaseService databaseService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request,
-            HttpServletResponse response)
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest)
             throws SQLException {
         try {
             return databaseService.login(loginRequest);

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProductService } from '../shop/product/product.service';
 import { Message } from 'primeng/api';
 import { UserService } from '../common/service/userservice';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin',
@@ -28,207 +29,168 @@ export class AdminComponent {
     return `Update: ${this.product.productname}`;
   }
 
-  getProductByName() {
+  async getProductByName() {
     this.bFindClicked = true;
     this.bCreateClicked = false;
-    return new Promise((resolve, reject) => {
-      this.productService.getProductByName(this.product.productname).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.product = response.body;
-          console.log("product: " + JSON.stringify(this.product));
-          console.log("status code: " + this.statusCode);
-          resolve(this.product);
-        },
-        error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error getting product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+    try {
+      const response = await firstValueFrom(this.productService.getProductByName(this.product.productname));
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.product = response.body!;
+        console.log("product: ", this.product);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+        this.errorMsgDetail = "Error getting product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+      console.log("status: ", this.statusCode);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   onCreateButtonPressed() {
     this.bCreateClicked = true;
     this.bFindClicked = false;
   }
-  createProduct() {
-    return new Promise((resolve, reject) => {
-      this.productService.addProduct(this.product).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.product = response.body;
-          console.log("product: " + JSON.stringify(this.product));
-          console.log("status code: " + this.statusCode);
-          resolve(this.product);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error adding product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+  async createProduct() {
+    try {
+      const response: any = await firstValueFrom(this.productService.addProduct(this.product!));
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.product = response.body!;
+        console.log("product: ", this.product!);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
+        this.errorMsgDetail = "Error adding product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+
+      }
+      console.log("status code:", this.statusCode);
     }
-    );
-  }
-
-  updateProduct() {
-    return new Promise((resolve, reject) => {
-      this.productService.updateProduct(this.product).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.product = response.body;
-          console.log("product: " + JSON.stringify(this.product));
-          console.log("status code: " + this.statusCode);
-          resolve(this.product);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error updating product with id: " + this.product.id + ".  Response code: " + this.statusCode;
-          this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
-  }
-
-  addProduct() {
-    return new Promise((resolve, reject) => {
-      this.productService.addProduct(this.product).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.product = response.body;
-          console.log("product: " + JSON.stringify(this.product));
-          console.log("status code: " + this.statusCode);
-          resolve(this.product);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error adding product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
-          this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
+    catch (error) {
+      console.error(error);
     }
-    );
-
   }
-  deleteUser() {
-    return new Promise((resolve, reject) => {
-      this.userService.deleteUser(this.user.id).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          console.log("status code: " + this.statusCode);
-          resolve(response);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error deleting user with id: " + this.user.id + ".  Response code: " + this.statusCode;
+
+  async updateProduct() {
+    try {
+      const response: any = await firstValueFrom(this.productService.updateProduct(this.product!));
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.product = response.body!;
+        console.log("product: ", this.product!);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+        this.errorMsgDetail = "Error updating product with id: " + this.product.id + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  async addProduct() {
+    try {
+      const response: any = firstValueFrom(this.productService.addProduct(this.product!));
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.product = response.body!;
+        console.log("product: ", this.product!);
+      }
+      else {
+        if (this.errorMsg.length > 0)
+          this.errorMsg.pop();
+        this.errorMsgDetail = "Error adding product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async deleteUser() {
+    try {
+      const response: any = await firstValueFrom(this.userService.deleteUser(this.user.id!));
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   updateUser() {
-    return new Promise((resolve, reject) => {
-      this.userService.updateUser(this.user).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.user = response.body;
-          console.log("user: " + JSON.stringify(this.user));
-          console.log("status code: " + this.statusCode);
-          resolve(this.user);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error updating user with id: " + this.user.id + ".  Response code: " + this.statusCode;
+    try {
+      const response: any = firstValueFrom(this.userService.updateUser(this.user!));
+      this.statusCode = response.status;
+      if (this.statusCode === 200) {
+        this.user = response.body!;
+        console.log("user: ", this.user!);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+        this.errorMsgDetail = "Error updating user with id: " + this.user.id + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+      console.log("status: ", this.statusCode!);
+    } catch (error) {
+      console.error(error);
+
+    }
   }
 
-  banUser() {
-    return new Promise((resolve, reject) => {
-      this.userService.banUser(this.user).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.user = response.body;
-          console.log("user: " + JSON.stringify(this.user));
-          console.log("status code: " + this.statusCode);
-          resolve(this.user);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error banning user with id: " + this.user.id + ".  Response code: " + this.statusCode;
+  async banUser() {
+    try {
+      const response: any = await firstValueFrom(this.userService.banUser(this.user!));
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.user = response.body!;
+        console.log("user: ", this.user!);
+      }
+      else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+        this.errorMsgDetail = "Error banning user with id: " + this.user.id + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      } console.log("status: ", this.statusCode!);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  unbanUser() {
-    return new Promise((resolve, reject) => {
-      this.userService.unbanUser(this.user).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          this.user = response.body;
-          console.log("user: " + JSON.stringify(this.user));
-          console.log("status code: " + this.statusCode);
-          resolve(this.user);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error adding product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+  async unbanUser() {
+    try {
+      const response: any = await firstValueFrom(this.userService.unbanUser(this.user!));
+      this.statusCode = response.status!;
+      if (this.statusCode === 200) {
+        this.user = response.body!;
+        console.log("user: ", this.user!);
+      } else {
+        if (this.errorMsg.length > 0)
           this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+        this.errorMsgDetail = "Error adding product with name: " + this.product.productname + ".  Response code: " + this.statusCode;
+        this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
+      }
+      console.log("status: ", this.statusCode!);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  deleteProduct() {
-    return new Promise((resolve, reject) => {
-      this.productService.deleteProduct(this.product.id).subscribe({
-        next: (response) => {
-          this.statusCode = response.status;
-          console.log("status code: " + this.statusCode);
-          resolve(response);
-        }, error: (error) => {
-          this.statusCode = error.status;
-          console.error("An error occurred:", error);
-          console.log("status code: " + this.statusCode);
-          this.errorMsgDetail = "Error deleting product with id: " + this.product.id + ".  Response code: " + this.statusCode;
-          this.errorMsg.pop();
-          this.errorMsg.push({ severity: 'error', summary: 'Error', detail: this.errorMsgDetail });
-          reject(error);
-        }
-      });
-    });
+  async deleteProduct() {
+    try {
+      const response: any = await firstValueFrom(this.productService.deleteProduct(this.product.id!));
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
