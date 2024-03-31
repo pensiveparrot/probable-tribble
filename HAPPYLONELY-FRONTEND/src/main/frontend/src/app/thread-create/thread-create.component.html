@@ -13,8 +13,10 @@
                         name="content" class="form-control" rows="5"></textarea>
                 </div>
                 <p-dropdown id="category" [options]="categories" [(ngModel)]="newThread.category"
+                    placeholder="Select a Category" name="category" class="form-control"></p-dropdown>
+                <!-- <p-dropdown id="category" [options]="categories" [(ngModel)]="newThread.category"
                     placeholder="Select a Category" name="category" class="form-control" optionLabel="name"
-                    optionValue="value"></p-dropdown>
+                    optionValue="value"></p-dropdown> -->
                 <div class="p-field">
                     <button type="submit" pButton label="Create Thread" class="submit-button"></button>
                 </div>

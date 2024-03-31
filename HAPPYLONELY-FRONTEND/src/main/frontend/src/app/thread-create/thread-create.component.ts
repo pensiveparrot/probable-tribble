@@ -4,7 +4,7 @@ import { UserService } from '../common/service/userservice';
 import { ChatService } from '../home/chat.service';
 import { Router } from '@angular/router';
 import { Thread } from '../home/message';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { HLUser } from '../home/hluser';
 @Component({
   selector: 'app-thread-create',
@@ -13,10 +13,10 @@ import { HLUser } from '../home/hluser';
 })
 export class ThreadCreateComponent {
   newThread: Thread = { id: '', content: '', sender: { id: '', username: '', statusmsg: '', profileimg: '' }, date_sent: new Date(), title: '', category: '', posts: [] };
-  categories: string[] = [];
+  categories: string[] = ['Art', 'Music', 'Games', 'Movies', 'Books', 'Other'];
 
-  constructor(private forumService: ForumService, private userService: UserService, private chatService: ChatService, private router: Router) {
-    this.categories = ['Art', 'Music', 'Games', 'Movies', 'Books', 'Other'];
+  constructor(private forumService: ForumService, private userService: UserService, private router: Router) {
+
   }
 
   async onSubmit() {
