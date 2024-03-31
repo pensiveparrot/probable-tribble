@@ -1,9 +1,15 @@
 .custom-dropdown {
-    width: 100%;
+    display: flex;
+    align-items: center;
+    width: 50%;
+}
+
+.custom-dropdown .p-inputgroup-addon {
+    margin-right: 0px;
 }
 
 .custom-dropdown .p-dropdown {
-    width: 100%;
+    flex-grow: 1;
 }
 
 .custom-dropdown .p-dropdown .p-dropdown-label {
