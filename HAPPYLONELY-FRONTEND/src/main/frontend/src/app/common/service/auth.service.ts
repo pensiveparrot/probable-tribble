@@ -14,7 +14,7 @@ export class AuthService {
     this.router = route;
   }
   getUserRole(): Observable<any> {
-    return this.http.get<number>("https://" + window.location.hostname + ":8443/" + "api/user/getUserRole", { withCredentials: true });
+    return this.http.get<number>(`https://${window.location.hostname}:8443/api/user/getUserRole`, { withCredentials: true });
   }
   loggedIn() {
     return (localStorage.getItem('token') ?? '').length > 0;

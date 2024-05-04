@@ -114,7 +114,9 @@ public interface DatabaseService extends UserDetailsService {
     // start email code
     public ResponseEntity<?> sendEmail(EmailRequest emailRequest) throws SQLException;
 
-    public ResponseEntity<?> getEmails() throws SQLException;
+    public ResponseEntity<?> getEmails(String host, String user, String password);
+
+    public ResponseEntity<?> getEmailById(String host, String user, String password, int id);
 
     // end email code
 

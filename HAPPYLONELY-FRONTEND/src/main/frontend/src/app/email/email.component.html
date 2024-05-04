@@ -1,1 +1,52 @@
-<p>email works!</p>
+<div class="forum-header">
+    <h2>Email</h2>
+    <button class="add-thread-button" (click)="sendEmail()">
+        <i class="fa fa-paper-plane"></i> Send Email
+    </button>
+</div>
+
+<div class="email-form" *ngIf="showEmailForm">
+    <input type="text" [(ngModel)]="emailRequest.to" placeholder="To" class="email-input">
+    <input type="text" [(ngModel)]="emailRequest.subject" placeholder="Subject" class="email-input">
+    <textarea [(ngModel)]="emailRequest.body" placeholder="Body" class="email-input"></textarea>
+    <button class="add-thread-button" (click)="submitEmail()">
+        <i class="fa fa-paper-plane"></i> Send
+    </button>
+</div>
+
+<p-table [value]="emails" styleClass="forum-table">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-email>
+        <tr (click)="viewEmail(email.id)">
+            <td>
+                <div class="thread-title">{{ email.from }}</div>
+            </td>
+            <td>
+                <div class="thread-category">{{ email.subject }}</div>
+            </td>
+            <td>
+                <div class="thread-creator">{{ email.date | date }}</div>
+            </td>
+            <td>
+                <button class="view-thread-button">
+                    <i class="fa fa-eye"></i> View
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<!-- Section for displaying the email content -->
+<div *ngIf="selectedEmail">
+    <h2>{{selectedEmail.subject}}</h2>
+    <p>From: {{selectedEmail.from}}</p>
+    <p>Date: {{selectedEmail.date | date}}</p>
+    <p>{{selectedEmail.body}}</p>
+</div>

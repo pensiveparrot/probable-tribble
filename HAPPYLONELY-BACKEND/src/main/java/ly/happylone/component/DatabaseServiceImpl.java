@@ -1,5 +1,6 @@
 package ly.happylone.component;
 
+import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,7 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
-
+import jakarta.mail.Store;
+import jakarta.mail.internet.InternetAddress;
 import ly.happylone.model.Art;
 import ly.happylone.model.EmailRequest;
 import ly.happylone.model.HLBadge;
@@ -54,15 +56,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import ly.happylone.service.DatabaseService;
 import ly.happylone.service.JwtService;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import ly.happylone.model.Email;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Folder;
+import javax.mail.MessagingException;
 
 @Component
 public class DatabaseServiceImpl implements DatabaseService {
@@ -1411,9 +1417,11 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Autowired
     private JavaMailSender emailSender;
 
-    @Override
     public ResponseEntity<?> sendEmail(EmailRequest emailRequest) {
         try {
+            // Validate the email address
+            InternetAddress emailAddr = new InternetAddress(emailRequest.getEmail());
+            emailAddr.validate();
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(emailRequest.getEmail());
             message.setTo(emailRequest.getSendTo());
@@ -1422,33 +1430,85 @@ public class DatabaseServiceImpl implements DatabaseService {
             emailSender.send(message);
             return ResponseEntity.ok("Email sent successfully");
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send email");
+            // Log the exception and rethrow it with a more specific message
+            logger.error("Error sending email", e);
+            throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
         }
     }
 
-    @Autowired
-    private JavaMailSender javaMailSender;
-
     @Override
-    public ResponseEntity<?> getEmails() {
-        List<Email> emails = new ArrayList<>();
+    public ResponseEntity<?> getEmails(String host, String user, String password) {
+        List<EmailRequest> emails = new ArrayList<>();
+        try (javax.mail.Store store = connectToStore(host, user, password);
+                Folder emailFolder = openFolder(store, "INBOX")) {
 
-        // Get the authenticated user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            // Get the email from the JavaMailSender
-            String email = ((JavaMailSenderImpl) javaMailSender).getUsername();
+            // retrieve the messages from the folder in an array and print it
+            javax.mail.Message[] messages = emailFolder.getMessages();
 
-            Email emailObj = new Email();
-            emailObj.setId(authentication.getName()); // Use the username as the ID
-            emailObj.setEmail(email);
-            emails.add(emailObj);
-
-            return ResponseEntity.ok(emails);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
+            for (javax.mail.Message message : messages) {
+                EmailRequest emailRequest = createEmailRequestFromMessage(message);
+                emails.add(emailRequest);
+            }
+        } catch (MessagingException e) {
+        } catch (Exception e) {
+            logger.error(StringUtils.toString(e));
+            throw new RuntimeException("Failed to get emails", e);
         }
+
+        return ResponseEntity.ok(emails);
+    }
+
+    public ResponseEntity<?> getEmailById(String host, String user, String password, int id) {
+        EmailRequest emailRequest = null;
+        try (javax.mail.Store store = connectToStore(host, user, password);
+                Folder emailFolder = openFolder(store, "INBOX")) {
+            javax.mail.Message message = emailFolder.getMessage(id);
+            emailRequest = createEmailRequestFromMessage(message);
+
+        } catch (Exception e) {
+            logger.error(StringUtils.toString(e));
+            throw new RuntimeException("Failed to get email by id", e);
+        }
+
+        return ResponseEntity.ok(emailRequest);
+    }
+
+    private javax.mail.Store connectToStore(String host, String user, String password) throws MessagingException {
+        // Create properties field
+        Properties properties = new Properties();
+        properties.put("mail.pop3s.host", host);
+        properties.put("mail.pop3s.port", "995");
+        properties.put("mail.pop3s.starttls.enable", "true");
+
+        // Setup authentication, get session
+        Session emailSession = Session.getInstance(properties,
+                new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(user, password);
+                    }
+                });
+        // Create the POP3 store object and connect with the pop server
+        javax.mail.Store store = emailSession.getStore("pop3s");
+        store.connect();
+
+        return store;
+    }
+
+    private Folder openFolder(javax.mail.Store store, String folderName) throws MessagingException {
+        Folder emailFolder = store.getFolder(folderName);
+        emailFolder.open(Folder.READ_ONLY);
+        return emailFolder;
+    }
+
+    private EmailRequest createEmailRequestFromMessage(javax.mail.Message message)
+            throws MessagingException, IOException {
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail(message.getFrom()[0].toString());
+        emailRequest.setSendTo(Arrays.toString(message.getRecipients(javax.mail.Message.RecipientType.TO)));
+        emailRequest.setSubject(message.getSubject());
+        emailRequest.setMessage(message.getContent().toString());
+        return emailRequest;
     }
     // end of email code
 

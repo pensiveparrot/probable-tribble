@@ -42,11 +42,11 @@ export class ChatService {
     }
 
     userHasChatGptApiKey(): Observable<boolean> {
-        return this.http.get<boolean>("https://" + window.location.hostname + ":8443/" + "api/chat/userHasChatGptApiKey", { withCredentials: true });
+        return this.http.get<boolean>(`https://${window.location.hostname}:8443/api/chat/userHasChatGptApiKey`, { withCredentials: true });
     }
 
     useChatGPT(request: { [key: string]: string }): Observable<string> {
-        return this.http.post<string>("https://" + window.location.hostname + ":8443/" + "api/chat/useChatGPT", request, { withCredentials: true });
+        return this.http.post<string>(`https://${window.location.hostname}:8443/api/chat/useChatGPT`, request, { withCredentials: true });
     }
     getNewMessageObservable(): Observable<Message> {
         return this.messageSubject.asObservable();
@@ -54,7 +54,7 @@ export class ChatService {
 
     // Fetch all Messages
     getMessages(): Observable<Message[]> {
-        return this.http.get<Message[]>("https://" + window.location.hostname + ":8443/" + "api/chat/messages", { withCredentials: true });
+        return this.http.get<Message[]>(`https://${window.location.hostname}:8443/api/chat/messages`, { withCredentials: true });
     }
 
     // Send a new Message
@@ -68,6 +68,6 @@ export class ChatService {
     }
 
     getUserDetails(): Observable<HLUser> {
-        return this.http.get<HLUser>("https://" + window.location.hostname + ":8443/" + "api/user/getUserByUsername", { withCredentials: true });
+        return this.http.get<HLUser>(`https://${window.location.hostname}:8443/api/user/getUserByUsername`, { withCredentials: true });
     }
 }

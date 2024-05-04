@@ -1,12 +1,11 @@
 <div class="artPage">
     <h2 class="pageTitle">Art Gallery</h2>
 
-    <p-galleria [value]="images" [containerStyle]="{ 'max-width': '960px' }" [numVisible]="1" [showIndicators]="true"
-        [showThumbnails]="true" [showItemNavigators]="false" [showItemNavigatorsOnHover]="false" [circular]="true"
-        [autoPlay]="true" [transitionInterval]="3000">
+    <p-galleria [value]="images" [numVisible]="1" [showThumbnails]="true" [showItemNavigators]="false"
+        [showItemNavigatorsOnHover]="false" [autoPlay]="false" [transitionInterval]="3000">
         <ng-template pTemplate="item" let-item>
             <div class="artItem">
-                <img [src]="item.itemImageSrc" class="artImgs" [alt]="item.alt" />
+                <img class="artImg" [src]="item.itemImageSrc" class="artImgs" [alt]="item.alt" />
                 <div class="artCaption">
                     <h3>{{ item.title }}</h3>
                     <p>{{ item.description }}</p>
