@@ -1,6 +1,5 @@
 package ly.happylone.component;
 
-import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -25,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
-import jakarta.mail.Store;
 import jakarta.mail.internet.InternetAddress;
 import ly.happylone.model.Art;
 import ly.happylone.model.EmailRequest;
@@ -60,15 +58,14 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-
 import ly.happylone.service.DatabaseService;
 import ly.happylone.service.JwtService;
-import ly.happylone.model.Email;
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Folder;
-import javax.mail.MessagingException;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.Folder;
+import jakarta.mail.MessagingException;
 
 @Component
 public class DatabaseServiceImpl implements DatabaseService {
@@ -1439,13 +1436,13 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public ResponseEntity<?> getEmails(String host, String user, String password) {
         List<EmailRequest> emails = new ArrayList<>();
-        try (javax.mail.Store store = connectToStore(host, user, password);
+        try (jakarta.mail.Store store = connectToStore(host, user, password);
                 Folder emailFolder = openFolder(store, "INBOX")) {
 
             // retrieve the messages from the folder in an array and print it
-            javax.mail.Message[] messages = emailFolder.getMessages();
+            jakarta.mail.Message[] messages = emailFolder.getMessages();
 
-            for (javax.mail.Message message : messages) {
+            for (jakarta.mail.Message message : messages) {
                 EmailRequest emailRequest = createEmailRequestFromMessage(message);
                 emails.add(emailRequest);
             }
@@ -1460,9 +1457,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     public ResponseEntity<?> getEmailById(String host, String user, String password, int id) {
         EmailRequest emailRequest = null;
-        try (javax.mail.Store store = connectToStore(host, user, password);
+        try (Store store = connectToStore(host, user, password);
                 Folder emailFolder = openFolder(store, "INBOX")) {
-            javax.mail.Message message = emailFolder.getMessage(id);
+            jakarta.mail.Message message = emailFolder.getMessage(id);
             emailRequest = createEmailRequestFromMessage(message);
 
         } catch (Exception e) {
@@ -1473,7 +1470,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         return ResponseEntity.ok(emailRequest);
     }
 
-    private javax.mail.Store connectToStore(String host, String user, String password) throws MessagingException {
+    private Store connectToStore(String host, String user, String password) throws MessagingException {
         // Create properties field
         Properties properties = new Properties();
         properties.put("mail.pop3s.host", host);
@@ -1489,23 +1486,23 @@ public class DatabaseServiceImpl implements DatabaseService {
                     }
                 });
         // Create the POP3 store object and connect with the pop server
-        javax.mail.Store store = emailSession.getStore("pop3s");
+        Store store = emailSession.getStore("pop3s");
         store.connect();
 
         return store;
     }
 
-    private Folder openFolder(javax.mail.Store store, String folderName) throws MessagingException {
+    private Folder openFolder(Store store, String folderName) throws MessagingException {
         Folder emailFolder = store.getFolder(folderName);
         emailFolder.open(Folder.READ_ONLY);
         return emailFolder;
     }
 
-    private EmailRequest createEmailRequestFromMessage(javax.mail.Message message)
+    private EmailRequest createEmailRequestFromMessage(jakarta.mail.Message message)
             throws MessagingException, IOException {
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setEmail(message.getFrom()[0].toString());
-        emailRequest.setSendTo(Arrays.toString(message.getRecipients(javax.mail.Message.RecipientType.TO)));
+        emailRequest.setSendTo(Arrays.toString(message.getRecipients(jakarta.mail.Message.RecipientType.TO)));
         emailRequest.setSubject(message.getSubject());
         emailRequest.setMessage(message.getContent().toString());
         return emailRequest;

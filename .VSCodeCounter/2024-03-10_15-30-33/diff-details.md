@@ -1,0 +1,157 @@
+# Diff Details
+
+Date : 2024-03-10 15:30:33
+
+Directory c:\\Users\\dillo\\Documents\\probable-tribble\\HAPPYLONELY-FRONTEND\\src\\main
+
+Total : 142 files,  13503 codes, -17 comments, -224 blanks, all 13262 lines
+
+[Summary](results.md) / [Details](details.md) / [Diff Summary](diff.md) / Diff Details
+
+## Files
+| filename | language | code | comment | blank | total |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/Application.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/Application.java) | Java | -11 | 0 | -5 | -16 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/ArtServiceImpl.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/ArtServiceImpl.java) | Java | -58 | -1 | -9 | -68 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/CustomAuthentication.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/CustomAuthentication.java) | Java | -15 | 0 | -5 | -20 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/CustomContentDeserializer.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/CustomContentDeserializer.java) | Java | -21 | 0 | -5 | -26 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/DatabaseServiceImpl.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/DatabaseServiceImpl.java) | Java | -1,416 | -24 | -121 | -1,561 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/HLPlayerServiceImpl.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/HLPlayerServiceImpl.java) | Java | -21 | 0 | -8 | -29 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/JwtServiceImpl.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/JwtServiceImpl.java) | Java | -35 | -2 | -8 | -45 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/MessageServiceImpl.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/MessageServiceImpl.java) | Java | -137 | -4 | -25 | -166 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/ProductServiceImpl.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/component/ProductServiceImpl.java) | Java | -68 | 0 | -12 | -80 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/JWTAuthenticationFilter.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/JWTAuthenticationFilter.java) | Java | -55 | 0 | -7 | -62 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/MailConfig.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/MailConfig.java) | Java | -26 | 0 | -8 | -34 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/MvcConfig.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/MvcConfig.java) | Java | -22 | -11 | -5 | -38 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/SecurityConfig.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/SecurityConfig.java) | Java | -101 | -5 | -18 | -124 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/WebSocketConfig.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/config/WebSocketConfig.java) | Java | -67 | -5 | -12 | -84 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ArtController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ArtController.java) | Java | -84 | -4 | -19 | -107 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ChatController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ChatController.java) | Java | -37 | 0 | -10 | -47 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/DownloadController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/DownloadController.java) | Java | -107 | -5 | -20 | -132 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/EmailController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/EmailController.java) | Java | -27 | -1 | -8 | -36 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ForumController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ForumController.java) | Java | -94 | 0 | -13 | -107 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/HLAuthController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/HLAuthController.java) | Java | -42 | -1 | -8 | -51 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/HLPlayerController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/HLPlayerController.java) | Java | -27 | 0 | -8 | -35 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/HLUserController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/HLUserController.java) | Java | -112 | -4 | -25 | -141 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ProductController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/ProductController.java) | Java | -54 | 0 | -9 | -63 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/WebSocketController.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/controller/WebSocketController.java) | Java | -19 | -1 | -3 | -23 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Art.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Art.java) | Java | -33 | 0 | -9 | -42 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Comment.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Comment.java) | Java | -33 | 0 | -10 | -43 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Email.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Email.java) | Java | -14 | 0 | -4 | -18 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/EmailRequest.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/EmailRequest.java) | Java | -12 | 0 | -3 | -15 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Forum.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Forum.java) | Java | -22 | 0 | -7 | -29 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLBadge.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLBadge.java) | Java | -38 | 0 | -1 | -39 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLPlayer.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLPlayer.java) | Java | -80 | 0 | -36 | -116 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLRole.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLRole.java) | Java | -17 | 0 | -4 | -21 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLUser.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLUser.java) | Java | -47 | 0 | -21 | -68 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLUserResponse.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/HLUserResponse.java) | Java | -34 | -2 | -13 | -49 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/LoginRequest.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/LoginRequest.java) | Java | -8 | 0 | -3 | -11 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Message.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Message.java) | Java | -26 | 0 | -11 | -37 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/MessageType.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/MessageType.java) | Java | -6 | 0 | -1 | -7 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/PlayerBehavior.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/PlayerBehavior.java) | Java | -8 | 0 | -3 | -11 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Post.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Post.java) | Java | -32 | 0 | -9 | -41 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Product.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Product.java) | Java | -29 | 0 | -11 | -40 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/RegisterRequest.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/RegisterRequest.java) | Java | -8 | 0 | -4 | -12 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Thread.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/model/Thread.java) | Java | -29 | 0 | -11 | -40 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/ArtService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/ArtService.java) | Java | -7 | 0 | -5 | -12 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/DatabaseService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/DatabaseService.java) | Java | -66 | -9 | -51 | -126 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/ForumService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/ForumService.java) | Java | -10 | -1 | -8 | -19 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/HLPlayerService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/HLPlayerService.java) | Java | -10 | 0 | -6 | -16 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/HLUserAuthService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/HLUserAuthService.java) | Java | -8 | 0 | -5 | -13 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/JwtService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/JwtService.java) | Java | -8 | 0 | -7 | -15 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/MessageService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/MessageService.java) | Java | -12 | 0 | -8 | -20 |
+| [HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/ProductService.java](/HAPPYLONELY-BACKEND/src/main/java/ly/happylone/service/ProductService.java) | Java | -13 | 0 | -9 | -22 |
+| [HAPPYLONELY-BACKEND/src/main/resources/application.properties](/HAPPYLONELY-BACKEND/src/main/resources/application.properties) | Java Properties | -22 | -10 | -3 | -35 |
+| [HAPPYLONELY-BACKEND/src/main/resources/download.js](/HAPPYLONELY-BACKEND/src/main/resources/download.js) | JavaScript | -37 | 0 | -11 | -48 |
+| [HAPPYLONELY-BACKEND/src/main/resources/package.json](/HAPPYLONELY-BACKEND/src/main/resources/package.json) | JSON | -15 | 0 | 0 | -15 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/.eslintrc.js](/HAPPYLONELY-FRONTEND/src/main/frontend/.eslintrc.js) | JavaScript | 18 | 0 | 0 | 18 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/README.md](/HAPPYLONELY-FRONTEND/src/main/frontend/README.md) | Markdown | 14 | 0 | 14 | 28 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/angular.json](/HAPPYLONELY-FRONTEND/src/main/frontend/angular.json) | JSON | 118 | 0 | 0 | 118 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/package-lock.json](/HAPPYLONELY-FRONTEND/src/main/frontend/package-lock.json) | JSON | 13,642 | 0 | 1 | 13,643 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/package.json](/HAPPYLONELY-FRONTEND/src/main/frontend/package.json) | JSON | 50 | 0 | 1 | 51 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.css) | CSS | 0 | 0 | 1 | 1 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.html) | HTML | 70 | 0 | 4 | 74 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/admin/admin.component.ts) | TypeScript | 221 | 0 | 14 | 235 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app-routing.module.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app-routing.module.ts) | TypeScript | 36 | 0 | 4 | 40 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.css) | CSS | 3 | 1 | 0 | 4 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.html) | HTML | 6 | 0 | 0 | 6 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.spec.ts) | TypeScript | 25 | 0 | 5 | 30 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.component.ts) | TypeScript | 15 | 0 | 2 | 17 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.module.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/app.module.ts) | TypeScript | 91 | 0 | 4 | 95 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.css) | CSS | 39 | 0 | 7 | 46 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.html) | HTML | 21 | 0 | 2 | 23 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/art/art.component.ts) | TypeScript | 121 | 0 | 5 | 126 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/auth.guard.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/auth.guard.spec.ts) | TypeScript | 18 | 0 | 5 | 23 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/auth.guard.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/auth.guard.ts) | TypeScript | 11 | 0 | 5 | 16 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/common/service/auth.service.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/common/service/auth.service.ts) | TypeScript | 21 | 0 | 3 | 24 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/common/service/forum.service.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/common/service/forum.service.ts) | TypeScript | 42 | 0 | 4 | 46 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/common/service/userservice.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/common/service/userservice.ts) | TypeScript | 60 | 0 | 10 | 70 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.css) | CSS | 0 | 0 | 1 | 1 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.html) | HTML | 1 | 0 | 1 | 2 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.spec.ts) | TypeScript | 18 | 0 | 6 | 24 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.component.ts) | TypeScript | 10 | 0 | 3 | 13 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.service.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/email.service.ts) | TypeScript | 19 | 0 | 2 | 21 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/emailRequest.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/email/emailRequest.ts) | TypeScript | 8 | 0 | 1 | 9 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/environments/environment.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/environments/environment.ts) | TypeScript | 4 | 0 | 0 | 4 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.css) | CSS | 36 | 0 | 6 | 42 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.html) | HTML | 3 | 0 | 0 | 3 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/header/header.component.ts) | TypeScript | 46 | 0 | 5 | 51 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/canvas-toBlob.d.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/canvas-toBlob.d.ts) | TypeScript | 1 | 0 | 1 | 2 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/chat.service.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/chat.service.ts) | TypeScript | 62 | 2 | 9 | 73 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/hluser.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/hluser.ts) | TypeScript | 7 | 0 | 2 | 9 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.css) | CSS | 141 | 0 | 25 | 166 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.html) | HTML | 78 | 5 | 7 | 90 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/home.component.ts) | TypeScript | 238 | 47 | 24 | 309 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/message.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/home/message.ts) | TypeScript | 24 | 1 | 6 | 31 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/LoginRequest.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/LoginRequest.ts) | TypeScript | 5 | 0 | 0 | 5 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.css) | CSS | 61 | 0 | 11 | 72 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.html) | HTML | 32 | 0 | 0 | 32 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/login/login.component.ts) | TypeScript | 43 | 1 | 3 | 47 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/RegisterRequest.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/RegisterRequest.ts) | TypeScript | 5 | 0 | 0 | 5 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.css) | CSS | 51 | 0 | 11 | 62 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.html) | HTML | 48 | 0 | 0 | 48 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/register/register.component.ts) | TypeScript | 55 | 0 | 6 | 61 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/objects/product.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/objects/product.ts) | TypeScript | 9 | 0 | 0 | 9 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/product/product.service.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/product/product.service.spec.ts) | TypeScript | 12 | 0 | 5 | 17 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/product/product.service.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/product/product.service.ts) | TypeScript | 28 | 0 | 7 | 35 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.css) | CSS | 52 | 0 | 10 | 62 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.html) | HTML | 30 | 1 | 1 | 32 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.spec.ts) | TypeScript | 44 | 0 | 9 | 53 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/shop/shop.component.ts) | TypeScript | 83 | 0 | 10 | 93 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.css) | CSS | 31 | 0 | 6 | 37 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.html) | HTML | 27 | 0 | 0 | 27 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-create/thread-create.component.ts) | TypeScript | 49 | 2 | 8 | 59 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.css) | CSS | 73 | 0 | 15 | 88 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.html) | HTML | 33 | 0 | 0 | 33 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-detail/thread-detail.component.ts) | TypeScript | 101 | 0 | 6 | 107 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.css) | CSS | 65 | 0 | 11 | 76 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.html) | HTML | 37 | 0 | 2 | 39 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/thread-list/thread-list.component.ts) | TypeScript | 31 | 0 | 6 | 37 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.css) | CSS | 0 | 0 | 1 | 1 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.html) | HTML | 18 | 4 | 3 | 25 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/user/user.component.ts) | TypeScript | 84 | 0 | 3 | 87 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/download.service.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/download.service.ts) | TypeScript | 13 | 0 | 2 | 15 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.css) | CSS | 21 | 0 | 4 | 25 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.html) | HTML | 20 | 4 | 1 | 25 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.spec.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.spec.ts) | TypeScript | 17 | 0 | 5 | 22 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/app/youtube-dl/youtube-dl.component.ts) | TypeScript | 38 | 0 | 6 | 44 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/index.html](/HAPPYLONELY-FRONTEND/src/main/frontend/src/index.html) | HTML | 16 | 1 | 3 | 20 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/main.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/main.ts) | TypeScript | 4 | 0 | 4 | 8 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/polyfills.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/polyfills.ts) | TypeScript | 1 | 0 | 1 | 2 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/styles.css](/HAPPYLONELY-FRONTEND/src/main/frontend/src/styles.css) | CSS | 35 | 1 | 20 | 56 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/src/window-global-fix.ts](/HAPPYLONELY-FRONTEND/src/main/frontend/src/window-global-fix.ts) | TypeScript | 4 | 0 | 0 | 4 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/tsconfig.app.json](/HAPPYLONELY-FRONTEND/src/main/frontend/tsconfig.app.json) | JSON | 14 | 1 | 0 | 15 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/tsconfig.json](/HAPPYLONELY-FRONTEND/src/main/frontend/tsconfig.json) | JSON with Comments | 32 | 1 | 0 | 33 |
+| [HAPPYLONELY-FRONTEND/src/main/frontend/tsconfig.spec.json](/HAPPYLONELY-FRONTEND/src/main/frontend/tsconfig.spec.json) | JSON | 13 | 1 | 1 | 15 |
+
+[Summary](results.md) / [Details](details.md) / [Diff Summary](diff.md) / Diff Details

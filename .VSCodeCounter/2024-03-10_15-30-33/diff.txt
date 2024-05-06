@@ -1,0 +1,215 @@
+Date : 2024-03-10 15:30:33
+Directory : c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main
+Total : 142 files,  13503 codes, -17 comments, -224 blanks, all 13262 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          6 |     13,822 |          2 |          3 |     13,827 |
+| TypeScript         |         51 |      1,894 |         53 |        251 |      2,198 |
+| CSS                |         15 |        608 |          2 |        129 |        739 |
+| HTML               |         15 |        440 |         15 |         24 |        479 |
+| JSON with Comments |          1 |         32 |          1 |          0 |         33 |
+| Markdown           |          1 |         14 |          0 |         14 |         28 |
+| JavaScript         |          2 |        -19 |          0 |        -11 |        -30 |
+| Java Properties    |          1 |        -22 |        -10 |         -3 |        -35 |
+| Java               |         50 |     -3,266 |        -80 |       -631 |     -3,977 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                      |        142 |     13,503 |        -17 |       -224 |     13,262 |
+| ..                                                                                                                                     |         53 |     -3,340 |        -90 |       -645 |     -4,075 |
+| ..\..                                                                                                                                  |         53 |     -3,340 |        -90 |       -645 |     -4,075 |
+| ..\..\..                                                                                                                               |         53 |     -3,340 |        -90 |       -645 |     -4,075 |
+| ..\..\..\HAPPYLONELY-BACKEND                                                                                                           |         53 |     -3,340 |        -90 |       -645 |     -4,075 |
+| ..\..\..\HAPPYLONELY-BACKEND\src                                                                                                       |         53 |     -3,340 |        -90 |       -645 |     -4,075 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main                                                                                                  |         53 |     -3,340 |        -90 |       -645 |     -4,075 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java                                                                                             |         50 |     -3,266 |        -80 |       -631 |     -3,977 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly                                                                                          |         50 |     -3,266 |        -80 |       -631 |     -3,977 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone                                                                                |         50 |     -3,266 |        -80 |       -631 |     -3,977 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone (Files)                                                                        |          1 |        -11 |          0 |         -5 |        -16 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component                                                                      |          8 |     -1,771 |        -31 |       -193 |     -1,995 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\config                                                                         |          5 |       -271 |        -21 |        -50 |       -342 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller                                                                     |         10 |       -603 |        -16 |       -123 |       -742 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model                                                                          |         18 |       -476 |         -2 |       -161 |       -639 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service                                                                        |          8 |       -134 |        -10 |        -99 |       -243 |
+| ..\..\..\HAPPYLONELY-BACKEND\src\main\resources                                                                                        |          3 |        -74 |        -10 |        -14 |        -98 |
+| frontend                                                                                                                               |         89 |     16,843 |         73 |        421 |     17,337 |
+| frontend (Files)                                                                                                                       |          8 |     13,901 |          3 |         17 |     13,921 |
+| frontend\src                                                                                                                           |         81 |      2,942 |         70 |        404 |      3,416 |
+| frontend\src (Files)                                                                                                                   |          5 |         60 |          2 |         28 |         90 |
+| frontend\src\app                                                                                                                       |         76 |      2,882 |         68 |        376 |      3,326 |
+| frontend\src\app (Files)                                                                                                               |          8 |        205 |          1 |         25 |        231 |
+| frontend\src\app\admin                                                                                                                 |          4 |        308 |          0 |         24 |        332 |
+| frontend\src\app\art                                                                                                                   |          4 |        198 |          0 |         19 |        217 |
+| frontend\src\app\common                                                                                                                |          3 |        123 |          0 |         17 |        140 |
+| frontend\src\app\common\service                                                                                                        |          3 |        123 |          0 |         17 |        140 |
+| frontend\src\app\email                                                                                                                 |          6 |         56 |          0 |         14 |         70 |
+| frontend\src\app\environments                                                                                                          |          1 |          4 |          0 |          0 |          4 |
+| frontend\src\app\header                                                                                                                |          4 |        102 |          0 |         16 |        118 |
+| frontend\src\app\home                                                                                                                  |          8 |        568 |         55 |         79 |        702 |
+| frontend\src\app\login                                                                                                                 |          5 |        158 |          1 |         19 |        178 |
+| frontend\src\app\register                                                                                                              |          5 |        176 |          0 |         22 |        198 |
+| frontend\src\app\shop                                                                                                                  |          7 |        258 |          1 |         42 |        301 |
+| frontend\src\app\shop (Files)                                                                                                          |          4 |        209 |          1 |         30 |        240 |
+| frontend\src\app\shop\objects                                                                                                          |          1 |          9 |          0 |          0 |          9 |
+| frontend\src\app\shop\product                                                                                                          |          2 |         40 |          0 |         12 |         52 |
+| frontend\src\app\thread-create                                                                                                         |          4 |        124 |          2 |         19 |        145 |
+| frontend\src\app\thread-detail                                                                                                         |          4 |        224 |          0 |         26 |        250 |
+| frontend\src\app\thread-list                                                                                                           |          4 |        150 |          0 |         24 |        174 |
+| frontend\src\app\user                                                                                                                  |          4 |        119 |          4 |         12 |        135 |
+| frontend\src\app\youtube-dl                                                                                                            |          5 |        109 |          4 |         18 |        131 |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                               | language           | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\Application.java                              | Java               |        -11 |          0 |         -5 |        -16 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\ArtServiceImpl.java                 | Java               |        -58 |         -1 |         -9 |        -68 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\CustomAuthentication.java           | Java               |        -15 |          0 |         -5 |        -20 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\CustomContentDeserializer.java      | Java               |        -21 |          0 |         -5 |        -26 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\DatabaseServiceImpl.java            | Java               |     -1,416 |        -24 |       -121 |     -1,561 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\HLPlayerServiceImpl.java            | Java               |        -21 |          0 |         -8 |        -29 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\JwtServiceImpl.java                 | Java               |        -35 |         -2 |         -8 |        -45 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\MessageServiceImpl.java             | Java               |       -137 |         -4 |        -25 |       -166 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\component\ProductServiceImpl.java             | Java               |        -68 |          0 |        -12 |        -80 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\config\JWTAuthenticationFilter.java           | Java               |        -55 |          0 |         -7 |        -62 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\config\MailConfig.java                        | Java               |        -26 |          0 |         -8 |        -34 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\config\MvcConfig.java                         | Java               |        -22 |        -11 |         -5 |        -38 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\config\SecurityConfig.java                    | Java               |       -101 |         -5 |        -18 |       -124 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\config\WebSocketConfig.java                   | Java               |        -67 |         -5 |        -12 |        -84 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\ArtController.java                 | Java               |        -84 |         -4 |        -19 |       -107 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\ChatController.java                | Java               |        -37 |          0 |        -10 |        -47 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\DownloadController.java            | Java               |       -107 |         -5 |        -20 |       -132 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\EmailController.java               | Java               |        -27 |         -1 |         -8 |        -36 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\ForumController.java               | Java               |        -94 |          0 |        -13 |       -107 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\HLAuthController.java              | Java               |        -42 |         -1 |         -8 |        -51 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\HLPlayerController.java            | Java               |        -27 |          0 |         -8 |        -35 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\HLUserController.java              | Java               |       -112 |         -4 |        -25 |       -141 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\ProductController.java             | Java               |        -54 |          0 |         -9 |        -63 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\controller\WebSocketController.java           | Java               |        -19 |         -1 |         -3 |        -23 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Art.java                                | Java               |        -33 |          0 |         -9 |        -42 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Comment.java                            | Java               |        -33 |          0 |        -10 |        -43 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Email.java                              | Java               |        -14 |          0 |         -4 |        -18 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\EmailRequest.java                       | Java               |        -12 |          0 |         -3 |        -15 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Forum.java                              | Java               |        -22 |          0 |         -7 |        -29 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\HLBadge.java                            | Java               |        -38 |          0 |         -1 |        -39 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\HLPlayer.java                           | Java               |        -80 |          0 |        -36 |       -116 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\HLRole.java                             | Java               |        -17 |          0 |         -4 |        -21 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\HLUser.java                             | Java               |        -47 |          0 |        -21 |        -68 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\HLUserResponse.java                     | Java               |        -34 |         -2 |        -13 |        -49 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\LoginRequest.java                       | Java               |         -8 |          0 |         -3 |        -11 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Message.java                            | Java               |        -26 |          0 |        -11 |        -37 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\MessageType.java                        | Java               |         -6 |          0 |         -1 |         -7 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\PlayerBehavior.java                     | Java               |         -8 |          0 |         -3 |        -11 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Post.java                               | Java               |        -32 |          0 |         -9 |        -41 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Product.java                            | Java               |        -29 |          0 |        -11 |        -40 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\RegisterRequest.java                    | Java               |         -8 |          0 |         -4 |        -12 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\model\Thread.java                             | Java               |        -29 |          0 |        -11 |        -40 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\ArtService.java                       | Java               |         -7 |          0 |         -5 |        -12 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\DatabaseService.java                  | Java               |        -66 |         -9 |        -51 |       -126 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\ForumService.java                     | Java               |        -10 |         -1 |         -8 |        -19 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\HLPlayerService.java                  | Java               |        -10 |          0 |         -6 |        -16 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\HLUserAuthService.java                | Java               |         -8 |          0 |         -5 |        -13 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\JwtService.java                       | Java               |         -8 |          0 |         -7 |        -15 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\MessageService.java                   | Java               |        -12 |          0 |         -8 |        -20 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\java\ly\happylone\service\ProductService.java                   | Java               |        -13 |          0 |         -9 |        -22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\resources\application.properties                                | Java Properties    |        -22 |        -10 |         -3 |        -35 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\resources\download.js                                           | JavaScript         |        -37 |          0 |        -11 |        -48 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-BACKEND\src\main\resources\package.json                                          | JSON               |        -15 |          0 |          0 |        -15 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\.eslintrc.js                                          | JavaScript         |         18 |          0 |          0 |         18 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\README.md                                             | Markdown           |         14 |          0 |         14 |         28 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\angular.json                                          | JSON               |        118 |          0 |          0 |        118 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\package-lock.json                                     | JSON               |     13,642 |          0 |          1 |     13,643 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\package.json                                          | JSON               |         50 |          0 |          1 |         51 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\admin\admin.component.css                     | CSS                |          0 |          0 |          1 |          1 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\admin\admin.component.html                    | HTML               |         70 |          0 |          4 |         74 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\admin\admin.component.spec.ts                 | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\admin\admin.component.ts                      | TypeScript         |        221 |          0 |         14 |        235 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\app-routing.module.ts                         | TypeScript         |         36 |          0 |          4 |         40 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\app.component.css                             | CSS                |          3 |          1 |          0 |          4 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\app.component.html                            | HTML               |          6 |          0 |          0 |          6 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\app.component.spec.ts                         | TypeScript         |         25 |          0 |          5 |         30 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\app.component.ts                              | TypeScript         |         15 |          0 |          2 |         17 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\app.module.ts                                 | TypeScript         |         91 |          0 |          4 |         95 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\art\art.component.css                         | CSS                |         39 |          0 |          7 |         46 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\art\art.component.html                        | HTML               |         21 |          0 |          2 |         23 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\art\art.component.spec.ts                     | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\art\art.component.ts                          | TypeScript         |        121 |          0 |          5 |        126 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\auth.guard.spec.ts                            | TypeScript         |         18 |          0 |          5 |         23 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\auth.guard.ts                                 | TypeScript         |         11 |          0 |          5 |         16 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\common\service\auth.service.ts                | TypeScript         |         21 |          0 |          3 |         24 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\common\service\forum.service.ts               | TypeScript         |         42 |          0 |          4 |         46 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\common\service\userservice.ts                 | TypeScript         |         60 |          0 |         10 |         70 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\email\email.component.css                     | CSS                |          0 |          0 |          1 |          1 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\email\email.component.html                    | HTML               |          1 |          0 |          1 |          2 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\email\email.component.spec.ts                 | TypeScript         |         18 |          0 |          6 |         24 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\email\email.component.ts                      | TypeScript         |         10 |          0 |          3 |         13 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\email\email.service.ts                        | TypeScript         |         19 |          0 |          2 |         21 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\email\emailRequest.ts                         | TypeScript         |          8 |          0 |          1 |          9 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\environments\environment.ts                   | TypeScript         |          4 |          0 |          0 |          4 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\header\header.component.css                   | CSS                |         36 |          0 |          6 |         42 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\header\header.component.html                  | HTML               |          3 |          0 |          0 |          3 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\header\header.component.spec.ts               | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\header\header.component.ts                    | TypeScript         |         46 |          0 |          5 |         51 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\canvas-toBlob.d.ts                       | TypeScript         |          1 |          0 |          1 |          2 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\chat.service.ts                          | TypeScript         |         62 |          2 |          9 |         73 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\hluser.ts                                | TypeScript         |          7 |          0 |          2 |          9 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\home.component.css                       | CSS                |        141 |          0 |         25 |        166 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\home.component.html                      | HTML               |         78 |          5 |          7 |         90 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\home.component.spec.ts                   | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\home.component.ts                        | TypeScript         |        238 |         47 |         24 |        309 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\home\message.ts                               | TypeScript         |         24 |          1 |          6 |         31 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\login\LoginRequest.ts                         | TypeScript         |          5 |          0 |          0 |          5 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\login\login.component.css                     | CSS                |         61 |          0 |         11 |         72 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\login\login.component.html                    | HTML               |         32 |          0 |          0 |         32 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\login\login.component.spec.ts                 | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\login\login.component.ts                      | TypeScript         |         43 |          1 |          3 |         47 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\register\RegisterRequest.ts                   | TypeScript         |          5 |          0 |          0 |          5 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\register\register.component.css               | CSS                |         51 |          0 |         11 |         62 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\register\register.component.html              | HTML               |         48 |          0 |          0 |         48 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\register\register.component.spec.ts           | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\register\register.component.ts                | TypeScript         |         55 |          0 |          6 |         61 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\objects\product.ts                       | TypeScript         |          9 |          0 |          0 |          9 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\product\product.service.spec.ts          | TypeScript         |         12 |          0 |          5 |         17 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\product\product.service.ts               | TypeScript         |         28 |          0 |          7 |         35 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\shop.component.css                       | CSS                |         52 |          0 |         10 |         62 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\shop.component.html                      | HTML               |         30 |          1 |          1 |         32 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\shop.component.spec.ts                   | TypeScript         |         44 |          0 |          9 |         53 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\shop\shop.component.ts                        | TypeScript         |         83 |          0 |         10 |         93 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-create\thread-create.component.css     | CSS                |         31 |          0 |          6 |         37 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-create\thread-create.component.html    | HTML               |         27 |          0 |          0 |         27 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-create\thread-create.component.spec.ts | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-create\thread-create.component.ts      | TypeScript         |         49 |          2 |          8 |         59 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-detail\thread-detail.component.css     | CSS                |         73 |          0 |         15 |         88 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-detail\thread-detail.component.html    | HTML               |         33 |          0 |          0 |         33 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-detail\thread-detail.component.spec.ts | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-detail\thread-detail.component.ts      | TypeScript         |        101 |          0 |          6 |        107 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-list\thread-list.component.css         | CSS                |         65 |          0 |         11 |         76 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-list\thread-list.component.html        | HTML               |         37 |          0 |          2 |         39 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-list\thread-list.component.spec.ts     | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\thread-list\thread-list.component.ts          | TypeScript         |         31 |          0 |          6 |         37 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\user\user.component.css                       | CSS                |          0 |          0 |          1 |          1 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\user\user.component.html                      | HTML               |         18 |          4 |          3 |         25 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\user\user.component.spec.ts                   | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\user\user.component.ts                        | TypeScript         |         84 |          0 |          3 |         87 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\youtube-dl\download.service.ts                | TypeScript         |         13 |          0 |          2 |         15 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\youtube-dl\youtube-dl.component.css           | CSS                |         21 |          0 |          4 |         25 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\youtube-dl\youtube-dl.component.html          | HTML               |         20 |          4 |          1 |         25 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\youtube-dl\youtube-dl.component.spec.ts       | TypeScript         |         17 |          0 |          5 |         22 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\app\youtube-dl\youtube-dl.component.ts            | TypeScript         |         38 |          0 |          6 |         44 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\index.html                                        | HTML               |         16 |          1 |          3 |         20 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\main.ts                                           | TypeScript         |          4 |          0 |          4 |          8 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\polyfills.ts                                      | TypeScript         |          1 |          0 |          1 |          2 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\styles.css                                        | CSS                |         35 |          1 |         20 |         56 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\src\window-global-fix.ts                              | TypeScript         |          4 |          0 |          0 |          4 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\tsconfig.app.json                                     | JSON               |         14 |          1 |          0 |         15 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\tsconfig.json                                         | JSON with Comments |         32 |          1 |          0 |         33 |
+| c:\Users\dillo\Documents\probable-tribble\HAPPYLONELY-FRONTEND\src\main\frontend\tsconfig.spec.json                                    | JSON               |         13 |          1 |          1 |         15 |
+| Total                                                                                                                                  |                    |     13,503 |        -17 |       -224 |     13,262 |
++----------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
