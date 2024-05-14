@@ -16,7 +16,7 @@
             "allowedCommonJsDependencies": [
               "sockjs-client"
             ],
-            "outputPath": "dist/test",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [

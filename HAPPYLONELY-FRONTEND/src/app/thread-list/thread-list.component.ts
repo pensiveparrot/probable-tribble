@@ -20,6 +20,10 @@ export class ThreadListComponent implements OnInit {
 
   async getThreads() {
     const response: any = await firstValueFrom(this.forumService.fetchThreadsList());
+    if (response.body.length > 0)
+      this.threads = response.body;
+    else
+      console.error("error with threads");
     console.log(response!);
 
   }
