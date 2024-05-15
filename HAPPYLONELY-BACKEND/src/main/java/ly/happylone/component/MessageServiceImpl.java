@@ -2,23 +2,15 @@ package ly.happylone.component;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,11 +22,15 @@ import ly.happylone.service.DatabaseService;
 
 @Service
 public class MessageServiceImpl implements MessageService {
+
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
     private DatabaseService databaseService;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public List<Message> fetchAllMessages() {
@@ -46,9 +42,6 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper mapper = new ObjectMapper();
-
     @Override
     public boolean userHasChatGptApiKey() throws SQLException {
         HLUser user = databaseService.getLoggedInUser();
@@ -56,52 +49,56 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public String contactChatGPT(String message, String apiKey)
-            throws SQLException, JsonMappingException, JsonProcessingException {
+    public String contactChatGPT(String message, String apiKey) throws SQLException, IOException {
         HLUser user = databaseService.getLoggedInUser();
         HttpStatusCode status = databaseService.getUserByUsernameMin("chatgpt").getStatusCode();
         HLUserResponse chatGPT = createChatGptUser();
 
-        if (status != HttpStatusCode.valueOf(200)) {
+        if (status != HttpStatus.OK) {
             databaseService.addChatGptUser(chatGPT);
         }
 
+        apiKey = resolveApiKey(apiKey, user);
+
+        if (!userHasChatGptApiKey()) {
+            updateGptApiKey(user.getUsername(), apiKey);
+        }
+
+        String responseContent = getChatGptResponseContent(message, apiKey, chatGPT);
+
+        postMessage(createApiResponseMessage(chatGPT, responseContent));
+        return responseContent;
+    }
+
+    private String resolveApiKey(String apiKey, HLUser user) {
         if (apiKey == null || apiKey.isEmpty()) {
             if (user.getGptapikey() != null) {
-                apiKey = user.getGptapikey();
+                return user.getGptapikey();
             } else {
                 throw new IllegalStateException("No API key provided");
             }
         }
+        return apiKey;
+    }
 
-        // Update the GPT API key for the user
-        if (!userHasChatGptApiKey()) {
-            try {
-                databaseService.updateUserGptApiKey(user.getUsername(), apiKey);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+    private void updateGptApiKey(String username, String apiKey) throws SQLException {
+        try {
+            databaseService.updateUserGptApiKey(username, apiKey);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+    }
 
+    private String getChatGptResponseContent(String message, String apiKey, HLUserResponse chatGPT) throws IOException {
         String url = "https://api.openai.com/v1/chat/completions";
-        HttpHeaders headers = createHeaders(apiKey);
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(createBody(message), headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(createBody(message), createHeaders(apiKey));
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
-        // Create a new message with the API response and post it
         JsonNode root = mapper.readTree(response.getBody());
         JsonNode choices = root.path("choices");
-        if (choices.isArray() && choices.size() > 0) {
-            JsonNode firstChoice = choices.get(0);
-            JsonNode messageNode = firstChoice.path("message");
-            String content = messageNode.path("content").asText();
-            // Create a new message with the content from the API response and post it
-            Message apiResponseMessage = new Message();
-            apiResponseMessage.setSender(chatGPT);
-            apiResponseMessage.setContent(content);
-            postMessage(apiResponseMessage);
 
-            return content;
+        if (choices.isArray() && choices.size() > 0) {
+            return choices.get(0).path("message").path("content").asText();
         } else {
             throw new IllegalStateException("No choices in response");
         }
@@ -110,23 +107,15 @@ public class MessageServiceImpl implements MessageService {
     private HttpHeaders createHeaders(String apiKey) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + apiKey);
+        headers.setBearerAuth(apiKey);
         return headers;
     }
 
     private Map<String, Object> createBody(String message) {
-        Map<String, Object> systemMessage = new HashMap<>();
-        systemMessage.put("role", "system");
-        systemMessage.put("content", "You are a helpful assistant.");
+        Map<String, Object> systemMessage = Map.of("role", "system", "content", "You are a helpful assistant.");
+        Map<String, Object> userMessage = Map.of("role", "user", "content", message);
 
-        Map<String, Object> userMessage = new HashMap<>();
-        userMessage.put("role", "user");
-        userMessage.put("content", message);
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("model", "gpt-4-turbo-preview");
-        body.put("messages", List.of(systemMessage, userMessage));
-        return body;
+        return Map.of("model", "gpt-4o", "messages", List.of(systemMessage, userMessage));
     }
 
     private HLUserResponse createChatGptUser() {
@@ -142,7 +131,6 @@ public class MessageServiceImpl implements MessageService {
     public void postMessage(Message message) throws SQLException {
         try {
             databaseService.postMessage(message);
-            // Send the message to the topic after saving it to the database
             broadcastMessageToClients(message);
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,16 +138,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     public void broadcastMessageToClients(Message message) {
-        System.out.println("Message posted broadcastMessageToClients method: " + message);
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String messageJson = objectMapper.writeValueAsString(message);
-            if (simpMessagingTemplate != null && messageJson != null) {
-                simpMessagingTemplate.convertAndSend("/topic/messages", messageJson);
-            }
+            String messageJson = mapper.writeValueAsString(message);
+            simpMessagingTemplate.convertAndSend("/topic/messages", messageJson);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private Message createApiResponseMessage(HLUserResponse chatGPT, String content) {
+        Message apiResponseMessage = new Message();
+        apiResponseMessage.setSender(chatGPT);
+        apiResponseMessage.setContent(content);
+        return apiResponseMessage;
+    }
 }

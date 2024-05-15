@@ -1,5 +1,6 @@
 package ly.happylone.service;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -13,7 +14,8 @@ public interface MessageService {
 
     void postMessage(Message message) throws SQLException;
 
-    public String contactChatGPT(String message, String apiKey) throws SQLException, JsonMappingException, JsonProcessingException;
+    public String contactChatGPT(String message, String apiKey)
+            throws SQLException, JsonMappingException, JsonProcessingException, IOException;
 
     public boolean userHasChatGptApiKey() throws SQLException;
 }

@@ -1,5 +1,6 @@
 package ly.happylone.controller;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ly.happylone.model.Message;
 import ly.happylone.service.MessageService;
@@ -33,7 +31,7 @@ public class ChatController {
 
     @PostMapping("/useChatGPT")
     public String chat(@RequestBody Map<String, String> request)
-            throws SQLException, JsonMappingException, JsonProcessingException {
+            throws SQLException, IOException {
         String message = request.get("message");
         String apiKey = request.get("apiKey");
         return messageService.contactChatGPT(message, apiKey);
