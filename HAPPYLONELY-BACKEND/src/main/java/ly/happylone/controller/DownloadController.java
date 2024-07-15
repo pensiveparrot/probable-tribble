@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -32,8 +30,6 @@ public class DownloadController {
     @Value("${script.location:/home/happylonely/script}")
     private String scriptLocation;
 
-    private final Set<String> executedCommands = new HashSet<>();
-
     @Async
     @PostMapping("/download")
     public CompletableFuture<ResponseEntity<byte[]>> download(@RequestBody Map<String, String> payload) {
@@ -46,33 +42,21 @@ public class DownloadController {
         }
 
         try {
-            String downloadScriptPath = Paths.get(scriptLocation, "download.js").toString();
+            String ytDlpPath = Paths.get(scriptLocation, "yt-dlp").toString();
             File scriptDirectory = new File(scriptLocation);
             if (!scriptDirectory.exists() && !scriptDirectory.mkdirs()) {
                 LOGGER.error("Failed to create script directory at: {}", scriptLocation);
                 return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
-            if (!executedCommands.contains("node --version")) {
-                executeCommand(null, "node", "--version");
-                executedCommands.add("node --version");
-            }
-            if (!executedCommands.contains("npm --version")) {
-                executeCommand(null, "npm", "--version");
-                executedCommands.add("npm --version");
-            }
+            String outputFileName = sanitizeFileName(
+                    "downloaded_" + System.currentTimeMillis() + (type.equals("music") ? ".mp3" : ".mp4"));
+            String outputPath = Paths.get(scriptLocation, outputFileName).toString();
 
-            if (!executedCommands.contains("npm init -y")) {
-                executeCommand(scriptLocation, "npm", "init", "-y");
-                executedCommands.add("npm init -y");
-            }
-            if (!executedCommands.contains("npm install ytdl-core")) {
-                executeCommand(scriptLocation, "npm", "install", "ytdl-core");
-                executedCommands.add("npm install ytdl-core");
-            }
-            String output = executeCommand(scriptLocation, "node", downloadScriptPath, url, type);
+            String[] command = buildYtDlpCommand(ytDlpPath, url, type, outputPath);
+            String output = executeCommand(scriptLocation, command);
 
-            File outputFile = new File(scriptLocation, output);
+            File outputFile = new File(outputPath);
             Resource resource = new FileSystemResource(outputFile);
 
             if (!resource.exists()) {
@@ -86,10 +70,8 @@ public class DownloadController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(
                     type.equals("music") ? MediaType.valueOf("audio/mpeg") : MediaType.valueOf("video/mp4"));
-            ContentDisposition contentDisposition = ContentDisposition
-                    .builder("attachment")
-                    .filename(outputFile.getName())
-                    .build();
+            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(outputFile.getName()).build();
             headers.setContentDisposition(contentDisposition);
             return CompletableFuture.completedFuture(new ResponseEntity<>(fileContent, headers, HttpStatus.OK));
         } catch (IOException | InterruptedException e) {
@@ -103,22 +85,40 @@ public class DownloadController {
         return url != null && url.matches(youtubeRegex);
     }
 
+    private String[] buildYtDlpCommand(String ytDlpPath, String url, String type, String outputPath) {
+        if ("music".equals(type)) {
+            return new String[] { ytDlpPath, "-x", "--audio-format", "mp3", "-o", outputPath, url };
+        } else {
+            return new String[] { ytDlpPath, "-f", "bestvideo+bestaudio", "--merge-output-format", "mp4", "-o",
+                    outputPath, url };
+        }
+    }
+
     private String executeCommand(String workingDirectory, String... command) throws IOException, InterruptedException {
+        LOGGER.info("Executing command: {} in directory: {}", String.join(" ", command), workingDirectory);
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         if (workingDirectory != null) {
             processBuilder.directory(new File(workingDirectory));
         }
+        processBuilder.redirectErrorStream(true); // Merge stdout and stderr
         Process process = processBuilder.start();
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-                String errorMessage = errorReader.lines().collect(Collectors.joining("\n"));
-                LOGGER.error("Command execution failed with exit code: {}. Error Message: {}", exitCode, errorMessage);
-                throw new IOException("Command execution failed: " + errorMessage);
-            }
-        }
+
+        // Capture output and error streams
         try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            return outputReader.lines().collect(Collectors.joining("\n"));
+            String output = outputReader.lines().collect(Collectors.joining("\n"));
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                LOGGER.error("Command execution failed with exit code: {}. Output: {}", exitCode, output);
+                throw new IOException("Command execution failed: " + output);
+            }
+
+            LOGGER.info("Command executed successfully. Output: {}", output);
+            return output;
         }
+    }
+
+    private String sanitizeFileName(String input) {
+        return input.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
     }
 }
